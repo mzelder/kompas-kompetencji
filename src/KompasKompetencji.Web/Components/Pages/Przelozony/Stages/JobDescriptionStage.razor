@@ -1,0 +1,152 @@
+@inject EvaluationService EvaluationService
+@inject NotificationService NotificationService
+
+<RadzenRow Gap="1.5rem">
+    <RadzenColumn Size="12" SizeMD="6">
+        <RadzenCard Variant="Variant.Outlined" class="rz-h-100">
+            <RadzenStack Gap="1rem">
+                <RadzenStack Gap="0">
+                    <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H2" class="rz-m-0">Opis stanowiska</RadzenText>
+                    <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">
+                        @View.Employee.Position · @View.Employee.Department
+                    </RadzenText>
+                </RadzenStack>
+
+                @if (View.JobDescription is JobDescription jobDescription)
+                {
+                    <RadzenText TextStyle="TextStyle.Body1" class="rz-m-0">@jobDescription.Purpose</RadzenText>
+
+                    <RadzenStack Gap="0.25rem">
+                        <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">Główne zadania</RadzenText>
+                        <ul class="rz-m-0">
+                            @foreach (var task in jobDescription.TaskList)
+                            {
+                                <li><RadzenText TextStyle="TextStyle.Body2" class="rz-m-0">@task</RadzenText></li>
+                            }
+                        </ul>
+                    </RadzenStack>
+
+                    <RadzenStack Gap="0.5rem">
+                        <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">Wymagane kompetencje</RadzenText>
+                        <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" Wrap="FlexWrap.Wrap">
+                            @foreach (var competency in jobDescription.RequiredCompetencyList)
+                            {
+                                <RadzenBadge BadgeStyle="BadgeStyle.Primary" Variant="Variant.Flat" Shade="Shade.Lighter" IsPill="true" Text="@competency" />
+                            }
+                        </RadzenStack>
+                    </RadzenStack>
+
+                    @if (jobDescription.SubordinatesCount is int subordinates)
+                    {
+                        <DetailItem Label="Liczba podległych osób" Value="@subordinates.ToString()" />
+                    }
+                }
+                else
+                {
+                    <RadzenAlert AlertStyle="AlertStyle.Info" Variant="Variant.Flat" Shade="Shade.Lighter" AllowClose="false" class="rz-m-0">
+                        Opis stanowiska nie został jeszcze uzupełniony. Arkusz możesz wybrać na podstawie stanowiska.
+                    </RadzenAlert>
+                }
+            </RadzenStack>
+        </RadzenCard>
+    </RadzenColumn>
+
+    <RadzenColumn Size="12" SizeMD="6">
+        <RadzenCard Variant="Variant.Outlined" class="rz-h-100">
+            <RadzenStack Gap="1rem">
+                <RadzenStack Gap="0">
+                    <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H2" class="rz-m-0">Arkusz oceny</RadzenText>
+                    <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">
+                        @(ReadOnly ? "Arkusz zatwierdzony na początku cyklu oceny." : "Wybierz arkusz, na którym ocenisz pracownika.")
+                    </RadzenText>
+                </RadzenStack>
+
+                @if (ReadOnly)
+                {
+                    <RadzenStack Orientation="Orientation.Horizontal" Gap="2rem" Wrap="FlexWrap.Wrap">
+                        <DetailItem Label="Arkusz" Value="@EvaluationText.Sheet(ConfirmedSheet)" />
+                        @if (View.OpenEvaluation?.SheetConfirmedAt is DateTime confirmedAt)
+                        {
+                            <DetailItem Label="Zatwierdzono" Value="@EvaluationText.Date(DateOnly.FromDateTime(confirmedAt))" />
+                        }
+                    </RadzenStack>
+                    <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">@EvaluationText.SheetDescription(ConfirmedSheet)</RadzenText>
+                }
+                else
+                {
+                    <RadzenStack Gap="0.5rem">
+                        <RadzenRadioButtonList TValue="EvaluationSheet" @bind-Value="sheet" Orientation="Orientation.Vertical" Gap="0.75rem">
+                            <Items>
+                                @foreach (var option in Enum.GetValues<EvaluationSheet>())
+                                {
+                                    <RadzenRadioButtonListItem TValue="EvaluationSheet" Value="@option" Text="@EvaluationText.Sheet(option)">
+                                        <Template Context="item">
+                                            <RadzenStack Gap="0">
+                                                <RadzenText TextStyle="TextStyle.Body1" class="rz-m-0">@OptionLabel(option)</RadzenText>
+                                                <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">@EvaluationText.SheetDescription(option)</RadzenText>
+                                            </RadzenStack>
+                                        </Template>
+                                    </RadzenRadioButtonListItem>
+                                }
+                            </Items>
+                        </RadzenRadioButtonList>
+                        <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">@View.SuggestionReason</RadzenText>
+                    </RadzenStack>
+
+                    @if (errorMessage is not null)
+                    {
+                        <RadzenAlert AlertStyle="AlertStyle.Danger" Variant="Variant.Flat" Shade="Shade.Lighter" AllowClose="false" class="rz-m-0">
+                            @errorMessage
+                        </RadzenAlert>
+                    }
+
+                    <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End">
+                        <RadzenButton Text="Zatwierdź arkusz" Icon="assignment_turned_in" ButtonStyle="ButtonStyle.Primary"
+                                      IsBusy="@busy" BusyText="Zapisywanie..." Click="@ConfirmAsync" />
+                    </RadzenStack>
+                }
+            </RadzenStack>
+        </RadzenCard>
+    </RadzenColumn>
+</RadzenRow>
+
+@code {
+    [Parameter, EditorRequired] public EmployeeEvaluationView View { get; set; } = default!;
+
+    [Parameter, EditorRequired] public int SupervisorId { get; set; }
+
+    [Parameter] public bool ReadOnly { get; set; }
+
+    [Parameter] public EventCallback OnConfirmed { get; set; }
+
+    private EvaluationSheet sheet;
+    private bool busy;
+    private string? errorMessage;
+
+    private EvaluationSheet ConfirmedSheet => View.OpenEvaluation?.Sheet ?? View.Task.Sheet;
+
+    protected override void OnInitialized()
+    {
+        sheet = View.SuggestedSheet;
+    }
+
+    private string OptionLabel(EvaluationSheet option) =>
+        option == View.SuggestedSheet ? $"{EvaluationText.Sheet(option)} (podpowiedź)" : EvaluationText.Sheet(option);
+
+    private async Task ConfirmAsync()
+    {
+        errorMessage = null;
+        busy = true;
+        var result = await EvaluationService.ConfirmSheetAsync(SupervisorId, View.Employee.Id, sheet, DateTime.Now);
+        busy = false;
+
+        if (!result.Succeeded)
+        {
+            errorMessage = result.Error;
+            return;
+        }
+
+        NotificationService.Notify(NotificationSeverity.Success, "Arkusz zatwierdzony", $"{View.Employee.FullName}: {EvaluationText.Sheet(sheet)}");
+        await OnConfirmed.InvokeAsync();
+    }
+}

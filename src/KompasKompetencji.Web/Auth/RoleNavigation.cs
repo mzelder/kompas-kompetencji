@@ -20,13 +20,18 @@ public static class RoleNavigation
             ]),
             new("Wsparcie",
             [
+                new("Przebieg oceny", "/przelozony/przebieg-oceny", "route"),
                 new("Model kompetencji", "/przelozony/model-kompetencji", "psychology"),
                 new("Zasady i materiały", "/przelozony/zasady", "menu_book"),
             ]),
         ],
         AppRoles.Hr =>
         [
-            new("Procesy", [new("Procesy ocen", "/hr", "fact_check", NavLinkMatch.All)]),
+            new("Procesy",
+            [
+                new("Procesy ocen", "/hr", "fact_check", NavLinkMatch.All),
+                new("Etapy ocen", "/hr/etapy-ocen", "timeline"),
+            ]),
             new("Organizacja", [new("Pracownicy i przełożeni", "/hr/pracownicy", "account_tree")]),
         ],
         AppRoles.Admin =>

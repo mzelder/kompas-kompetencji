@@ -1,0 +1,110 @@
+@page "/przelozony/pracownicy/{EmployeeId:int}"
+@using KompasKompetencji.Web.Components.Pages.Przelozony.Stages
+@inject UserService Users
+@inject EvaluationService EvaluationService
+@inject NavigationManager Navigation
+
+<PageTitle>@(view?.Employee.FullName ?? "Pracownik") – Kompas kompetencji</PageTitle>
+
+<RadzenButton Text="Moi pracownicy" Icon="arrow_back" Variant="Variant.Text" ButtonStyle="ButtonStyle.Base" Size="ButtonSize.Small"
+              Click="@BackToList" class="rz-mb-2" />
+
+@if (loadError is not null)
+{
+    <RadzenAlert AlertStyle="AlertStyle.Danger" Variant="Variant.Flat" Shade="Shade.Lighter" AllowClose="false">
+        Nie udało się wczytać danych: @loadError
+    </RadzenAlert>
+}
+else if (loading)
+{
+    <RadzenProgressBarCircular ShowValue="false" Mode="ProgressBarMode.Indeterminate" />
+}
+else if (view is null)
+{
+    <StatusMessage Icon="person_off" IconColor="@Colors.Warning" Title="Nie znaleziono pracownika w Twoim zespole."
+                   Text="Wybierz osobę z listy swoich podwładnych.">
+        <RadzenButton Text="Moi pracownicy" Icon="groups" ButtonStyle="ButtonStyle.Primary" Click="@BackToList" />
+    </StatusMessage>
+}
+else
+{
+    <PageHeader Title="@view.Employee.FullName" Subtitle="@($"{view.Employee.Position} · {view.Employee.Department}")">
+        <StatTile Icon="event" IconColor="@Colors.Primary" Label="Termin oceny" Compact="true"
+                  Value="@($"{EvaluationText.Date(view.Task.DueDate)} ({EvaluationText.RelativeToToday(view.Task.DueDate, today)})")" />
+    </PageHeader>
+
+    <RadzenSteps @bind-SelectedIndex="selectedIndex" ShowStepsButtons="false">
+        <Steps>
+            @foreach (var stage in EvaluationStages.All)
+            {
+                <RadzenStepsItem Text="@EvaluationText.Stage(stage)" Disabled="@(stage > view.CurrentStage)">
+                    <RadzenText TextStyle="TextStyle.H5" TagName="TagName.H2" class="rz-my-6">
+                        Etap @EvaluationText.StageNumber(stage). @EvaluationText.Stage(stage)
+                    </RadzenText>
+                    @if (stage == EvaluationStage.JobDescriptionReview)
+                    {
+                        <JobDescriptionStage @key="@view" View="@view" SupervisorId="@supervisorId"
+                                             ReadOnly="@(view.CurrentStage > stage)" OnConfirmed="@LoadAsync" />
+                    }
+                    else
+                    {
+                        <RadzenText TextStyle="TextStyle.Body1" class="rz-color-base-300">@EvaluationText.StageDescription(stage)</RadzenText>
+                    }
+                </RadzenStepsItem>
+            }
+        </Steps>
+    </RadzenSteps>
+
+    <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween" class="rz-mt-6">
+        <RadzenButton Text="Wstecz" Icon="arrow_back" ButtonStyle="ButtonStyle.Base"
+                      Disabled="@(selectedIndex == 0)" Click="@(() => selectedIndex--)" />
+        <RadzenButton Text="Dalej" Icon="arrow_forward" ButtonStyle="ButtonStyle.Primary"
+                      Disabled="@(selectedIndex >= (int)view.CurrentStage)" Click="@(() => selectedIndex++)" />
+    </RadzenStack>
+}
+
+@code {
+    public const string ListPath = "/przelozony/pracownicy";
+
+    public static string PathFor(int employeeId) => $"{ListPath}/{employeeId}";
+
+    [CascadingParameter] private Task<AuthenticationState> AuthState { get; set; } = default!;
+
+    [Parameter] public int EmployeeId { get; set; }
+
+    private readonly DateOnly today = DateOnly.FromDateTime(DateTime.Today);
+    private EmployeeEvaluationView? view;
+    private int supervisorId;
+    private int selectedIndex;
+    private bool loading = true;
+    private string? loadError;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        loading = true;
+        try
+        {
+            var userId = (await AuthState).User.GetUserId();
+            var user = userId is null ? null : await Users.GetByIdAsync(userId.Value);
+            view = null;
+            if (user?.EmployeeId is int employeeId)
+            {
+                supervisorId = employeeId;
+                await LoadAsync();
+            }
+        }
+        catch (Exception ex)
+        {
+            loadError = ex.Message;
+        }
+        loading = false;
+    }
+
+    private async Task LoadAsync()
+    {
+        view = await EvaluationService.GetEmployeeEvaluationAsync(supervisorId, EmployeeId, today);
+        selectedIndex = view is null ? 0 : (int)view.CurrentStage;
+    }
+
+    private void BackToList() => Navigation.NavigateTo(ListPath);
+}

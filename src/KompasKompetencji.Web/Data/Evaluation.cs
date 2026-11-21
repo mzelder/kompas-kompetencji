@@ -35,6 +35,8 @@ public class Evaluation
 
     public EvaluationSheet Sheet { get; set; }
 
+    public DateTime? SheetConfirmedAt { get; set; }
+
     public EvaluationStatus Status { get; set; }
 
     public DateOnly PeriodStart { get; set; }

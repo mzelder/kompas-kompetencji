@@ -1,5 +1,8 @@
 @page "/przelozony/pracownicy"
 @inject OrganizationService Organization
+@inject UserService Users
+@inject EvaluationService Evaluations
+@inject NavigationManager Navigation
 
 <PageTitle>Moi pracownicy – Kompas kompetencji</PageTitle>
 
@@ -14,63 +17,51 @@
         </RadzenAlert>
     }
 
-    <RadzenCard Variant="Variant.Outlined" class="fill-card fill-row">
-        <RadzenStack Gap="1rem" class="fill-stack">
-            <RadzenStack Gap="0">
-                <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H2" class="rz-m-0">Pracownicy</RadzenText>
-                <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300 rz-text-truncate">
-                    @CountCaption
-                </RadzenText>
-            </RadzenStack>
-
-            <SearchBox Value="@search" ValueChanged="@OnSearchChanged"
-                       Placeholder="Szukaj: nazwisko, stanowisko, komórka" />
-
-            <RadzenDataGrid TItem="Employee" Data="@filteredEmployees" IsLoading="@loading"
-                            AllowSorting="true"
-                            EmptyText="@(string.IsNullOrWhiteSpace(search) ? "Brak pracowników." : "Nikt nie pasuje do wyszukiwania.")"
-                            class="fill-grid">
-                <Columns>
-                    <RadzenDataGridColumn Property="@nameof(Employee.FullName)" Title="Imię i nazwisko">
-                        <Template Context="employee">
-                            <PersonName Person="@employee" ShowSupervisorIcon="false" />
-                        </Template>
-                    </RadzenDataGridColumn>
-                    <RadzenDataGridColumn Property="@nameof(Employee.Position)" Title="Stanowisko" />
-                </Columns>
-            </RadzenDataGrid>
-        </RadzenStack>
-    </RadzenCard>
+    @if (accountNotLinked)
+    {
+        <StatusMessage Icon="link_off" IconColor="@Colors.Warning" Title="Konto nie jest powiązane z pracownikiem"
+                       Text="Poproś HR o powiązanie Twojego konta z kartą pracownika, aby zobaczyć swój zespół." />
+    }
+    else
+    {
+        <EmployeeStageList Employees="@employees" Stages="@stages" Loading="@loading"
+                           CountLabel="Podwładni" EmptyText="Nie masz jeszcze podwładnych."
+                           OnEmployeeClick="@OpenEmployee" />
+    }
 </div>
 
 @code {
     private IReadOnlyList<Employee> employees = [];
-    private IReadOnlyList<Employee> filteredEmployees = [];
-    private string? search;
+    private IReadOnlyDictionary<int, EvaluationStage> stages = new Dictionary<int, EvaluationStage>();
     private bool loading = true;
+    private bool accountNotLinked;
     private string? loadError;
 
-    private string CountCaption => filteredEmployees.Count == employees.Count
-        ? $"Wszyscy pracownicy: {employees.Count}"
-        : $"Wyniki wyszukiwania: {filteredEmployees.Count} z {employees.Count}";
+    [CascadingParameter] private Task<AuthenticationState> AuthState { get; set; } = default!;
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
-            employees = (await Organization.GetChartAsync()).Employees;
+            var userId = (await AuthState).User.GetUserId();
+            var user = userId is null ? null : await Users.GetByIdAsync(userId.Value);
+            if (user?.EmployeeId is int supervisorId)
+            {
+                employees = (await Organization.GetChartAsync()).SubordinatesOf(supervisorId);
+                stages = await Evaluations.GetCurrentStagesAsync(employees.Select(e => e.Id).ToList());
+            }
+            else
+            {
+                accountNotLinked = true;
+            }
         }
         catch (Exception ex)
         {
             loadError = ex.Message;
         }
-        filteredEmployees = employees;
         loading = false;
     }
 
-    private void OnSearchChanged(string value)
-    {
-        search = value;
-        filteredEmployees = EmployeeSearch.Filter(employees, search);
-    }
+    private void OpenEmployee(Employee employee) =>
+        Navigation.NavigateTo(EmployeeEvaluation.PathFor(employee.Id));
 }

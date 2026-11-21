@@ -10,6 +10,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
 
     public DbSet<Evaluation> Evaluations => Set<Evaluation>();
 
+    public DbSet<JobDescription> JobDescriptions => Set<JobDescription>();
+
     public DbSet<AppUser> Users => Set<AppUser>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -82,6 +84,91 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
                 new EmployeeSupervisor { EmployeeId = 13, SupervisorId = 3 });
         });
 
+        modelBuilder.Entity<JobDescription>(j =>
+        {
+            j.ToTable("JobDescriptions");
+            j.HasKey(p => p.EmployeeId);
+            j.Property(p => p.Purpose).HasMaxLength(1000);
+            j.Property(p => p.Tasks).HasMaxLength(4000);
+            j.Property(p => p.RequiredCompetencies).HasMaxLength(1000);
+            j.HasOne(p => p.Employee)
+                .WithOne(p => p.JobDescription)
+                .HasForeignKey<JobDescription>(p => p.EmployeeId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            j.HasData(
+                new JobDescription
+                {
+                    EmployeeId = 1,
+                    Purpose = "Przygotowywanie analiz danych wspierających decyzje kierownictwa departamentu oraz dbanie o jakość danych wykorzystywanych w raportach.",
+                    Tasks = Lines(
+                        "Przygotowywanie analiz i raportów na potrzeby kierownictwa departamentu",
+                        "Opracowywanie wskaźników i metod pomiaru realizacji zadań",
+                        "Weryfikacja jakości i kompletności danych z systemów dziedzinowych",
+                        "Przygotowywanie projektów stanowisk do dokumentów przekazanych do zaopiniowania",
+                        "Wsparcie merytoryczne mniej doświadczonych pracowników wydziału"),
+                    RequiredCompetencies = Lines("Myślenie analityczne", "Orientacja na cele", "Komunikacja pisemna", "Współpraca"),
+                },
+                new JobDescription
+                {
+                    EmployeeId = 2,
+                    Purpose = "Realizacja zadań związanych z gromadzeniem, przetwarzaniem i udostępnianiem danych na potrzeby wydziału.",
+                    Tasks = Lines(
+                        "Gromadzenie i porządkowanie danych z jednostek podległych",
+                        "Przygotowywanie zestawień i wizualizacji danych",
+                        "Udzielanie odpowiedzi na zapytania dotyczące danych publicznych",
+                        "Prowadzenie dokumentacji źródeł danych"),
+                    RequiredCompetencies = Lines("Myślenie analityczne", "Rzetelność", "Komunikacja", "Współpraca"),
+                },
+                new JobDescription
+                {
+                    EmployeeId = 3,
+                    Purpose = "Kierowanie Wydziałem Analiz Danych, zapewnienie terminowej i rzetelnej realizacji zadań wydziału oraz rozwój kompetencji podległych pracowników.",
+                    Tasks = Lines(
+                        "Planowanie, organizowanie i nadzorowanie pracy wydziału",
+                        "Przydzielanie zadań i ocena ich realizacji przez pracowników",
+                        "Przygotowywanie stanowisk i rekomendacji dla dyrektora departamentu",
+                        "Współpraca z innymi komórkami organizacyjnymi i instytucjami",
+                        "Prowadzenie ocen okresowych i planowanie rozwoju zawodowego pracowników"),
+                    RequiredCompetencies = Lines("Zarządzanie zespołem", "Podejmowanie decyzji", "Myślenie strategiczne", "Zarządzanie rozwojem pracowników", "Komunikacja"),
+                    SubordinatesCount = 6,
+                },
+                new JobDescription
+                {
+                    EmployeeId = 9,
+                    Purpose = "Obsługa administracyjna wydziału i wsparcie pracowników w przygotowywaniu zestawień danych.",
+                    Tasks = Lines(
+                        "Prowadzenie rejestru korespondencji wydziału",
+                        "Przygotowywanie prostych zestawień danych według wskazówek",
+                        "Archiwizowanie dokumentacji wydziału",
+                        "Organizacja spotkań i przygotowywanie notatek"),
+                    RequiredCompetencies = Lines("Rzetelność", "Organizacja pracy własnej", "Komunikacja"),
+                },
+                new JobDescription
+                {
+                    EmployeeId = 10,
+                    Purpose = "Przygotowywanie i opiniowanie analiz dotyczących usług cyfrowych oraz koordynacja współpracy z dostawcami danych.",
+                    Tasks = Lines(
+                        "Opracowywanie analiz wpływu planowanych zmian na usługi cyfrowe",
+                        "Opiniowanie projektów dokumentów pod kątem danych i wskaźników",
+                        "Koordynowanie współpracy z instytucjami przekazującymi dane",
+                        "Prowadzenie spotkań roboczych z udziałem innych komórek",
+                        "Przygotowywanie materiałów na posiedzenia zespołów międzyresortowych"),
+                    RequiredCompetencies = Lines("Myślenie analityczne", "Współpraca", "Komunikacja", "Orientacja na cele"),
+                },
+                new JobDescription
+                {
+                    EmployeeId = 12,
+                    Purpose = "Realizacja zadań związanych z analizą danych i przygotowywaniem informacji dla kierownictwa.",
+                    Tasks = Lines(
+                        "Przygotowywanie cyklicznych raportów z danych wydziału",
+                        "Analiza danych ankietowych i statystycznych",
+                        "Przygotowywanie projektów odpowiedzi na pisma",
+                        "Aktualizacja danych publikowanych w serwisie urzędu"),
+                    RequiredCompetencies = Lines("Myślenie analityczne", "Rzetelność", "Komunikacja pisemna"),
+                });
+        });
+
         modelBuilder.Entity<Evaluation>(v =>
         {
             v.ToTable("Evaluations");
@@ -101,59 +188,61 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             v.HasData(
                 new Evaluation
                 {
-                    Id = 1, EmployeeId = 1, EvaluatorId = 3, Sheet = EvaluationSheet.C, Status = EvaluationStatus.Completed,
+                    Id = 1, EmployeeId = 1, EvaluatorId = 3, Sheet = EvaluationSheet.C, Status = EvaluationStatus.Completed, SheetConfirmedAt = new DateTime(2024, 12, 18, 9, 0, 0),
                     PeriodStart = new DateOnly(2024, 12, 15), PeriodEnd = new DateOnly(2025, 12, 14), DueDate = new DateOnly(2025, 12, 15),
                     ConversationAt = new DateTime(2025, 12, 8, 10, 0, 0), ConversationStatus = ConversationStatus.Held,
                     StartedAt = new DateTime(2025, 11, 20, 9, 0, 0), CompletedAt = new DateTime(2025, 12, 10, 14, 0, 0),
                 },
                 new Evaluation
                 {
-                    Id = 2, EmployeeId = 1, EvaluatorId = 3, Sheet = EvaluationSheet.C, Status = EvaluationStatus.InProgress,
+                    Id = 2, EmployeeId = 1, EvaluatorId = 3, Sheet = EvaluationSheet.C, Status = EvaluationStatus.InProgress, SheetConfirmedAt = new DateTime(2025, 12, 18, 9, 0, 0),
                     PeriodStart = new DateOnly(2025, 12, 15), PeriodEnd = new DateOnly(2026, 12, 14), DueDate = new DateOnly(2026, 12, 15),
                     ConversationAt = new DateTime(2026, 11, 27, 10, 0, 0), ConversationStatus = ConversationStatus.Scheduled,
                     StartedAt = new DateTime(2026, 11, 12, 10, 30, 0),
                 },
                 new Evaluation
                 {
-                    Id = 3, EmployeeId = 2, EvaluatorId = 3, Sheet = EvaluationSheet.C, Status = EvaluationStatus.Completed,
+                    Id = 3, EmployeeId = 2, EvaluatorId = 3, Sheet = EvaluationSheet.C, Status = EvaluationStatus.Completed, SheetConfirmedAt = new DateTime(2024, 11, 5, 9, 0, 0),
                     PeriodStart = new DateOnly(2024, 11, 2), PeriodEnd = new DateOnly(2025, 11, 1), DueDate = new DateOnly(2025, 11, 2),
                     ConversationAt = new DateTime(2025, 10, 27, 11, 0, 0), ConversationStatus = ConversationStatus.Held,
                     StartedAt = new DateTime(2025, 10, 6, 9, 0, 0), CompletedAt = new DateTime(2025, 10, 28, 12, 0, 0),
                 },
                 new Evaluation
                 {
-                    Id = 4, EmployeeId = 9, EvaluatorId = 3, Sheet = EvaluationSheet.C, Status = EvaluationStatus.Completed,
+                    Id = 4, EmployeeId = 9, EvaluatorId = 3, Sheet = EvaluationSheet.C, Status = EvaluationStatus.Completed, SheetConfirmedAt = new DateTime(2025, 1, 14, 9, 0, 0),
                     PeriodStart = new DateOnly(2025, 1, 10), PeriodEnd = new DateOnly(2026, 1, 9), DueDate = new DateOnly(2026, 1, 10),
                     ConversationAt = new DateTime(2026, 1, 7, 9, 30, 0), ConversationStatus = ConversationStatus.Held,
                     StartedAt = new DateTime(2025, 12, 15, 9, 0, 0), CompletedAt = new DateTime(2026, 1, 8, 11, 0, 0),
                 },
                 new Evaluation
                 {
-                    Id = 5, EmployeeId = 10, EvaluatorId = 3, Sheet = EvaluationSheet.C, Status = EvaluationStatus.Completed,
+                    Id = 5, EmployeeId = 10, EvaluatorId = 3, Sheet = EvaluationSheet.C, Status = EvaluationStatus.Completed, SheetConfirmedAt = new DateTime(2025, 6, 4, 9, 0, 0),
                     PeriodStart = new DateOnly(2025, 6, 1), PeriodEnd = new DateOnly(2026, 5, 31), DueDate = new DateOnly(2026, 6, 1),
                     ConversationAt = new DateTime(2026, 5, 26, 13, 0, 0), ConversationStatus = ConversationStatus.Held,
                     StartedAt = new DateTime(2026, 5, 4, 9, 0, 0), CompletedAt = new DateTime(2026, 5, 27, 13, 0, 0),
                 },
                 new Evaluation
                 {
-                    Id = 6, EmployeeId = 9, EvaluatorId = 3, Sheet = EvaluationSheet.C, Status = EvaluationStatus.CriteriaSet,
+                    Id = 6, EmployeeId = 9, EvaluatorId = 3, Sheet = EvaluationSheet.C, Status = EvaluationStatus.CriteriaSet, SheetConfirmedAt = new DateTime(2026, 1, 13, 9, 0, 0),
                     PeriodStart = new DateOnly(2026, 1, 10), PeriodEnd = new DateOnly(2027, 1, 9), DueDate = new DateOnly(2027, 1, 10),
                     ConversationAt = new DateTime(2026, 12, 18, 9, 0, 0), ConversationStatus = ConversationStatus.Scheduled,
                     StartedAt = new DateTime(2026, 11, 16, 14, 0, 0),
                 },
                 new Evaluation
                 {
-                    Id = 7, EmployeeId = 12, EvaluatorId = 3, Sheet = EvaluationSheet.C, Status = EvaluationStatus.Completed,
+                    Id = 7, EmployeeId = 12, EvaluatorId = 3, Sheet = EvaluationSheet.C, Status = EvaluationStatus.Completed, SheetConfirmedAt = new DateTime(2024, 12, 23, 9, 0, 0),
                     PeriodStart = new DateOnly(2024, 12, 20), PeriodEnd = new DateOnly(2025, 12, 19), DueDate = new DateOnly(2025, 12, 20),
                     ConversationAt = new DateTime(2025, 12, 17, 12, 0, 0), ConversationStatus = ConversationStatus.Held,
                     StartedAt = new DateTime(2025, 11, 24, 9, 0, 0), CompletedAt = new DateTime(2025, 12, 18, 10, 0, 0),
                 },
                 new Evaluation
                 {
-                    Id = 8, EmployeeId = 13, EvaluatorId = 3, Sheet = EvaluationSheet.C, Status = EvaluationStatus.NotStarted,
+                    Id = 8, EmployeeId = 13, EvaluatorId = 3, Sheet = EvaluationSheet.C, Status = EvaluationStatus.NotStarted, SheetConfirmedAt = new DateTime(2025, 12, 12, 9, 0, 0),
                     PeriodStart = new DateOnly(2025, 12, 10), PeriodEnd = new DateOnly(2026, 12, 9), DueDate = new DateOnly(2026, 12, 10),
                     ConversationAt = new DateTime(2026, 11, 14, 10, 0, 0), ConversationStatus = ConversationStatus.Scheduled,
                 });
         });
     }
+
+    private static string Lines(params string[] lines) => string.Join('\n', lines);
 }

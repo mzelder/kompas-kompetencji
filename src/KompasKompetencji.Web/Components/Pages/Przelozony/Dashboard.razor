@@ -12,7 +12,7 @@
         {
             var overdue = overview.WithUrgency(EvaluationUrgency.Overdue).Count;
             <StatTile Icon="@(overdue == 0 ? "check_circle" : "error")" IconColor="@(overdue == 0 ? Colors.Success : Colors.Danger)"
-                      Label="Po terminie" Value="@overdue" Compact="true" />
+                      Label="Po terminie" Value="@overdue.ToString()" Compact="true" />
         }
     </PageHeader>
 

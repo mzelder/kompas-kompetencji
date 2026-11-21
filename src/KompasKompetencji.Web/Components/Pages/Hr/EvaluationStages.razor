@@ -1,0 +1,41 @@
+@page "/hr/etapy-ocen"
+@inject OrganizationService Organization
+@inject EvaluationService Evaluations
+
+<PageTitle>Etapy ocen – Kompas kompetencji</PageTitle>
+
+<div class="fill-page">
+    <PageHeader Title="Etapy ocen"
+                Subtitle="Bieżący etap oceny okresowej wszystkich pracowników." />
+
+    @if (loadError is not null)
+    {
+        <RadzenAlert AlertStyle="AlertStyle.Danger" Variant="Variant.Flat" Shade="Shade.Lighter" AllowClose="false" class="rz-mb-4">
+            Nie udało się wczytać danych: @loadError
+        </RadzenAlert>
+    }
+
+    <EmployeeStageList Employees="@employees" Stages="@stages" Loading="@loading"
+                       CountLabel="Wszyscy pracownicy" EmptyText="Brak pracowników." />
+</div>
+
+@code {
+    private IReadOnlyList<Employee> employees = [];
+    private IReadOnlyDictionary<int, EvaluationStage> stages = new Dictionary<int, EvaluationStage>();
+    private bool loading = true;
+    private string? loadError;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            employees = (await Organization.GetChartAsync()).Employees;
+            stages = await Evaluations.GetCurrentStagesAsync(employees.Select(e => e.Id).ToList());
+        }
+        catch (Exception ex)
+        {
+            loadError = ex.Message;
+        }
+        loading = false;
+    }
+}
