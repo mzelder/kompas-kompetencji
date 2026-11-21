@@ -2,4 +2,7 @@
   <Folder Name="/src/">
     <Project Path="src/KompasKompetencji.Web/KompasKompetencji.Web.csproj" />
   </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/KompasKompetencji.Tests/KompasKompetencji.Tests.csproj" />
+  </Folder>
 </Solution>

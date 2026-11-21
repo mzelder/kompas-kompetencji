@@ -21,6 +21,9 @@ src/KompasKompetencji.Web/
   Data/AppDbContext.cs              kontekst EF Core
   Data/Employee.cs                  encja przykładowa (dane demo)
   Data/Migrations/                  migracje bazy danych
+  Assistant/                        asystent AI: klient modelu, RAG, odmowa, pseudonimizacja
+tests/KompasKompetencji.Tests/      testy xUnit (wyszukiwarka, asystent)
+knowledge-base/                     baza wiedzy asystenta: źródła, skrypt, knowledge-base.json
 ```
 
 ## Uruchomienie krok po kroku
@@ -106,7 +109,7 @@ Otwórz `KompasKompetencji.slnx`, ustaw `KompasKompetencji.Web` jako projekt sta
 
 ## Asystent AI (Claude API)
 
-Bez klucza asystent odpowiada gotowymi odpowiedziami przykładowymi. Żeby podłączyć prawdziwy model:
+Bez klucza asystent działa w trybie bez modelu: wyszukuje fragmenty bazy wiedzy tak samo jak z modelem i pokazuje najlepiej pasujący fragment ze źródłem. Żeby podłączyć prawdziwy model:
 
 1. Utwórz klucz API w Claude Console: https://platform.claude.com (Settings → API keys). Doładowanie kredytów: Settings → Billing.
 2. Zapisz go w user-secrets (nie trafia do repozytorium):
@@ -117,7 +120,25 @@ Bez klucza asystent odpowiada gotowymi odpowiedziami przykładowymi. Żeby podł
 
 3. Uruchom aplikację ponownie.
 
-Model jest w `appsettings.json` (`Assistant:Model`, domyślnie `claude-haiku-5-5`). Połączenie idzie przez oficjalny pakiet `Anthropic` i jego `IChatClient`. W Development logi `Microsoft.Extensions.AI` (poziom `Trace` w `appsettings.Development.json`) pokazują każde zapytanie do modelu i odpowiedź.
+Model jest w `appsettings.json` (`Assistant:Model`, domyślnie `claude-haiku-5-5`). Połączenie idzie przez oficjalny pakiet `Anthropic` i jego `IChatClient`. W Development logi `Microsoft.Extensions.AI` (poziom `Trace` w `appsettings.Development.json`) pokazują każde zapytanie do modelu i odpowiedź, już po pseudonimizacji.
+
+Jak działa pytanie do asystenta:
+
+1. Pytanie o wystawienie poziomu oceny konkretnej osobie dostaje stałą odmowę, bez wywołania modelu.
+2. Wyszukiwarka BM25 wybiera 5 fragmentów z `knowledge-base/knowledge-base.json` (zapytanie z dwóch ostatnich pytań użytkownika).
+3. Imiona i nazwiska pracowników z bazy są zamieniane na „Pracownik A”, „Pracownik B”…
+4. Model dostaje prompt systemowy z ponumerowanymi fragmentami i odpowiada, podając numery [n].
+5. W odpowiedzi pseudonimy wracają na imiona i nazwiska, a pod odpowiedzią pojawiają się źródła, które model przywołał.
+
+Baza wiedzy i jej przebudowa: [knowledge-base/README.md](knowledge-base/README.md).
+
+## Testy
+
+```powershell
+dotnet test
+```
+
+Testy nie wołają API. Sprawdzają m.in., czy dla 24 pytań w stylu jury (`tests/KompasKompetencji.Tests/retrieval-questions.json`) właściwy fragment jest w pierwszej piątce wyników wyszukiwarki, odmowę przy pytaniach o poziom oceny i pseudonimizację. Jeśli aplikacja jest uruchomiona (np. z Visual Studio), build może nie nadpisać plików w `bin`; wtedy zatrzymaj aplikację albo użyj `dotnet test --artifacts-path <inny folder>`.
 
 ## Praca z bazą danych (migracje)
 

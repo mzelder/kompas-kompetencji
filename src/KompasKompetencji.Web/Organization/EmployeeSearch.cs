@@ -1,18 +1,13 @@
 using KompasKompetencji.Web.Data;
+using KompasKompetencji.Web.Text;
 
 namespace KompasKompetencji.Web.Organization;
 
 public static class EmployeeSearch
 {
-    private static readonly Dictionary<char, char> PolishLetters = new()
-    {
-        ['ą'] = 'a', ['ć'] = 'c', ['ę'] = 'e', ['ł'] = 'l', ['ń'] = 'n',
-        ['ó'] = 'o', ['ś'] = 's', ['ź'] = 'z', ['ż'] = 'z',
-    };
-
     public static IReadOnlyList<Employee> Filter(IReadOnlyList<Employee> employees, string? term)
     {
-        var normalizedTerm = Normalize(term?.Trim() ?? string.Empty);
+        var normalizedTerm = TextNormalizer.Normalize(term?.Trim() ?? string.Empty);
         if (normalizedTerm.Length == 0)
         {
             return employees;
@@ -22,10 +17,7 @@ public static class EmployeeSearch
     }
 
     private static bool Matches(Employee employee, string normalizedTerm) =>
-        Normalize(employee.FullName).Contains(normalizedTerm)
-        || Normalize(employee.Position).Contains(normalizedTerm)
-        || Normalize(employee.Department).Contains(normalizedTerm);
-
-    private static string Normalize(string text) =>
-        string.Concat(text.ToLowerInvariant().Select(c => PolishLetters.GetValueOrDefault(c, c)));
+        TextNormalizer.Normalize(employee.FullName).Contains(normalizedTerm)
+        || TextNormalizer.Normalize(employee.Position).Contains(normalizedTerm)
+        || TextNormalizer.Normalize(employee.Department).Contains(normalizedTerm);
 }

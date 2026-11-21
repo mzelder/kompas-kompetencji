@@ -1,0 +1,226 @@
+[
+  {
+    "question": "Ile dni ma pracownik na sprzeciw od oceny okresowej?",
+    "expectedChunkIds": [
+      "ustawa-art-83",
+      "poradnik-okresowe-7"
+    ]
+  },
+  {
+    "question": "Nie zgadzam się z oceną okresową, co mogę zrobić?",
+    "expectedChunkIds": [
+      "ustawa-art-83",
+      "poradnik-okresowe-7"
+    ]
+  },
+  {
+    "question": "Do kogo pracownik może się odwołać od oceny?",
+    "expectedChunkIds": [
+      "ustawa-art-83",
+      "poradnik-okresowe-7"
+    ]
+  },
+  {
+    "question": "W jakim terminie rozpatruje się sprzeciwu od oceny okresowej?",
+    "expectedChunkIds": [
+      "ustawa-art-83",
+      "poradnik-okresowe-7"
+    ]
+  },
+  {
+    "question": "Jak często sporządza się ocenę okresową?",
+    "expectedChunkIds": [
+      "ustawa-art-81",
+      "poradnik-okresowe-4"
+    ]
+  },
+  {
+    "question": "Kto sporządza ocenę okresową pracownika?",
+    "expectedChunkIds": [
+      "ustawa-art-81",
+      "rozp-okresowe-2",
+      "poradnik-okresowe-3"
+    ]
+  },
+  {
+    "question": "Jakie kryteria są obowiązkowe w arkuszu C?",
+    "expectedChunkIds": [
+      "rozp-okresowe-4",
+      "arkusz-c-czesc-i"
+    ]
+  },
+  {
+    "question": "Jakie kryteria obowiązkowe ocenia się u osoby kierującej zespołem?",
+    "expectedChunkIds": [
+      "rozp-okresowe-4",
+      "arkusz-b-czesc-i"
+    ]
+  },
+  {
+    "question": "Ile kryteriów dodatkowych może wybrać oceniający?",
+    "expectedChunkIds": [
+      "arkusz-c-czesc-i",
+      "arkusz-b-czesc-i",
+      "poradnik-okresowe-6-2-2"
+    ]
+  },
+  {
+    "question": "Jaka jest skala ocen cząstkowych w ocenie okresowej?",
+    "expectedChunkIds": [
+      "rozp-okresowe-11",
+      "poradnik-okresowe-6-2-5-1"
+    ]
+  },
+  {
+    "question": "Kiedy pracownik otrzymuje negatywną ocenę okresową?",
+    "expectedChunkIds": [
+      "rozp-okresowe-11",
+      "poradnik-okresowe-6-2-5-2"
+    ]
+  },
+  {
+    "question": "Co się dzieje po negatywnej ocenie okresowej?",
+    "expectedChunkIds": [
+      "ustawa-art-81",
+      "ustawa-art-71",
+      "poradnik-okresowe-8"
+    ]
+  },
+  {
+    "question": "Co to jest IPRZ i kto go ustala?",
+    "expectedChunkIds": [
+      "ustawa-art-108",
+      "poradnik-okresowe-6-2-5-4"
+    ]
+  },
+  {
+    "question": "O czym rozmawia się podczas rozmowy oceniającej?",
+    "expectedChunkIds": [
+      "rozp-okresowe-10",
+      "poradnik-okresowe-6-2-4",
+      "arkusz-c-czesc-ii",
+      "arkusz-pierwsza-rozmowa-oceniajaca",
+      "poradnik-pierwsza-6-5-1"
+    ]
+  },
+  {
+    "question": "Czy po dobrej ocenie okresowej urzędnik może dostać kolejny stopień służbowy?",
+    "expectedChunkIds": [
+      "ustawa-art-89",
+      "poradnik-okresowe-9",
+      "poradnik-okresowe-6-2-6"
+    ]
+  },
+  {
+    "question": "Kto podlega pierwszej ocenie w służbie cywilnej?",
+    "expectedChunkIds": [
+      "ustawa-art-37",
+      "poradnik-pierwsza-3"
+    ]
+  },
+  {
+    "question": "Kiedy dokonuje się pierwszej oceny nowego pracownika?",
+    "expectedChunkIds": [
+      "ustawa-art-38",
+      "rozp-pierwsza-4",
+      "poradnik-pierwsza-4",
+      "poradnik-pierwsza-4-1"
+    ]
+  },
+  {
+    "question": "Jaka jest skala punktowa w pierwszej ocenie?",
+    "expectedChunkIds": [
+      "rozp-pierwsza-9",
+      "poradnik-pierwsza-6-5-3"
+    ]
+  },
+  {
+    "question": "Jakie są warunki przyznania pozytywnej pierwszej oceny?",
+    "expectedChunkIds": [
+      "rozp-pierwsza-10",
+      "poradnik-pierwsza-6-5-3"
+    ]
+  },
+  {
+    "question": "Co omówić z nowym pracownikiem na rozmowie wstępnej?",
+    "expectedChunkIds": [
+      "rozp-pierwsza-3",
+      "arkusz-pierwsza-rozmowa-wstepna",
+      "poradnik-pierwsza-6-2"
+    ]
+  },
+  {
+    "question": "Co oznacza kompetencja współpraca?",
+    "expectedChunkIds": [
+      "model-wspolpraca",
+      "rozp-okresowe-wspolpraca",
+      "rozp-pierwsza-wspolpraca"
+    ]
+  },
+  {
+    "question": "Jak wygląda rzetelność na poziomie oczekiwań?",
+    "expectedChunkIds": [
+      "model-rzetelnosc"
+    ]
+  },
+  {
+    "question": "Jakie kompetencje są wymagane na stanowisku starszego specjalisty?",
+    "expectedChunkIds": [
+      "osp-starszy-specjalista-wymagania-i-kompetencje"
+    ]
+  },
+  {
+    "question": "Jakie zadania ma radca w opisie stanowiska pracy?",
+    "expectedChunkIds": [
+      "osp-radca-zadania"
+    ]
+  },
+  {
+    "question": "Kiedy trzeba dokonać pierwszej oceny?",
+    "expectedChunkIds": [
+      "rozp-pierwsza-4",
+      "poradnik-pierwsza-4"
+    ]
+  },
+  {
+    "question": "Jakie kryteria są obowiązkowe w arkuszu C i ile kryteriów trzeba wybrać łącznie?",
+    "expectedChunkIds": [
+      "rozp-okresowe-4",
+      "arkusz-c-czesc-i"
+    ]
+  },
+  {
+    "question": "Jak często sporządza się ocenę okresową i co się dzieje po ocenie negatywnej?",
+    "expectedChunkIds": [
+      "ustawa-art-71",
+      "poradnik-okresowe-8"
+    ]
+  },
+  {
+    "question": "Jakie są poziomy skali w ocenie okresowej i kiedy ocena jest negatywna?",
+    "expectedChunkIds": [
+      "rozp-okresowe-11"
+    ]
+  },
+  {
+    "question": "Kiedy ocena okresowa jest negatywna?",
+    "expectedChunkIds": [
+      "rozp-okresowe-11-cz2",
+      "poradnik-okresowe-6-2-5-2"
+    ]
+  },
+  {
+    "question": "Jakie są warunki pozytywnej pierwszej oceny i jaka jest skala punktowa?",
+    "expectedChunkIds": [
+      "rozp-pierwsza-10",
+      "poradnik-pierwsza-6-5-3"
+    ]
+  },
+  {
+    "question": "Co trzeba omówić z pracownikiem na rozmowie na początku okresu oceny okresowej i w jakim terminie?",
+    "expectedChunkIds": [
+      "rozp-okresowe-5",
+      "poradnik-okresowe-6-2-1"
+    ]
+  }
+]
