@@ -6,7 +6,7 @@ Placeholder aplikacji do oceny kompetencji pracowników służby cywilnej.
 
 Zakres funkcjonalny MVP opisuje [mvp.md](mvp.md).
 
-**Konwencja:** kod, nazwy plików, klas, tabel i komentarze w kodzie są po angielsku. Teksty widoczne dla użytkownika (UI) są po polsku.
+**Konwencja:** kod, nazwy plików, klas i tabel są po angielsku. Teksty widoczne dla użytkownika (UI) są po polsku. W kodzie nie piszemy komentarzy.
 
 ## Struktura
 

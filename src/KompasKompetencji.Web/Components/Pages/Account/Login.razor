@@ -1,0 +1,231 @@
+@page "/login"
+@layout AuthLayout
+@attribute [AllowAnonymous]
+@inject UserService Users
+@inject LoginTicketStore Tickets
+@inject NavigationManager Navigation
+@inject IWebHostEnvironment Environment
+
+<PageTitle>Logowanie – Kompas kompetencji</PageTitle>
+
+<RadzenStack Orientation="Orientation.Horizontal" Wrap="FlexWrap.Wrap" Gap="1.5rem"
+             JustifyContent="JustifyContent.Center" AlignItems="AlignItems.Start">
+
+    <RadzenCard Variant="Variant.Outlined" class="login-card">
+        <RadzenStack Gap="1.25rem">
+            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.75rem">
+                <RadzenIcon Icon="explore" IconColor="@Colors.Primary" Style="font-size: 2.5rem;" />
+                <RadzenStack Gap="0">
+                    <RadzenText TextStyle="TextStyle.H5" TagName="TagName.H1" class="rz-m-0">Kompas kompetencji</RadzenText>
+                    <RadzenText TextStyle="TextStyle.Body2" class="rz-m-0 rz-color-base-600">Wsparcie przełożonego w ocenie pracownika</RadzenText>
+                </RadzenStack>
+            </RadzenStack>
+
+            <AuthorizeView>
+                <Authorized>
+                    <RadzenAlert AlertStyle="AlertStyle.Info" Variant="Variant.Flat" Shade="Shade.Lighter" AllowClose="false">
+                        Jesteś zalogowany jako <strong>@context.User.Identity?.Name</strong>
+                        (@AppRoles.DisplayName(context.User.GetRole())).
+                        <RadzenLink Path="/" Text="Przejdź do panelu" />
+                    </RadzenAlert>
+                </Authorized>
+            </AuthorizeView>
+
+            @if (errorMessage is not null)
+            {
+                <RadzenAlert AlertStyle="AlertStyle.Danger" Variant="Variant.Flat" Shade="Shade.Lighter" AllowClose="false">
+                    @errorMessage
+                </RadzenAlert>
+            }
+
+            <RadzenTabs @bind-SelectedIndex="selectedTab" Change="@(_ => errorMessage = null)">
+                <Tabs>
+                    <RadzenTabsItem Text="Logowanie" Icon="login">
+                        <RadzenTemplateForm TItem="LoginModel" Data="@loginModel" Submit="@SignInAsync">
+                            <RadzenStack Gap="1rem" class="rz-pt-2">
+                                <RadzenFormField Text="Login" Variant="Variant.Outlined">
+                                    <ChildContent>
+                                        <RadzenTextBox Name="SignInLogin" @bind-Value="loginModel.Login" autocomplete="username" />
+                                    </ChildContent>
+                                    <Helper>
+                                        <RadzenRequiredValidator Component="SignInLogin" Text="Podaj login." />
+                                    </Helper>
+                                </RadzenFormField>
+                                <RadzenFormField Text="Hasło" Variant="Variant.Outlined">
+                                    <ChildContent>
+                                        <RadzenPassword Name="SignInPassword" @bind-Value="loginModel.Password" autocomplete="current-password" />
+                                    </ChildContent>
+                                    <Helper>
+                                        <RadzenRequiredValidator Component="SignInPassword" Text="Podaj hasło." />
+                                    </Helper>
+                                </RadzenFormField>
+                                <RadzenButton ButtonType="ButtonType.Submit" Text="Zaloguj się" Icon="login"
+                                              ButtonStyle="ButtonStyle.Primary" IsBusy="@busy" BusyText="Logowanie…" />
+                            </RadzenStack>
+                        </RadzenTemplateForm>
+                    </RadzenTabsItem>
+
+                    <RadzenTabsItem Text="Nowe konto" Icon="person_add">
+                        <RadzenTemplateForm TItem="RegisterModel" Data="@registerModel" Submit="@RegisterAsync">
+                            <RadzenStack Gap="1rem" class="rz-pt-2">
+                                <RadzenFormField Text="Login" Variant="Variant.Outlined">
+                                    <ChildContent>
+                                        <RadzenTextBox Name="RegisterLogin" @bind-Value="registerModel.Login" autocomplete="username" />
+                                    </ChildContent>
+                                    <Helper>
+                                        <RadzenRequiredValidator Component="RegisterLogin" Text="Podaj login." />
+                                        <RadzenLengthValidator Component="RegisterLogin" Min="UserService.MinLoginLength" Max="UserService.MaxLoginLength"
+                                                               Text="@($"Login musi mieć od {UserService.MinLoginLength} do {UserService.MaxLoginLength} znaków.")" />
+                                        <RadzenRegexValidator Component="RegisterLogin" Pattern="@UserService.LoginPattern"
+                                                              Text="Dozwolone są litery, cyfry oraz znaki . _ -" />
+                                    </Helper>
+                                </RadzenFormField>
+                                <RadzenFormField Text="Hasło" Variant="Variant.Outlined">
+                                    <ChildContent>
+                                        <RadzenPassword Name="RegisterPassword" @bind-Value="registerModel.Password" autocomplete="new-password" />
+                                    </ChildContent>
+                                    <Helper>
+                                        <RadzenRequiredValidator Component="RegisterPassword" Text="Podaj hasło." />
+                                        <RadzenLengthValidator Component="RegisterPassword" Min="UserService.MinPasswordLength"
+                                                               Text="@($"Hasło musi mieć co najmniej {UserService.MinPasswordLength} znaki.")" />
+                                    </Helper>
+                                </RadzenFormField>
+                                <RadzenFormField Text="Rola" Variant="Variant.Outlined">
+                                    <RadzenDropDown Name="RegisterRole" @bind-Value="registerModel.Role" Data="@roleOptions"
+                                                    TextProperty="@nameof(RoleOption.Text)" ValueProperty="@nameof(RoleOption.Value)" />
+                                </RadzenFormField>
+                                <RadzenButton ButtonType="ButtonType.Submit" Text="Utwórz konto i zaloguj" Icon="person_add"
+                                              ButtonStyle="ButtonStyle.Primary" IsBusy="@busy" BusyText="Tworzenie konta…" />
+                            </RadzenStack>
+                        </RadzenTemplateForm>
+                    </RadzenTabsItem>
+                </Tabs>
+            </RadzenTabs>
+        </RadzenStack>
+    </RadzenCard>
+
+    @if (Environment.IsDevelopment())
+    {
+        <RadzenCard Variant="Variant.Outlined" class="login-card test-accounts-card">
+            <RadzenStack Gap="1rem">
+                <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.5rem">
+                    <RadzenIcon Icon="bug_report" IconColor="@Colors.Warning" />
+                    <RadzenText TextStyle="TextStyle.H6" class="rz-m-0">Konta testowe</RadzenText>
+                </RadzenStack>
+
+                @foreach (var account in TestAccounts.All)
+                {
+                    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center"
+                                 JustifyContent="JustifyContent.SpaceBetween" class="test-account-row">
+                        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.75rem">
+                            <RadzenIcon Icon="@AppRoles.Icon(account.Role)" />
+                            <RadzenStack Gap="0">
+                                <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-m-0">@AppRoles.DisplayName(account.Role)</RadzenText>
+                                <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0">
+                                    <code>@account.Login</code> / <code>@account.Password</code>
+                                </RadzenText>
+                            </RadzenStack>
+                        </RadzenStack>
+                        <RadzenButton Text="Zaloguj" Icon="bolt" Size="ButtonSize.Small" Variant="Variant.Flat"
+                                      ButtonStyle="ButtonStyle.Secondary" Disabled="@busy"
+                                      Click="@(() => SignInAsTestAccountAsync(account))" />
+                    </RadzenStack>
+                }
+            </RadzenStack>
+        </RadzenCard>
+    }
+</RadzenStack>
+
+@code {
+    [SupplyParameterFromQuery] public string? ReturnUrl { get; set; }
+
+    [SupplyParameterFromQuery(Name = "error")] public string? ErrorCode { get; set; }
+
+    private readonly LoginModel loginModel = new();
+    private readonly RegisterModel registerModel = new();
+    private readonly List<RoleOption> roleOptions =
+        AppRoles.All.Select(r => new RoleOption(r, AppRoles.DisplayName(r))).ToList();
+
+    private int selectedTab;
+    private bool busy;
+    private string? errorMessage;
+
+    protected override void OnInitialized()
+    {
+        if (ErrorCode == "ticket")
+        {
+            errorMessage = "Logowanie wygasło. Spróbuj ponownie.";
+        }
+    }
+
+    private async Task SignInAsync(LoginModel model)
+    {
+        errorMessage = null;
+        busy = true;
+        var user = await Users.ValidateCredentialsAsync(model.Login, model.Password);
+        busy = false;
+
+        if (user is null)
+        {
+            errorMessage = "Nieprawidłowy login lub hasło.";
+            return;
+        }
+        CompleteSignIn(user.Id, ReturnUrl);
+    }
+
+    private async Task RegisterAsync(RegisterModel model)
+    {
+        errorMessage = null;
+        busy = true;
+        var result = await Users.RegisterAsync(model.Login, model.Password, model.Role);
+        busy = false;
+
+        if (!result.Succeeded)
+        {
+            errorMessage = result.Error;
+            return;
+        }
+        CompleteSignIn(result.User!.Id, returnUrl: null);
+    }
+
+    private async Task SignInAsTestAccountAsync(TestAccount account)
+    {
+        if (!Environment.IsDevelopment())
+        {
+            return;
+        }
+
+        errorMessage = null;
+        busy = true;
+        var user = await Users.FindByLoginAsync(account.Login);
+        busy = false;
+
+        if (user is null)
+        {
+            errorMessage = $"Konto testowe „{account.Login}” nie istnieje w bazie. Uruchom aplikację ponownie, aby je utworzyć.";
+            return;
+        }
+        CompleteSignIn(user.Id, returnUrl: null);
+    }
+
+    private void CompleteSignIn(int userId, string? returnUrl)
+    {
+        var ticket = Tickets.Issue(userId);
+        Navigation.NavigateTo(AuthEndpoints.BuildSignInUrl(ticket, returnUrl), forceLoad: true);
+    }
+
+    private sealed class LoginModel
+    {
+        public string Login { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
+    }
+
+    private sealed class RegisterModel
+    {
+        public string Login { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
+        public string Role { get; set; } = AppRoles.Supervisor;
+    }
+
+    private sealed record RoleOption(string Value, string Text);
+}

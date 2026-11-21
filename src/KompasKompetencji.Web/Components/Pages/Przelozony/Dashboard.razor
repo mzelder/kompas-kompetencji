@@ -1,0 +1,45 @@
+@page "/przelozony"
+@using KompasKompetencji.Web.Data
+@using Microsoft.EntityFrameworkCore
+@inject IDbContextFactory<AppDbContext> DbFactory
+
+<PageTitle>Moi pracownicy – Kompas kompetencji</PageTitle>
+
+<PageHeader Title="Moi pracownicy"
+            Subtitle="Lista podwładnych. W kolejnym kroku stąd będzie się rozpoczynać ocenę okresową." />
+
+@if (error is not null)
+{
+    <RadzenAlert AlertStyle="AlertStyle.Danger" Variant="Variant.Flat" Shade="Shade.Lighter" AllowClose="false">
+        Brak połączenia z bazą: @error
+    </RadzenAlert>
+}
+else
+{
+    <RadzenDataGrid Data="@employees" TItem="Employee" IsLoading="@(employees is null)"
+                    AllowSorting="true" AllowFiltering="true" FilterMode="FilterMode.Simple">
+        <Columns>
+            <RadzenDataGridColumn Property="@nameof(Employee.FirstName)" Title="Imię" />
+            <RadzenDataGridColumn Property="@nameof(Employee.LastName)" Title="Nazwisko" />
+            <RadzenDataGridColumn Property="@nameof(Employee.Position)" Title="Stanowisko" />
+        </Columns>
+    </RadzenDataGrid>
+}
+
+@code {
+    private List<Employee>? employees;
+    private string? error;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            await using var db = await DbFactory.CreateDbContextAsync();
+            employees = await db.Employees.AsNoTracking().OrderBy(e => e.LastName).ToListAsync();
+        }
+        catch (Exception ex)
+        {
+            error = ex.Message;
+        }
+    }
+}
