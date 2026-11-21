@@ -1,3 +1,7 @@
+html body {
+    background-image: none;
+}
+
 h1:focus {
     outline: none;
 }
@@ -43,9 +47,7 @@ h1:focus {
 }
 
 .auth-layout {
-    min-height: 100vh;
     padding: 4rem 1rem;
-    background: var(--rz-body-background-color);
 }
 
 .login-card {
@@ -53,11 +55,15 @@ h1:focus {
     max-width: 100%;
 }
 
-.icon-lg {
+.rzi.icon-md {
+    font-size: 1.5rem;
+}
+
+.rzi.icon-lg {
     font-size: 2.5rem;
 }
 
-.icon-xl {
+.rzi.icon-xl {
     font-size: 3rem;
 }
 

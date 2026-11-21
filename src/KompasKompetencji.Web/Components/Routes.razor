@@ -15,3 +15,12 @@
         <FocusOnNavigate RouteData="routeData" Selector="h1" />
     </Found>
 </Router>
+
+@code {
+    [Inject] private ThemeService ThemeService { get; set; } = default!;
+
+    protected override void OnInitialized()
+    {
+        ThemeService.SetTheme(new ThemeOptions { Theme = AppTheme.Name, TriggerChange = false });
+    }
+}
