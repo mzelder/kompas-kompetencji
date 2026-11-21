@@ -44,6 +44,17 @@
             </Helper>
         </RadzenFormField>
 
+        <RadzenFormField Text="Data zatrudnienia" Variant="Variant.Outlined" class="rz-w-100">
+            <ChildContent>
+                <RadzenDatePicker TValue="DateTime" Name="EmployedSince" @bind-Value="form.EmployedSince" DateFormat="dd.MM.yyyy" />
+            </ChildContent>
+            <Helper>
+                <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">
+                    Pierwsza ocena okresowa: @EvaluationText.Date(EvaluationSchedule.NextDueDate(DateOnly.FromDateTime(form.EmployedSince), null))
+                </RadzenText>
+            </Helper>
+        </RadzenFormField>
+
         <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.5rem">
             <RadzenCheckBox TValue="bool" Name="IsSupervisor" @bind-Value="form.IsSupervisor" />
             <RadzenLabel Component="IsSupervisor" Text="Pełni funkcję przełożonego" />
@@ -66,7 +77,8 @@
     {
         busy = true;
         var employee = await Organization.AddEmployeeAsync(
-            new NewEmployee(model.FirstName, model.LastName, model.Position, model.Department, model.IsSupervisor));
+            new NewEmployee(model.FirstName, model.LastName, model.Position, model.Department, model.IsSupervisor,
+                DateOnly.FromDateTime(model.EmployedSince)));
         busy = false;
         DialogService.Close(employee);
     }
@@ -78,5 +90,6 @@
         public string Position { get; set; } = string.Empty;
         public string Department { get; set; } = string.Empty;
         public bool IsSupervisor { get; set; }
+        public DateTime EmployedSince { get; set; } = DateTime.Today;
     }
 }

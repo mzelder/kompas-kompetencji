@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace KompasKompetencji.Web.Organization;
 
-public sealed record NewEmployee(string FirstName, string LastName, string Position, string Department, bool IsSupervisor);
+public sealed record NewEmployee(string FirstName, string LastName, string Position, string Department, bool IsSupervisor, DateOnly EmployedSince);
 
 public sealed record OperationResult(string? Error)
 {
@@ -36,6 +36,7 @@ public sealed class OrganizationService(IDbContextFactory<AppDbContext> dbFactor
             Position = input.Position.Trim(),
             Department = input.Department.Trim(),
             IsSupervisor = input.IsSupervisor,
+            EmployedSince = input.EmployedSince,
         };
 
         await using var db = await dbFactory.CreateDbContextAsync(ct);

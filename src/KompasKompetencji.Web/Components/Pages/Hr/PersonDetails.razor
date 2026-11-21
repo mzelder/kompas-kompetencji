@@ -14,6 +14,7 @@
     </RadzenStack>
 
     <DetailItem Label="Komórka organizacyjna" Value="@Person.Department" />
+    <DetailItem Label="Data zatrudnienia" Value="@EvaluationText.Date(Person.EmployedSince)" />
     <DetailItem Label="Konto w systemie" Value="@(Chart.AccountLoginOf(Person.Id) ?? "Brak konta")" />
     <DetailItem Label="Przełożeni" Fill="true" Value="@NamesOrNone(Chart.SupervisorsOf(Person.Id))" />
     @if (Person.IsSupervisor)

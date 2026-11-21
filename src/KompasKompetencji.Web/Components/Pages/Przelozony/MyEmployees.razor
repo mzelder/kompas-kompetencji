@@ -1,0 +1,76 @@
+@page "/przelozony/pracownicy"
+@inject OrganizationService Organization
+
+<PageTitle>Moi pracownicy – Kompas kompetencji</PageTitle>
+
+<div class="fill-page">
+    <PageHeader Title="Moi pracownicy"
+                Subtitle="Twoi podwładni objęci oceną okresową." />
+
+    @if (loadError is not null)
+    {
+        <RadzenAlert AlertStyle="AlertStyle.Danger" Variant="Variant.Flat" Shade="Shade.Lighter" AllowClose="false" class="rz-mb-4">
+            Nie udało się wczytać danych: @loadError
+        </RadzenAlert>
+    }
+
+    <RadzenCard Variant="Variant.Outlined" class="fill-card fill-row">
+        <RadzenStack Gap="1rem" class="fill-stack">
+            <RadzenStack Gap="0">
+                <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H2" class="rz-m-0">Pracownicy</RadzenText>
+                <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300 rz-text-truncate">
+                    @CountCaption
+                </RadzenText>
+            </RadzenStack>
+
+            <SearchBox Value="@search" ValueChanged="@OnSearchChanged"
+                       Placeholder="Szukaj: nazwisko, stanowisko, komórka" />
+
+            <RadzenDataGrid TItem="Employee" Data="@filteredEmployees" IsLoading="@loading"
+                            AllowSorting="true"
+                            EmptyText="@(string.IsNullOrWhiteSpace(search) ? "Brak pracowników." : "Nikt nie pasuje do wyszukiwania.")"
+                            class="fill-grid">
+                <Columns>
+                    <RadzenDataGridColumn Property="@nameof(Employee.FullName)" Title="Imię i nazwisko">
+                        <Template Context="employee">
+                            <PersonName Person="@employee" ShowSupervisorIcon="false" />
+                        </Template>
+                    </RadzenDataGridColumn>
+                    <RadzenDataGridColumn Property="@nameof(Employee.Position)" Title="Stanowisko" />
+                </Columns>
+            </RadzenDataGrid>
+        </RadzenStack>
+    </RadzenCard>
+</div>
+
+@code {
+    private IReadOnlyList<Employee> employees = [];
+    private IReadOnlyList<Employee> filteredEmployees = [];
+    private string? search;
+    private bool loading = true;
+    private string? loadError;
+
+    private string CountCaption => filteredEmployees.Count == employees.Count
+        ? $"Wszyscy pracownicy: {employees.Count}"
+        : $"Wyniki wyszukiwania: {filteredEmployees.Count} z {employees.Count}";
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            employees = (await Organization.GetChartAsync()).Employees;
+        }
+        catch (Exception ex)
+        {
+            loadError = ex.Message;
+        }
+        filteredEmployees = employees;
+        loading = false;
+    }
+
+    private void OnSearchChanged(string value)
+    {
+        search = value;
+        filteredEmployees = EmployeeSearch.Filter(employees, search);
+    }
+}
