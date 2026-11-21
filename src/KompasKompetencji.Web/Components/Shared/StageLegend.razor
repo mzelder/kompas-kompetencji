@@ -1,0 +1,8 @@
+<div class="stage-legend">
+    @foreach (var stage in EvaluationStages.All)
+    {
+        <div class="stage-legend-item">
+            <StageMarker Stage="@stage" />
+        </div>
+    }
+</div>

@@ -17,9 +17,12 @@ public partial class MyEmployees
     [Inject] private DialogService DialogService { get; set; } = default!;
     [Inject] private NotificationService NotificationService { get; set; } = default!;
 
+    private sealed record NextStepAction(string Text, string Icon, ButtonStyle Style, Variant Variant, bool Enabled);
+
+    private sealed record NextStepView(string Title, string Detail, bool IsWarning, NextStepAction? Action);
+
     private IReadOnlyList<Employee> employees = [];
-    private IReadOnlyDictionary<int, EvaluationStage> stages = new Dictionary<int, EvaluationStage>();
-    private IReadOnlyDictionary<int, EvaluationTask> tasks = new Dictionary<int, EvaluationTask>();
+    private IReadOnlyList<EmployeeEvaluationRow> rows = [];
     private readonly DateOnly today = DateOnly.FromDateTime(DateTime.Today);
     private int supervisorId;
     private bool loading = true;
@@ -38,7 +41,7 @@ public partial class MyEmployees
             {
                 supervisorId = employeeId;
                 employees = (await Organization.GetChartAsync()).SubordinatesOf(supervisorId);
-                await LoadEvaluationsAsync();
+                await LoadRowsAsync();
             }
             else
             {
@@ -52,22 +55,59 @@ public partial class MyEmployees
         loading = false;
     }
 
-    private async Task LoadEvaluationsAsync()
+    private async Task LoadRowsAsync()
     {
-        stages = await Evaluations.GetCurrentStagesAsync(employees.Select(e => e.Id).ToList());
-        tasks = (await Evaluations.GetSupervisorOverviewAsync(supervisorId, DateTime.Now)).Tasks
-            .ToDictionary(t => t.Employee.Id);
+        rows = await Evaluations.GetEvaluationRowsAsync(employees, today);
     }
 
-    private EvaluationTask? AssessmentTaskFor(Employee employee) =>
-        stages.GetValueOrDefault(employee.Id) == EvaluationStage.Assessment ? tasks.GetValueOrDefault(employee.Id) : null;
-
-    private async Task ScheduleConversationAsync(EvaluationTask task)
+    private static NextStepView? NextStepFor(EmployeeEvaluationRow row) => row.Stage switch
     {
-        if (await ConversationDialog.OpenAsync(DialogService, task, ConversationType.Assessment, supervisorId, today))
+        EvaluationStage.JobDescriptionReview => new(
+            "Opis stanowiska i arkusz", "Przejrzyj opis stanowiska i zatwierdź arkusz oceny", false,
+            new("Zatwierdź arkusz", "assignment", ButtonStyle.Primary, Variant.Filled, true)),
+        EvaluationStage.StartingConversation => new(
+            "Rozmowa rozpoczynająca", "Ustal z pracownikiem kryteria oceny", false, null),
+        EvaluationStage.Assessment => AssessmentConversationStep(row.Task),
+        EvaluationStage.Completion => new(
+            "Zakończenie", $"Zapoznaj pracownika z oceną do {EvaluationText.Date(row.DueDate)}", false, null),
+        _ => null,
+    };
+
+    private static NextStepView AssessmentConversationStep(EvaluationTask task)
+    {
+        const string title = "Rozmowa oceniająca";
+        var changeDate = new NextStepAction("Zmień termin", "edit_calendar", ButtonStyle.Base, Variant.Text, true);
+        var schedule = new NextStepAction("Wyznacz termin", "edit_calendar", ButtonStyle.Primary, Variant.Filled, task.CanScheduleConversation);
+
+        return task switch
         {
-            await LoadEvaluationsAsync();
-            NotificationService.Notify(NotificationSeverity.Success, "Zapisano termin rozmowy", task.Employee.FullName);
+            { ConversationAt: DateTime at, ConversationStatus: ConversationStatus.Held } =>
+                new(title, $"Odbyta {EvaluationText.Date(at)}", false, null),
+            { ConversationAt: DateTime at } when ConversationRules.IsPastDue(at, task.ConversationStatus, DateTime.Now) =>
+                new(title, $"{EvaluationText.Date(at)}: termin minął", true, changeDate),
+            { ConversationAt: DateTime at } =>
+                new(title, EvaluationText.Date(at), false, changeDate),
+            { CanScheduleConversation: false } =>
+                new(title, $"Możliwa od {EvaluationText.Date(task.ConversationWindowOpensOn)}", false, schedule),
+            { Urgency: EvaluationUrgency.Overdue } =>
+                new(title, "Termin oceny minął, wyznacz jak najszybciej", true, schedule),
+            _ =>
+                new(title, $"Najpóźniej {EvaluationText.Date(task.DueDate)}", false, schedule),
+        };
+    }
+
+    private async Task RunActionAsync(EmployeeEvaluationRow row)
+    {
+        if (row.Stage != EvaluationStage.Assessment)
+        {
+            OpenEmployee(row.Employee);
+            return;
+        }
+
+        if (await ConversationDialog.OpenAsync(DialogService, row.Task, ConversationType.Assessment, supervisorId, today))
+        {
+            await LoadRowsAsync();
+            NotificationService.Notify(NotificationSeverity.Success, "Zapisano termin rozmowy", row.Employee.FullName);
         }
     }
 

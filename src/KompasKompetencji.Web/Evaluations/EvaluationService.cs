@@ -29,6 +29,13 @@ public sealed record SupervisorOverview(IReadOnlyList<EvaluationTask> Tasks, IRe
         .ToList();
 }
 
+public sealed record EmployeeEvaluationRow(Employee Employee, EvaluationStage Stage, EvaluationTask Task)
+{
+    public string FullName => Employee.FullName;
+
+    public DateOnly DueDate => Task.DueDate;
+}
+
 public sealed record EmployeeEvaluationView(
     Employee Employee,
     JobDescription? JobDescription,
@@ -232,19 +239,24 @@ public sealed class EvaluationService(IDbContextFactory<AppDbContext> dbFactory)
         return OperationResult.Success;
     }
 
-    public async Task<IReadOnlyDictionary<int, EvaluationStage>> GetCurrentStagesAsync(
-        IReadOnlyCollection<int> employeeIds, CancellationToken ct = default)
+    public async Task<IReadOnlyList<EmployeeEvaluationRow>> GetEvaluationRowsAsync(
+        IReadOnlyList<Employee> employees, DateOnly today, CancellationToken ct = default)
     {
         await using var db = await dbFactory.CreateDbContextAsync(ct);
 
+        var employeeIds = employees.Select(e => e.Id).ToList();
         var evaluations = await db.Evaluations.AsNoTracking()
+            .Include(v => v.Conversations)
             .Where(v => employeeIds.Contains(v.EmployeeId))
             .ToListAsync(ct);
         var evaluationsByEmployee = evaluations.ToLookup(v => v.EmployeeId);
 
-        return employeeIds.ToDictionary(
-            id => id,
-            id => EvaluationStages.Current(EvaluationSchedule.OpenEvaluation(evaluationsByEmployee[id])));
+        return employees
+            .Select(e => new EmployeeEvaluationRow(
+                e,
+                EvaluationStages.Current(EvaluationSchedule.OpenEvaluation(evaluationsByEmployee[e.Id])),
+                EvaluationSchedule.Describe(e, evaluationsByEmployee[e.Id], today)))
+            .ToList();
     }
 
     public async Task<EmployeeEvaluationView?> GetEmployeeEvaluationAsync(

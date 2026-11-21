@@ -17,5 +17,6 @@ public static class EvaluationStages
     public static EvaluationStage Current(Evaluation? openEvaluation) =>
         openEvaluation?.SheetConfirmedAt is null ? EvaluationStage.JobDescriptionReview
         : openEvaluation.PartIConfirmedAt is null ? EvaluationStage.StartingConversation
-        : EvaluationStage.Assessment;
+        : openEvaluation.WrittenEvaluationAt is null ? EvaluationStage.Assessment
+        : EvaluationStage.Completion;
 }

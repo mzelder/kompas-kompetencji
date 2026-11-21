@@ -7,29 +7,43 @@
             </RadzenText>
         </RadzenStack>
 
+        <StageLegend />
+
         <SearchBox Value="@search" ValueChanged="@OnSearchChanged"
                    Placeholder="Szukaj: nazwisko, komórka" />
 
-        <RadzenDataGrid TItem="Employee" Data="@filteredEmployees" IsLoading="@Loading"
+        <RadzenDataGrid TItem="EmployeeEvaluationRow" Data="@filteredRows" IsLoading="@Loading"
                         AllowSorting="true" RowClick="@OnRowClick" class="person-grid fill-grid"
                         EmptyText="@(string.IsNullOrWhiteSpace(search) ? EmptyText : "Nikt nie pasuje do wyszukiwania.")">
             <Columns>
-                <RadzenDataGridColumn Property="@nameof(Employee.FullName)" Title="Imię i nazwisko" Width="320px">
-                    <Template Context="employee">
-                        <PersonName Person="@employee" ShowSupervisorIcon="false" />
+                <RadzenDataGridColumn Property="@nameof(EmployeeEvaluationRow.FullName)" Title="Imię i nazwisko" Width="280px">
+                    <Template Context="row">
+                        <PersonName Person="@row.Employee" ShowSupervisorIcon="false" />
                     </Template>
                 </RadzenDataGridColumn>
-                <RadzenDataGridColumn Title="Etap oceny" Sortable="false">
-                    <Template Context="employee">
-                        <RadzenStack Gap="0.5rem">
-                            <EvaluationStageText Stage="@(Stages.TryGetValue(employee.Id, out var stage) ? stage : null)" />
-                            @if (StageDetails is not null)
-                            {
-                                @StageDetails(employee)
-                            }
+                <RadzenDataGridColumn Property="@nameof(EmployeeEvaluationRow.Stage)" Title="Etap oceny" Width="240px">
+                    <Template Context="row">
+                        <StageMarker Stage="@row.Stage" />
+                    </Template>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn Property="@nameof(EmployeeEvaluationRow.DueDate)" Title="Termin oceny" Width="180px">
+                    <Template Context="row">
+                        <RadzenStack Gap="0">
+                            <RadzenText TextStyle="TextStyle.Body2" class="rz-m-0">@EvaluationText.Date(row.DueDate)</RadzenText>
+                            <RadzenText TextStyle="TextStyle.Caption" class="@(row.DueDate < Today ? "rz-m-0 rz-color-danger text-small" : "rz-m-0 rz-color-base-500 text-small")">
+                                @EvaluationText.RelativeToToday(row.DueDate, Today)
+                            </RadzenText>
                         </RadzenStack>
                     </Template>
                 </RadzenDataGridColumn>
+                @if (NextStep is not null)
+                {
+                    <RadzenDataGridColumn Title="Następny krok" Sortable="false">
+                        <Template Context="row">
+                            @NextStep(row)
+                        </Template>
+                    </RadzenDataGridColumn>
+                }
             </Columns>
         </RadzenDataGrid>
     </RadzenStack>

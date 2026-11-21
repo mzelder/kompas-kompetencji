@@ -16,7 +16,7 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
     // If you encounter a merge conflict in the line below, it means you need to
     // discard one of the migration branches and recreate its migrations on top of
     // the other branch. See https://aka.ms/efcore-docs-migrations-conflicts for more info.
-    public override string LastMigrationId => "20261121225911_Initial";
+    public override string LastMigrationId => "20261121231852_Initial";
 
     protected override void BuildModel(ModelBuilder modelBuilder)
     {
@@ -283,6 +283,38 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
                         EvaluationId = 13,
                         Status = "Held",
                         Type = "Starting"
+                    },
+                    new
+                    {
+                        Id = 24,
+                        At = new DateTime(2024, 12, 17, 9, 0, 0, 0, DateTimeKind.Unspecified),
+                        EvaluationId = 14,
+                        Status = "Held",
+                        Type = "Starting"
+                    },
+                    new
+                    {
+                        Id = 25,
+                        At = new DateTime(2025, 11, 17, 10, 0, 0, 0, DateTimeKind.Unspecified),
+                        EvaluationId = 14,
+                        Status = "Held",
+                        Type = "Assessment"
+                    },
+                    new
+                    {
+                        Id = 26,
+                        At = new DateTime(2025, 12, 16, 9, 0, 0, 0, DateTimeKind.Unspecified),
+                        EvaluationId = 15,
+                        Status = "Held",
+                        Type = "Starting"
+                    },
+                    new
+                    {
+                        Id = 27,
+                        At = new DateTime(2026, 11, 16, 11, 0, 0, 0, DateTimeKind.Unspecified),
+                        EvaluationId = 15,
+                        Status = "Held",
+                        Type = "Assessment"
                     });
             });
 
@@ -474,6 +506,16 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
                         IsSupervisor = false,
                         LastName = "Wróbel",
                         Position = "Starszy specjalista"
+                    },
+                    new
+                    {
+                        Id = 16,
+                        Department = "Wydział Analiz Danych",
+                        EmployedSince = new DateOnly(2019, 11, 28),
+                        FirstName = "Monika",
+                        IsSupervisor = false,
+                        LastName = "Sikora",
+                        Position = "Specjalista"
                     });
             });
 
@@ -569,6 +611,11 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
                     {
                         EmployeeId = 15,
                         SupervisorId = 3
+                    },
+                    new
+                    {
+                        EmployeeId = 16,
+                        SupervisorId = 3
                     });
             });
 
@@ -627,6 +674,9 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
                     .IsRequired()
                     .HasMaxLength(30)
                     .HasColumnType("nvarchar(30)");
+
+                b.Property<DateTime?>("WrittenEvaluationAt")
+                    .HasColumnType("datetime2");
 
                 b.HasKey("Id");
 
@@ -847,6 +897,41 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
                         Sheet = "C",
                         SheetConfirmedAt = new DateTime(2026, 1, 20, 9, 0, 0, 0, DateTimeKind.Unspecified),
                         Status = "CriteriaSet"
+                    },
+                    new
+                    {
+                        Id = 14,
+                        CompletedAt = new DateTime(2025, 11, 28, 12, 0, 0, 0, DateTimeKind.Unspecified),
+                        DueDate = new DateOnly(2025, 11, 28),
+                        EmployeeAcquaintedOn = new DateOnly(2024, 12, 17),
+                        EmployeeId = 16,
+                        EvaluatorId = 3,
+                        Expectations = "Udostępnianie danych publicznych na wnioski w ustawowym terminie, z kompletnym uzasadnieniem odmowy.",
+                        PartIConfirmedAt = new DateTime(2024, 12, 17, 10, 0, 0, 0, DateTimeKind.Unspecified),
+                        PeriodEnd = new DateOnly(2025, 11, 27),
+                        PeriodStart = new DateOnly(2024, 12, 17),
+                        Sheet = "C",
+                        SheetConfirmedAt = new DateTime(2024, 12, 3, 9, 0, 0, 0, DateTimeKind.Unspecified),
+                        StartedAt = new DateTime(2025, 10, 1, 9, 0, 0, 0, DateTimeKind.Unspecified),
+                        Status = "Completed",
+                        WrittenEvaluationAt = new DateTime(2025, 11, 20, 13, 0, 0, 0, DateTimeKind.Unspecified)
+                    },
+                    new
+                    {
+                        Id = 15,
+                        DueDate = new DateOnly(2026, 11, 28),
+                        EmployeeAcquaintedOn = new DateOnly(2025, 12, 16),
+                        EmployeeId = 16,
+                        EvaluatorId = 3,
+                        Expectations = "Wnioski o udostępnienie danych rozpatrywane w terminie, także te wymagające uzgodnień z innymi komórkami. Rejestr udostępnionych danych prowadzony na bieżąco.",
+                        PartIConfirmedAt = new DateTime(2025, 12, 16, 10, 0, 0, 0, DateTimeKind.Unspecified),
+                        PeriodEnd = new DateOnly(2026, 11, 27),
+                        PeriodStart = new DateOnly(2025, 12, 16),
+                        Sheet = "C",
+                        SheetConfirmedAt = new DateTime(2025, 12, 2, 9, 0, 0, 0, DateTimeKind.Unspecified),
+                        StartedAt = new DateTime(2026, 10, 1, 9, 0, 0, 0, DateTimeKind.Unspecified),
+                        Status = "InProgress",
+                        WrittenEvaluationAt = new DateTime(2026, 11, 19, 14, 30, 0, 0, DateTimeKind.Unspecified)
                     });
             });
 
@@ -943,6 +1028,16 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
                     {
                         EvaluationId = 13,
                         Criterion = "AnalyticalThinking"
+                    },
+                    new
+                    {
+                        EvaluationId = 14,
+                        Criterion = "AnalyticalThinking"
+                    },
+                    new
+                    {
+                        EvaluationId = 15,
+                        Criterion = "AnalyticalThinking"
                     });
             });
 
@@ -999,6 +1094,20 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
                         CreatedAt = new DateTime(2026, 10, 2, 14, 10, 0, 0, DateTimeKind.Unspecified),
                         EvaluationId = 13,
                         Text = "Samodzielnie wykrył błąd w obliczeniach raportu rocznego przed jego wysłaniem do dyrektora i zaproponował dodatkowy krok kontroli."
+                    },
+                    new
+                    {
+                        Id = 5,
+                        CreatedAt = new DateTime(2026, 3, 4, 10, 15, 0, 0, DateTimeKind.Unspecified),
+                        EvaluationId = 15,
+                        Text = "Rozpatrzyła wszystkie wnioski z pierwszego kwartału w terminie, w tym dwa wymagające uzgodnień z działem prawnym."
+                    },
+                    new
+                    {
+                        Id = 6,
+                        CreatedAt = new DateTime(2026, 8, 21, 13, 40, 0, 0, DateTimeKind.Unspecified),
+                        EvaluationId = 15,
+                        Text = "Uporządkowała rejestr udostępnionych danych i zaproponowała wzór odpowiedzi skracający obsługę typowych wniosków."
                     });
             });
 
@@ -1093,6 +1202,13 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
                         Purpose = "Przygotowywanie analiz statystycznych i prognoz na potrzeby planowania zadań departamentu.",
                         RequiredCompetencies = "Myślenie analityczne\nRzetelność\nKomunikacja\nOrientacja na cele",
                         Tasks = "Przygotowywanie prognoz i analiz trendów na podstawie danych wydziału\nOpracowywanie zestawień do planów i sprawozdań departamentu\nWeryfikacja poprawności obliczeń w raportach przygotowywanych przez wydział\nUdzielanie wyjaśnień dotyczących metod analizy innym komórkom"
+                    },
+                    new
+                    {
+                        EmployeeId = 16,
+                        Purpose = "Obsługa wniosków o udostępnienie danych i przygotowywanie zestawień dla podmiotów zewnętrznych.",
+                        RequiredCompetencies = "Rzetelność\nKomunikacja pisemna\nWspółpraca",
+                        Tasks = "Rozpatrywanie wniosków o udostępnienie danych wydziału\nPrzygotowywanie zestawień danych dla podmiotów zewnętrznych\nProwadzenie rejestru udostępnionych danych\nWspółpraca z działem prawnym przy odpowiedziach na wnioski"
                     });
             });
 

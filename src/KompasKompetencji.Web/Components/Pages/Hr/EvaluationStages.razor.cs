@@ -1,8 +1,6 @@
-using KompasKompetencji.Web.Data;
 using KompasKompetencji.Web.Evaluations;
 using KompasKompetencji.Web.Organization;
 using Microsoft.AspNetCore.Components;
-using Radzen;
 
 namespace KompasKompetencji.Web.Components.Pages.Hr;
 
@@ -11,8 +9,8 @@ public partial class EvaluationStages
     [Inject] private OrganizationService Organization { get; set; } = default!;
     [Inject] private EvaluationService Evaluations { get; set; } = default!;
 
-    private IReadOnlyList<Employee> employees = [];
-    private IReadOnlyDictionary<int, EvaluationStage> stages = new Dictionary<int, EvaluationStage>();
+    private readonly DateOnly today = DateOnly.FromDateTime(DateTime.Today);
+    private IReadOnlyList<EmployeeEvaluationRow> rows = [];
     private bool loading = true;
     private string? loadError;
 
@@ -20,8 +18,8 @@ public partial class EvaluationStages
     {
         try
         {
-            employees = (await Organization.GetChartAsync()).Employees;
-            stages = await Evaluations.GetCurrentStagesAsync(employees.Select(e => e.Id).ToList());
+            var employees = (await Organization.GetChartAsync()).Employees;
+            rows = await Evaluations.GetEvaluationRowsAsync(employees, today);
         }
         catch (Exception ex)
         {

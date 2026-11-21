@@ -310,14 +310,66 @@ h1:focus {
     display: none;
 }
 
-.stage-steps-compact > ul {
+.stage-color-0 {
+    --stage-color: var(--rz-primary-light);
+}
+
+.stage-color-1 {
+    --stage-color: var(--rz-info);
+}
+
+.stage-color-2 {
+    --stage-color: var(--rz-primary);
+}
+
+.stage-color-3 {
+    --stage-color: var(--rz-success);
+    --stage-title-color: var(--rz-success);
+}
+
+.stage-marker {
+    display: inline-flex;
+    align-items: center;
     gap: 0.5rem;
+    white-space: nowrap;
 }
 
-.stage-steps-compact .rz-steps-item:not(:last-child) {
+.stage-marker-number {
+    display: inline-flex;
     flex: none;
+    align-items: center;
+    justify-content: center;
+    width: var(--rz-steps-number-width);
+    height: var(--rz-steps-number-height);
+    border-radius: var(--rz-steps-number-border-radius);
+    background-color: var(--stage-color);
+    color: var(--rz-on-primary);
+    font-size: 0.875rem;
+    font-weight: 600;
 }
 
-.stage-steps-compact .rz-steps-item:not(:last-child)::after {
-    content: none;
+.stage-marker-title {
+    color: var(--stage-title-color, var(--rz-text-color));
+}
+
+.stage-legend {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    row-gap: 0.5rem;
+}
+
+.stage-legend-item:not(:last-child) {
+    flex: auto;
+    display: flex;
+    align-items: center;
+}
+
+.stage-legend-item:not(:last-child)::after {
+    content: "";
+    flex: auto;
+    min-width: 1rem;
+    height: 1px;
+    margin-inline: 1rem;
+    background-color: var(--rz-base-600);
 }

@@ -20,47 +20,29 @@
     }
     else
     {
-        <EmployeeStageList Employees="@employees" Stages="@stages" Loading="@loading"
+        <EmployeeStageList Rows="@rows" Today="@today" Loading="@loading"
                            CountLabel="Podwładni" EmptyText="Nie masz jeszcze podwładnych."
                            OnEmployeeClick="@OpenEmployee">
-            <StageDetails Context="employee">
-                @if (AssessmentTaskFor(employee) is EvaluationTask task)
+            <NextStep Context="row">
+                @if (NextStepFor(row) is NextStepView step)
                 {
-                    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween"
-                                 Gap="0.75rem">
-                        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.5rem" class="min-w-0">
-                            @if (task.ConversationAt is DateTime conversationAt)
-                            {
-                                <RadzenIcon Icon="event" IconColor="@Colors.Primary" class="no-shrink" />
-                                <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0">
-                                    Rozmowa oceniająca @EvaluationText.Date(conversationAt)
-                                </RadzenText>
-                            }
-                            else if (task.CanScheduleConversation)
-                            {
-                                <RadzenIcon Icon="event_available" IconColor="@Colors.Primary" class="no-shrink" />
-                                <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0">
-                                    Możesz wyznaczyć rozmowę oceniającą, najpóźniej @EvaluationText.Date(task.DueDate)
-                                </RadzenText>
-                            }
-                            else
-                            {
-                                <RadzenIcon Icon="schedule" class="no-shrink rz-color-base-300" />
-                                <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">
-                                    Rozmowę oceniającą wyznaczysz od @EvaluationText.Date(task.ConversationWindowOpensOn)
-                                </RadzenText>
-                            }
+                    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween" Gap="0.75rem">
+                        <RadzenStack Gap="0" class="min-w-0">
+                            <RadzenText TextStyle="TextStyle.Body2" class="rz-m-0 rz-text-truncate">@step.Title</RadzenText>
+                            <RadzenText TextStyle="TextStyle.Caption" class="@(step.IsWarning ? "rz-m-0 rz-color-warning rz-text-truncate" : "rz-m-0 rz-color-base-300 rz-text-truncate")">
+                                @step.Detail
+                            </RadzenText>
                         </RadzenStack>
-                        @if (task.NeedsConversation)
+                        @if (step.Action is NextStepAction action)
                         {
                             <div @onclick:stopPropagation="true" class="no-shrink">
-                                <RadzenButton Text="Wyznacz termin" Icon="edit_calendar" ButtonStyle="ButtonStyle.Primary" Size="ButtonSize.Small"
-                                              Click="@(() => ScheduleConversationAsync(task))" />
+                                <RadzenButton Text="@action.Text" Icon="@action.Icon" ButtonStyle="@action.Style" Variant="@action.Variant"
+                                              Size="ButtonSize.Small" Disabled="@(!action.Enabled)" Click="@(() => RunActionAsync(row))" />
                             </div>
                         }
                     </RadzenStack>
                 }
-            </StageDetails>
+            </NextStep>
         </EmployeeStageList>
     }
 </div>

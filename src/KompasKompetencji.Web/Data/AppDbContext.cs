@@ -60,7 +60,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
                 new Employee { Id = 12, FirstName = "Karolina", LastName = "Mazur", Position = "Specjalista", Department = "Wydział Analiz Danych", EmployedSince = new DateOnly(2021, 12, 20) },
                 new Employee { Id = 13, FirstName = "Łukasz", LastName = "Grabowski", Position = "Specjalista", Department = "Wydział Analiz Danych", EmployedSince = new DateOnly(2020, 12, 10) },
                 new Employee { Id = 14, FirstName = "Natalia", LastName = "Krawczyk", Position = "Główny specjalista", Department = "Wydział Analiz Danych", EmployedSince = new DateOnly(2023, 4, 3) },
-                new Employee { Id = 15, FirstName = "Bartosz", LastName = "Wróbel", Position = "Starszy specjalista", Department = "Wydział Analiz Danych", EmployedSince = new DateOnly(2022, 1, 17) });
+                new Employee { Id = 15, FirstName = "Bartosz", LastName = "Wróbel", Position = "Starszy specjalista", Department = "Wydział Analiz Danych", EmployedSince = new DateOnly(2022, 1, 17) },
+                new Employee { Id = 16, FirstName = "Monika", LastName = "Sikora", Position = "Specjalista", Department = "Wydział Analiz Danych", EmployedSince = new DateOnly(2019, 11, 28) });
         });
 
         modelBuilder.Entity<EmployeeSupervisor>(l =>
@@ -92,7 +93,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
                 new EmployeeSupervisor { EmployeeId = 12, SupervisorId = 3 },
                 new EmployeeSupervisor { EmployeeId = 13, SupervisorId = 3 },
                 new EmployeeSupervisor { EmployeeId = 14, SupervisorId = 3 },
-                new EmployeeSupervisor { EmployeeId = 15, SupervisorId = 3 });
+                new EmployeeSupervisor { EmployeeId = 15, SupervisorId = 3 },
+                new EmployeeSupervisor { EmployeeId = 16, SupervisorId = 3 });
         });
 
         modelBuilder.Entity<JobDescription>(j =>
@@ -216,6 +218,17 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
                         "Weryfikacja poprawności obliczeń w raportach przygotowywanych przez wydział",
                         "Udzielanie wyjaśnień dotyczących metod analizy innym komórkom"),
                     RequiredCompetencies = Lines("Myślenie analityczne", "Rzetelność", "Komunikacja", "Orientacja na cele"),
+                },
+                new JobDescription
+                {
+                    EmployeeId = 16,
+                    Purpose = "Obsługa wniosków o udostępnienie danych i przygotowywanie zestawień dla podmiotów zewnętrznych.",
+                    Tasks = Lines(
+                        "Rozpatrywanie wniosków o udostępnienie danych wydziału",
+                        "Przygotowywanie zestawień danych dla podmiotów zewnętrznych",
+                        "Prowadzenie rejestru udostępnionych danych",
+                        "Współpraca z działem prawnym przy odpowiedziach na wnioski"),
+                    RequiredCompetencies = Lines("Rzetelność", "Komunikacja pisemna", "Współpraca"),
                 });
         });
 
@@ -337,6 +350,24 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
                     PeriodStart = new DateOnly(2026, 2, 3), PeriodEnd = new DateOnly(2027, 1, 16), DueDate = new DateOnly(2027, 1, 17),
                     Expectations = "Obliczenia w raportach wydziału sprawdzane przed wysłaniem. Wyjaśnienia metod analizy dla innych komórek udzielane w ciągu tygodnia.",
                     PartIConfirmedAt = new DateTime(2026, 2, 3, 10, 0, 0), EmployeeAcquaintedOn = new DateOnly(2026, 2, 3),
+                },
+                new Evaluation
+                {
+                    Id = 14, EmployeeId = 16, EvaluatorId = 3, Sheet = EvaluationSheet.C, Status = EvaluationStatus.Completed, SheetConfirmedAt = new DateTime(2024, 12, 3, 9, 0, 0),
+                    PeriodStart = new DateOnly(2024, 12, 17), PeriodEnd = new DateOnly(2025, 11, 27), DueDate = new DateOnly(2025, 11, 28),
+                    Expectations = "Udostępnianie danych publicznych na wnioski w ustawowym terminie, z kompletnym uzasadnieniem odmowy.",
+                    PartIConfirmedAt = new DateTime(2024, 12, 17, 10, 0, 0), EmployeeAcquaintedOn = new DateOnly(2024, 12, 17),
+                    WrittenEvaluationAt = new DateTime(2025, 11, 20, 13, 0, 0),
+                    StartedAt = new DateTime(2025, 10, 1, 9, 0, 0), CompletedAt = new DateTime(2025, 11, 28, 12, 0, 0),
+                },
+                new Evaluation
+                {
+                    Id = 15, EmployeeId = 16, EvaluatorId = 3, Sheet = EvaluationSheet.C, Status = EvaluationStatus.InProgress, SheetConfirmedAt = new DateTime(2025, 12, 2, 9, 0, 0),
+                    PeriodStart = new DateOnly(2025, 12, 16), PeriodEnd = new DateOnly(2026, 11, 27), DueDate = new DateOnly(2026, 11, 28),
+                    Expectations = "Wnioski o udostępnienie danych rozpatrywane w terminie, także te wymagające uzgodnień z innymi komórkami. Rejestr udostępnionych danych prowadzony na bieżąco.",
+                    PartIConfirmedAt = new DateTime(2025, 12, 16, 10, 0, 0), EmployeeAcquaintedOn = new DateOnly(2025, 12, 16),
+                    WrittenEvaluationAt = new DateTime(2026, 11, 19, 14, 30, 0),
+                    StartedAt = new DateTime(2026, 10, 1, 9, 0, 0),
                 });
         });
 
@@ -370,6 +401,16 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
                 {
                     Id = 4, EvaluationId = 13, CreatedAt = new DateTime(2026, 10, 2, 14, 10, 0),
                     Text = "Samodzielnie wykrył błąd w obliczeniach raportu rocznego przed jego wysłaniem do dyrektora i zaproponował dodatkowy krok kontroli.",
+                },
+                new EvaluationNote
+                {
+                    Id = 5, EvaluationId = 15, CreatedAt = new DateTime(2026, 3, 4, 10, 15, 0),
+                    Text = "Rozpatrzyła wszystkie wnioski z pierwszego kwartału w terminie, w tym dwa wymagające uzgodnień z działem prawnym.",
+                },
+                new EvaluationNote
+                {
+                    Id = 6, EvaluationId = 15, CreatedAt = new DateTime(2026, 8, 21, 13, 40, 0),
+                    Text = "Uporządkowała rejestr udostępnionych danych i zaproponowała wzór odpowiedzi skracający obsługę typowych wniosków.",
                 });
         });
 
@@ -407,7 +448,11 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
                 new Conversation { Id = 20, EvaluationId = 11, Type = ConversationType.Starting, At = new DateTime(2026, 4, 21, 9, 0, 0), Status = ConversationStatus.Held },
                 new Conversation { Id = 21, EvaluationId = 12, Type = ConversationType.Starting, At = new DateTime(2025, 2, 4, 9, 0, 0), Status = ConversationStatus.Held },
                 new Conversation { Id = 22, EvaluationId = 12, Type = ConversationType.Assessment, At = new DateTime(2026, 1, 12, 11, 0, 0), Status = ConversationStatus.Held },
-                new Conversation { Id = 23, EvaluationId = 13, Type = ConversationType.Starting, At = new DateTime(2026, 2, 3, 9, 0, 0), Status = ConversationStatus.Held });
+                new Conversation { Id = 23, EvaluationId = 13, Type = ConversationType.Starting, At = new DateTime(2026, 2, 3, 9, 0, 0), Status = ConversationStatus.Held },
+                new Conversation { Id = 24, EvaluationId = 14, Type = ConversationType.Starting, At = new DateTime(2024, 12, 17, 9, 0, 0), Status = ConversationStatus.Held },
+                new Conversation { Id = 25, EvaluationId = 14, Type = ConversationType.Assessment, At = new DateTime(2025, 11, 17, 10, 0, 0), Status = ConversationStatus.Held },
+                new Conversation { Id = 26, EvaluationId = 15, Type = ConversationType.Starting, At = new DateTime(2025, 12, 16, 9, 0, 0), Status = ConversationStatus.Held },
+                new Conversation { Id = 27, EvaluationId = 15, Type = ConversationType.Assessment, At = new DateTime(2026, 11, 16, 11, 0, 0), Status = ConversationStatus.Held });
         });
 
         modelBuilder.Entity<EvaluationAdditionalCriterion>(a =>
@@ -436,7 +481,9 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
                 new EvaluationAdditionalCriterion { EvaluationId = 10, Criterion = Criterion.AnalyticalThinking },
                 new EvaluationAdditionalCriterion { EvaluationId = 11, Criterion = Criterion.AnalyticalThinking },
                 new EvaluationAdditionalCriterion { EvaluationId = 12, Criterion = Criterion.AnalyticalThinking },
-                new EvaluationAdditionalCriterion { EvaluationId = 13, Criterion = Criterion.AnalyticalThinking });
+                new EvaluationAdditionalCriterion { EvaluationId = 13, Criterion = Criterion.AnalyticalThinking },
+                new EvaluationAdditionalCriterion { EvaluationId = 14, Criterion = Criterion.AnalyticalThinking },
+                new EvaluationAdditionalCriterion { EvaluationId = 15, Criterion = Criterion.AnalyticalThinking });
         });
     }
 
