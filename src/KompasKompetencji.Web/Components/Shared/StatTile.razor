@@ -7,15 +7,3 @@
         <RadzenText TextStyle="@(Compact ? TextStyle.H6 : TextStyle.H4)" TagName="TagName.P" class="rz-m-0 stat-value no-shrink">@Value</RadzenText>
     </RadzenStack>
 </RadzenCard>
-
-@code {
-    [Parameter, EditorRequired] public string Icon { get; set; } = string.Empty;
-
-    [Parameter] public string? IconColor { get; set; }
-
-    [Parameter, EditorRequired] public string Label { get; set; } = string.Empty;
-
-    [Parameter, EditorRequired] public string Value { get; set; } = string.Empty;
-
-    [Parameter] public bool Compact { get; set; }
-}

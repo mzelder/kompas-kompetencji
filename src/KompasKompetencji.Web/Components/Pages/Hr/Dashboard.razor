@@ -15,9 +15,3 @@
         <RadzenDataGridColumn Property="@nameof(EvaluationProcessRow.Deadline)" Title="Termin" FormatString="{0:yyyy-MM-dd}" />
     </Columns>
 </RadzenDataGrid>
-
-@code {
-    private readonly List<EvaluationProcessRow> processes = [];
-
-    private sealed record EvaluationProcessRow(string Employee, string Supervisor, string Sheet, string Status, DateTime Deadline);
-}

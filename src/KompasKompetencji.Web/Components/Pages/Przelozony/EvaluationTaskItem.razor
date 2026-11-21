@@ -1,5 +1,3 @@
-@inject NavigationManager Navigation
-
 <RadzenCard Variant="Variant.Filled" class="rz-p-3">
     <RadzenStack Gap="0.75rem">
         <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween" Gap="1rem">
@@ -66,17 +64,3 @@
         }
     </RadzenStack>
 </RadzenCard>
-
-@code {
-    [Parameter, EditorRequired] public EvaluationTask Task { get; set; } = default!;
-
-    [Parameter, EditorRequired] public DateOnly Today { get; set; }
-
-    [Parameter] public bool ConversationPastDue { get; set; }
-
-    [Parameter] public EventCallback<EvaluationTask> OnConversation { get; set; }
-
-    [Parameter] public EventCallback<EvaluationTask> OnMarkHeld { get; set; }
-
-    private int OverdueDays => Today.DayNumber - Task.DueDate.DayNumber;
-}

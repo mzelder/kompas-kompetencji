@@ -8,9 +8,3 @@
         <RadzenIcon Icon="supervisor_account" IconColor="@Colors.Info" title="Przełożony" aria-label="Przełożony" />
     }
 </RadzenStack>
-
-@code {
-    [Parameter, EditorRequired] public Employee Person { get; set; } = default!;
-
-    [Parameter] public bool ShowSupervisorIcon { get; set; } = true;
-}

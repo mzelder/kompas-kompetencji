@@ -1,5 +1,4 @@
 ﻿@page "/Error"
-@using System.Diagnostics
 
 <PageTitle>Błąd – Kompas kompetencji</PageTitle>
 
@@ -11,18 +10,3 @@
     }
     <RadzenButton Text="Wróć do swojego panelu" Icon="home" Path="/" ButtonStyle="ButtonStyle.Primary" />
 </StatusMessage>
-
-@code {
-    [CascadingParameter]
-    private HttpContext? HttpContext { get; set; }
-
-    [PersistentState]
-    public string? RequestId { get; set; }
-
-    private bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
-
-    protected override void OnInitialized()
-    {
-        RequestId ??= Activity.Current?.Id ?? HttpContext?.TraceIdentifier;
-    }
-}

@@ -1,6 +1,3 @@
-@inject DialogService DialogService
-@inject OrganizationService Organization
-
 <RadzenStack Gap="1rem">
     <RadzenText TextStyle="TextStyle.Body1" class="rz-m-0">
         Pracownik: <strong>@Employee.FullName</strong>
@@ -35,28 +32,3 @@
                       Click="@AssignAsync" />
     </RadzenStack>
 </RadzenStack>
-
-@code {
-    [Parameter, EditorRequired] public Data.Employee Employee { get; set; } = default!;
-
-    [Parameter, EditorRequired] public IReadOnlyList<Data.Employee> Candidates { get; set; } = [];
-
-    private IEnumerable<int> selectedIds = [];
-    private bool busy;
-    private string? errorMessage;
-
-    private async Task AssignAsync()
-    {
-        errorMessage = null;
-        busy = true;
-        var result = await Organization.AssignSupervisorsAsync(Employee.Id, selectedIds.ToList());
-        busy = false;
-
-        if (!result.Succeeded)
-        {
-            errorMessage = result.Error;
-            return;
-        }
-        DialogService.Close(true);
-    }
-}

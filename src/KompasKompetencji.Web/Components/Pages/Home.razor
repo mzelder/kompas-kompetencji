@@ -1,13 +1,2 @@
 @page "/"
 @attribute [Authorize]
-@inject NavigationManager Navigation
-
-@code {
-    [CascadingParameter] private Task<AuthenticationState> AuthState { get; set; } = default!;
-
-    protected override async Task OnInitializedAsync()
-    {
-        var user = (await AuthState).User;
-        Navigation.NavigateTo(AppRoles.HomePath(user.GetRole()), replace: true);
-    }
-}

@@ -1,6 +1,4 @@
 @page "/hr/etapy-ocen"
-@inject OrganizationService Organization
-@inject EvaluationService Evaluations
 
 <PageTitle>Etapy ocen – Kompas kompetencji</PageTitle>
 
@@ -18,24 +16,3 @@
     <EmployeeStageList Employees="@employees" Stages="@stages" Loading="@loading"
                        CountLabel="Wszyscy pracownicy" EmptyText="Brak pracowników." />
 </div>
-
-@code {
-    private IReadOnlyList<Employee> employees = [];
-    private IReadOnlyDictionary<int, EvaluationStage> stages = new Dictionary<int, EvaluationStage>();
-    private bool loading = true;
-    private string? loadError;
-
-    protected override async Task OnInitializedAsync()
-    {
-        try
-        {
-            employees = (await Organization.GetChartAsync()).Employees;
-            stages = await Evaluations.GetCurrentStagesAsync(employees.Select(e => e.Id).ToList());
-        }
-        catch (Exception ex)
-        {
-            loadError = ex.Message;
-        }
-        loading = false;
-    }
-}

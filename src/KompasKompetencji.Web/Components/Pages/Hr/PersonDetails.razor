@@ -22,12 +22,3 @@
         <DetailItem Label="Podwładni" Fill="true" Value="@NamesOrNone(Chart.SubordinatesOf(Person.Id))" />
     }
 </RadzenStack>
-
-@code {
-    [Parameter, EditorRequired] public Employee Person { get; set; } = default!;
-
-    [Parameter, EditorRequired] public OrganizationChart Chart { get; set; } = default!;
-
-    private static string NamesOrNone(IReadOnlyList<Employee> people) =>
-        people.Count == 0 ? "Brak" : string.Join(", ", people.Select(p => p.FullName));
-}

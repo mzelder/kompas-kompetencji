@@ -4,15 +4,3 @@
     <RadzenText TextStyle="TextStyle.Body1" class="rz-m-0 rz-color-base-300">@Text</RadzenText>
     @ChildContent
 </RadzenStack>
-
-@code {
-    [Parameter, EditorRequired] public string Icon { get; set; } = string.Empty;
-
-    [Parameter] public string IconColor { get; set; } = Colors.Primary;
-
-    [Parameter, EditorRequired] public string Title { get; set; } = string.Empty;
-
-    [Parameter] public string? Text { get; set; }
-
-    [Parameter] public RenderFragment? ChildContent { get; set; }
-}

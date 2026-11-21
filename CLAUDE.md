@@ -86,6 +86,7 @@ W Development **przy każdym uruchomieniu baza jest usuwana i tworzona od nowa**
 
 - Kod, nazwy plików, klas i tabel **po angielsku**. Teksty widoczne dla użytkownika **po polsku**.
 - **Nie dodawaj komentarzy w kodzie** (ani `//`, ani `///`, ani `@* *@`, ani `/* */` w CSS) i nie zastanawiaj się, jakie komentarze dodać. Kod ma się tłumaczyć nazwami.
+- **Kod C# komponentu Razor trzymaj w osobnym pliku `Nazwa.razor.cs`** obok `Nazwa.razor` (np. `AddEmployeeDialog.razor` + `AddEmployeeDialog.razor.cs`), jako `public partial class Nazwa` w przestrzeni nazw odpowiadającej folderowi (np. `KompasKompetencji.Web.Components.Pages.Hr`). W `.razor` nie ma bloków `@code` ani `@inject`: zostają tylko znaczniki i dyrektywy `@page`, `@using`, `@attribute`, `@layout`, `@inherits`. Serwisy wstrzykujemy w `.razor.cs` jako `[Inject] private DialogService DialogService { get; set; } = default!;` (na początku klasy). Plik `.razor.cs` nie widzi `@using` z `_Imports.razor`, więc potrzebne `using` (m.in. `Microsoft.AspNetCore.Components` dla `[Parameter]`) dopisz w nim jawnie. Dotyczy to też nowych komponentów.
 - Dane pracowników są fikcyjne. Nie dodawaj prawdziwych danych osobowych.
 - AI nigdy nie ustala poziomu oceny. Sugerowany poziom liczy jawna, deterministyczna reguła, decyzję podejmuje przełożony.
 

@@ -11,9 +11,3 @@
         </Steps>
     </RadzenSteps>
 }
-
-@code {
-    [Parameter] public EvaluationStage? Stage { get; set; }
-
-    private static void PreventChange(StepsCanChangeEventArgs args) => args.PreventDefault();
-}

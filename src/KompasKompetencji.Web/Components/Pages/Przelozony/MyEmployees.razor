@@ -1,8 +1,4 @@
 @page "/przelozony/pracownicy"
-@inject OrganizationService Organization
-@inject UserService Users
-@inject EvaluationService Evaluations
-@inject NavigationManager Navigation
 
 <PageTitle>Moi pracownicy – Kompas kompetencji</PageTitle>
 
@@ -29,39 +25,3 @@
                            OnEmployeeClick="@OpenEmployee" />
     }
 </div>
-
-@code {
-    private IReadOnlyList<Employee> employees = [];
-    private IReadOnlyDictionary<int, EvaluationStage> stages = new Dictionary<int, EvaluationStage>();
-    private bool loading = true;
-    private bool accountNotLinked;
-    private string? loadError;
-
-    [CascadingParameter] private Task<AuthenticationState> AuthState { get; set; } = default!;
-
-    protected override async Task OnInitializedAsync()
-    {
-        try
-        {
-            var userId = (await AuthState).User.GetUserId();
-            var user = userId is null ? null : await Users.GetByIdAsync(userId.Value);
-            if (user?.EmployeeId is int supervisorId)
-            {
-                employees = (await Organization.GetChartAsync()).SubordinatesOf(supervisorId);
-                stages = await Evaluations.GetCurrentStagesAsync(employees.Select(e => e.Id).ToList());
-            }
-            else
-            {
-                accountNotLinked = true;
-            }
-        }
-        catch (Exception ex)
-        {
-            loadError = ex.Message;
-        }
-        loading = false;
-    }
-
-    private void OpenEmployee(Employee employee) =>
-        Navigation.NavigateTo(EmployeeEvaluation.PathFor(employee.Id));
-}

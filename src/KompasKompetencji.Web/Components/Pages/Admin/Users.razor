@@ -1,6 +1,5 @@
 @page "/admin"
 @using KompasKompetencji.Web.Data
-@inject UserService UserService
 
 <PageTitle>Użytkownicy – Kompas kompetencji</PageTitle>
 
@@ -21,12 +20,3 @@
         <RadzenDataGridColumn Property="@nameof(AppUser.CreatedAt)" Title="Utworzono" FormatString="{0:yyyy-MM-dd HH:mm}" />
     </Columns>
 </RadzenDataGrid>
-
-@code {
-    private List<AppUser>? users;
-
-    protected override async Task OnInitializedAsync()
-    {
-        users = await UserService.GetAllAsync();
-    }
-}

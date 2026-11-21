@@ -6,11 +6,3 @@
         <RadzenTextBox Value="@Value" ValueChanged="@ValueChanged" Immediate="true" aria-label="@Placeholder" />
     </ChildContent>
 </RadzenFormField>
-
-@code {
-    [Parameter] public string? Value { get; set; }
-
-    [Parameter] public EventCallback<string> ValueChanged { get; set; }
-
-    [Parameter] public string Placeholder { get; set; } = "Szukaj";
-}
