@@ -1,0 +1,43 @@
+<RadzenCard Variant="Variant.Outlined" class="rz-h-100">
+    <RadzenStack Gap="1rem">
+        <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H2" class="rz-m-0">Do omówienia na rozmowie</RadzenText>
+
+        <ul class="rz-m-0">
+            @foreach (var topic in Topics)
+            {
+                <li><RadzenText TextStyle="TextStyle.Body1" class="rz-m-0">@topic</RadzenText></li>
+            }
+        </ul>
+
+        @if (JobDescription is JobDescription jobDescription)
+        {
+            <RadzenStack Gap="0.25rem">
+                <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">Główne zadania z opisu stanowiska</RadzenText>
+                <ul class="rz-m-0">
+                    @foreach (var task in jobDescription.TaskList)
+                    {
+                        <li><RadzenText TextStyle="TextStyle.Body2" class="rz-m-0">@task</RadzenText></li>
+                    }
+                </ul>
+            </RadzenStack>
+
+            <RadzenStack Gap="0.5rem">
+                <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">Wymagane kompetencje</RadzenText>
+                <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" Wrap="FlexWrap.Wrap">
+                    @foreach (var competency in jobDescription.RequiredCompetencyList)
+                    {
+                        <RadzenBadge BadgeStyle="BadgeStyle.Primary" Variant="Variant.Flat" Shade="Shade.Lighter" IsPill="true" Text="@competency" />
+                    }
+                </RadzenStack>
+            </RadzenStack>
+        }
+        else
+        {
+            <RadzenAlert AlertStyle="AlertStyle.Info" Variant="Variant.Flat" Shade="Shade.Lighter" AllowClose="false" class="rz-m-0">
+                Opis stanowiska nie został jeszcze uzupełniony. Obowiązki omów na podstawie stanowiska, a kryteria dodatkowe wybierz z wykazu.
+            </RadzenAlert>
+        }
+
+        <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">§ 5 rozporządzenia w sprawie ocen okresowych</RadzenText>
+    </RadzenStack>
+</RadzenCard>

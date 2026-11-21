@@ -1,19 +1,19 @@
 <RadzenStack Gap="1.25rem">
     <RadzenStack Orientation="Orientation.Horizontal" Gap="2rem" Wrap="FlexWrap.Wrap">
         <DetailItem Label="Pracownik" Value="@Task.Employee.FullName" />
-        <DetailItem Label="Termin oceny" Value="@($"{EvaluationText.Date(Task.DueDate)} ({EvaluationText.RelativeToToday(Task.DueDate, Today)})")" />
+        <DetailItem Label="@DeadlineLabel" Value="@($"{EvaluationText.Date(deadline)} ({EvaluationText.RelativeToToday(deadline, Today)})")" />
     </RadzenStack>
 
-    @if (ConversationRules.IsPastDue(Task.ConversationAt, Task.ConversationStatus, DateTime.Now))
+    @if (ConversationRules.IsPastDue(currentAt, currentStatus, DateTime.Now))
     {
         <RadzenAlert AlertStyle="AlertStyle.Warning" Variant="Variant.Flat" Shade="Shade.Lighter" AllowClose="false" class="rz-m-0">
-            Termin rozmowy minął @EvaluationText.Date(Task.ConversationAt!.Value). Oznacz ją jako odbytą albo wyznacz nowy termin.
+            Termin rozmowy minął @EvaluationText.Date(currentAt!.Value). Oznacz ją jako odbytą albo wyznacz nowy termin.
         </RadzenAlert>
     }
     else if (overdue)
     {
         <RadzenAlert AlertStyle="AlertStyle.Warning" Variant="Variant.Flat" Shade="Shade.Lighter" AllowClose="false" class="rz-m-0">
-            Termin oceny minął @EvaluationText.Date(Task.DueDate). Wyznacz rozmowę jak najszybciej.
+            @OverdueMessage
         </RadzenAlert>
     }
 
@@ -25,7 +25,7 @@
         </ChildContent>
         <Helper>
             <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">
-                @(overdue ? "Wybierz najbliższy możliwy termin albo datę rozmowy, która już się odbyła." : $"Najpóźniej w dniu oceny: {EvaluationText.Date(Task.DueDate)}.")
+                @DateHint
             </RadzenText>
         </Helper>
     </RadzenFormField>
@@ -36,7 +36,7 @@
             <Items>
                 <RadzenRadioButtonListItem TValue="ConversationStatus" Value="ConversationStatus.Scheduled"
                                            Text="@EvaluationText.Conversation(ConversationStatus.Scheduled)"
-                                           Disabled="@(!ConversationRules.CanBeScheduled(conversationAt, Task.ConversationAt, DateTime.Now))" />
+                                           Disabled="@(!ConversationRules.CanBeScheduled(conversationAt, currentAt, DateTime.Now))" />
                 <RadzenRadioButtonListItem TValue="ConversationStatus" Value="ConversationStatus.Held"
                                            Text="@EvaluationText.Conversation(ConversationStatus.Held)"
                                            Disabled="@(!ConversationRules.CanBeHeld(conversationAt, DateTime.Now))" />

@@ -1,3 +1,4 @@
+using KompasKompetencji.Web.Evaluations;
 using Microsoft.EntityFrameworkCore;
 
 namespace KompasKompetencji.Web.Data;
@@ -9,6 +10,10 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<EmployeeSupervisor> EmployeeSupervisors => Set<EmployeeSupervisor>();
 
     public DbSet<Evaluation> Evaluations => Set<Evaluation>();
+
+    public DbSet<Conversation> Conversations => Set<Conversation>();
+
+    public DbSet<EvaluationAdditionalCriterion> EvaluationAdditionalCriteria => Set<EvaluationAdditionalCriterion>();
 
     public DbSet<JobDescription> JobDescriptions => Set<JobDescription>();
 
@@ -49,7 +54,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
                 new Employee { Id = 8, FirstName = "Piotr", LastName = "Kamiński", Position = "Starszy referent", Department = "Wydział Usług Cyfrowych", EmployedSince = new DateOnly(2024, 3, 1) },
                 new Employee { Id = 9, FirstName = "Michał", LastName = "Szymański", Position = "Referent", Department = "Wydział Analiz Danych", EmployedSince = new DateOnly(2018, 1, 10) },
                 new Employee { Id = 10, FirstName = "Agnieszka", LastName = "Woźniak", Position = "Starszy specjalista", Department = "Wydział Analiz Danych", EmployedSince = new DateOnly(2020, 6, 1) },
-                new Employee { Id = 11, FirstName = "Paweł", LastName = "Kozłowski", Position = "Specjalista", Department = "Wydział Analiz Danych", EmployedSince = new DateOnly(2026, 7, 1) },
+                new Employee { Id = 11, FirstName = "Paweł", LastName = "Kozłowski", Position = "Starszy specjalista", Department = "Wydział Analiz Danych", EmployedSince = new DateOnly(2026, 11, 5) },
                 new Employee { Id = 12, FirstName = "Karolina", LastName = "Mazur", Position = "Specjalista", Department = "Wydział Analiz Danych", EmployedSince = new DateOnly(2021, 12, 20) },
                 new Employee { Id = 13, FirstName = "Łukasz", LastName = "Grabowski", Position = "Specjalista", Department = "Wydział Analiz Danych", EmployedSince = new DateOnly(2020, 12, 10) });
         });
@@ -158,6 +163,23 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
                 },
                 new JobDescription
                 {
+                    EmployeeId = 11,
+                    Purpose = "Prowadzenie spraw dotyczących reagowania na incydenty i sytuacje kryzysowe w zakresie danych i usług cyfrowych departamentu.",
+                    Tasks = Lines(
+                        "Udział w opracowaniu i aktualizacji planu reagowania na incydenty dotyczące danych i usług cyfrowych",
+                        "Analiza zgłoszonych incydentów i przygotowywanie rekomendacji działań naprawczych",
+                        "Współpraca z zespołami reagowania na incydenty w innych urzędach i instytucjach",
+                        "Udział w przygotowaniu i przeprowadzaniu ćwiczeń z reagowania na sytuacje kryzysowe",
+                        "Prowadzenie kontroli przestrzegania procedur bezpieczeństwa danych w jednostkach podległych"),
+                    RequiredCompetencies = Lines(
+                        "Organizacja pracy i orientacja na osiąganie celów",
+                        "Współpraca",
+                        "Myślenie analityczne",
+                        "Wykorzystywanie wiedzy i doskonalenie zawodowe",
+                        "Radzenie sobie w sytuacjach kryzysowych"),
+                },
+                new JobDescription
+                {
                     EmployeeId = 12,
                     Purpose = "Realizacja zadań związanych z analizą danych i przygotowywaniem informacji dla kierownictwa.",
                     Tasks = Lines(
@@ -174,7 +196,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             v.ToTable("Evaluations");
             v.Property(p => p.Status).HasConversion<string>().HasMaxLength(30);
             v.Property(p => p.Sheet).HasConversion<string>().HasMaxLength(1);
-            v.Property(p => p.ConversationStatus).HasConversion<string>().HasMaxLength(30);
+            v.Property(p => p.Expectations).HasMaxLength(4000);
+            v.Property(p => p.Goals).HasMaxLength(4000);
             v.HasIndex(p => new { p.EmployeeId, p.DueDate });
             v.HasOne(p => p.Employee)
                 .WithMany()
@@ -188,59 +211,130 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             v.HasData(
                 new Evaluation
                 {
-                    Id = 1, EmployeeId = 1, EvaluatorId = 3, Sheet = EvaluationSheet.C, Status = EvaluationStatus.Completed, SheetConfirmedAt = new DateTime(2024, 12, 18, 9, 0, 0),
-                    PeriodStart = new DateOnly(2024, 12, 15), PeriodEnd = new DateOnly(2025, 12, 14), DueDate = new DateOnly(2025, 12, 15),
-                    ConversationAt = new DateTime(2025, 12, 8, 10, 0, 0), ConversationStatus = ConversationStatus.Held,
+                    Id = 1, EmployeeId = 1, EvaluatorId = 3, Sheet = EvaluationSheet.C, Status = EvaluationStatus.Completed, SheetConfirmedAt = new DateTime(2024, 12, 11, 9, 0, 0),
+                    PeriodStart = new DateOnly(2024, 12, 16), PeriodEnd = new DateOnly(2025, 12, 14), DueDate = new DateOnly(2025, 12, 15),
+                    Expectations = "Samodzielne przygotowywanie analiz dla kierownictwa w uzgodnionych terminach, z opisem źródeł i ograniczeń danych.",
+                    PartIConfirmedAt = new DateTime(2024, 12, 16, 15, 0, 0), EmployeeAcquaintedOn = new DateOnly(2024, 12, 16),
                     StartedAt = new DateTime(2025, 11, 20, 9, 0, 0), CompletedAt = new DateTime(2025, 12, 10, 14, 0, 0),
                 },
                 new Evaluation
                 {
-                    Id = 2, EmployeeId = 1, EvaluatorId = 3, Sheet = EvaluationSheet.C, Status = EvaluationStatus.InProgress, SheetConfirmedAt = new DateTime(2025, 12, 18, 9, 0, 0),
-                    PeriodStart = new DateOnly(2025, 12, 15), PeriodEnd = new DateOnly(2026, 12, 14), DueDate = new DateOnly(2026, 12, 15),
-                    ConversationAt = new DateTime(2026, 11, 27, 10, 0, 0), ConversationStatus = ConversationStatus.Scheduled,
+                    Id = 2, EmployeeId = 1, EvaluatorId = 3, Sheet = EvaluationSheet.C, Status = EvaluationStatus.InProgress, SheetConfirmedAt = new DateTime(2025, 12, 11, 9, 0, 0),
+                    PeriodStart = new DateOnly(2025, 12, 16), PeriodEnd = new DateOnly(2026, 12, 14), DueDate = new DateOnly(2026, 12, 15),
+                    Expectations = "Analizy dla kierownictwa oddawane w terminie i bez poprawek merytorycznych. Propozycje nowych wskaźników zgłaszane z własnej inicjatywy, co najmniej raz na kwartał.",
+                    Goals = "Opracowanie zestawu wskaźników realizacji zadań departamentu do końca II kwartału 2026 r.",
+                    PartIConfirmedAt = new DateTime(2025, 12, 16, 15, 0, 0), EmployeeAcquaintedOn = new DateOnly(2025, 12, 16),
                     StartedAt = new DateTime(2026, 11, 12, 10, 30, 0),
                 },
                 new Evaluation
                 {
                     Id = 3, EmployeeId = 2, EvaluatorId = 3, Sheet = EvaluationSheet.C, Status = EvaluationStatus.Completed, SheetConfirmedAt = new DateTime(2024, 11, 5, 9, 0, 0),
-                    PeriodStart = new DateOnly(2024, 11, 2), PeriodEnd = new DateOnly(2025, 11, 1), DueDate = new DateOnly(2025, 11, 2),
-                    ConversationAt = new DateTime(2025, 10, 27, 11, 0, 0), ConversationStatus = ConversationStatus.Held,
+                    PeriodStart = new DateOnly(2024, 11, 7), PeriodEnd = new DateOnly(2025, 11, 1), DueDate = new DateOnly(2025, 11, 2),
+                    Expectations = "Zestawienia danych przygotowywane według przyjętego wzoru i sprawdzone przed przekazaniem.",
+                    PartIConfirmedAt = new DateTime(2024, 11, 7, 14, 0, 0), EmployeeAcquaintedOn = new DateOnly(2024, 11, 7),
                     StartedAt = new DateTime(2025, 10, 6, 9, 0, 0), CompletedAt = new DateTime(2025, 10, 28, 12, 0, 0),
                 },
                 new Evaluation
                 {
                     Id = 4, EmployeeId = 9, EvaluatorId = 3, Sheet = EvaluationSheet.C, Status = EvaluationStatus.Completed, SheetConfirmedAt = new DateTime(2025, 1, 14, 9, 0, 0),
-                    PeriodStart = new DateOnly(2025, 1, 10), PeriodEnd = new DateOnly(2026, 1, 9), DueDate = new DateOnly(2026, 1, 10),
-                    ConversationAt = new DateTime(2026, 1, 7, 9, 30, 0), ConversationStatus = ConversationStatus.Held,
+                    PeriodStart = new DateOnly(2025, 1, 16), PeriodEnd = new DateOnly(2026, 1, 9), DueDate = new DateOnly(2026, 1, 10),
+                    Expectations = "Korespondencja wydziału rejestrowana na bieżąco, odpowiedzi na proste pytania udzielane w ciągu dwóch dni.",
+                    PartIConfirmedAt = new DateTime(2025, 1, 16, 14, 0, 0), EmployeeAcquaintedOn = new DateOnly(2025, 1, 16),
                     StartedAt = new DateTime(2025, 12, 15, 9, 0, 0), CompletedAt = new DateTime(2026, 1, 8, 11, 0, 0),
                 },
                 new Evaluation
                 {
-                    Id = 5, EmployeeId = 10, EvaluatorId = 3, Sheet = EvaluationSheet.C, Status = EvaluationStatus.Completed, SheetConfirmedAt = new DateTime(2025, 6, 4, 9, 0, 0),
-                    PeriodStart = new DateOnly(2025, 6, 1), PeriodEnd = new DateOnly(2026, 5, 31), DueDate = new DateOnly(2026, 6, 1),
-                    ConversationAt = new DateTime(2026, 5, 26, 13, 0, 0), ConversationStatus = ConversationStatus.Held,
-                    StartedAt = new DateTime(2026, 5, 4, 9, 0, 0), CompletedAt = new DateTime(2026, 5, 27, 13, 0, 0),
+                    Id = 5, EmployeeId = 10, EvaluatorId = 3, Sheet = EvaluationSheet.C, Status = EvaluationStatus.Completed, SheetConfirmedAt = new DateTime(2025, 11, 12, 9, 0, 0),
+                    PeriodStart = new DateOnly(2025, 11, 17), PeriodEnd = new DateOnly(2026, 11, 9), DueDate = new DateOnly(2026, 11, 10),
+                    Expectations = "Opinie do projektów dokumentów przygotowywane w terminie, z konkretnymi propozycjami zmian wskaźników.",
+                    PartIConfirmedAt = new DateTime(2025, 11, 17, 14, 0, 0), EmployeeAcquaintedOn = new DateOnly(2025, 11, 17),
+                    StartedAt = new DateTime(2026, 10, 12, 9, 0, 0), CompletedAt = new DateTime(2026, 11, 6, 13, 0, 0),
                 },
                 new Evaluation
                 {
                     Id = 6, EmployeeId = 9, EvaluatorId = 3, Sheet = EvaluationSheet.C, Status = EvaluationStatus.CriteriaSet, SheetConfirmedAt = new DateTime(2026, 1, 13, 9, 0, 0),
-                    PeriodStart = new DateOnly(2026, 1, 10), PeriodEnd = new DateOnly(2027, 1, 9), DueDate = new DateOnly(2027, 1, 10),
-                    ConversationAt = new DateTime(2026, 12, 18, 9, 0, 0), ConversationStatus = ConversationStatus.Scheduled,
+                    PeriodStart = new DateOnly(2026, 1, 15), PeriodEnd = new DateOnly(2027, 1, 9), DueDate = new DateOnly(2027, 1, 10),
+                    Expectations = "Rejestr korespondencji prowadzony bez zaległości. Zestawienia danych przygotowywane samodzielnie według wskazówek, bez konieczności poprawek.",
+                    PartIConfirmedAt = new DateTime(2026, 1, 15, 14, 0, 0), EmployeeAcquaintedOn = new DateOnly(2026, 1, 15),
                     StartedAt = new DateTime(2026, 11, 16, 14, 0, 0),
                 },
                 new Evaluation
                 {
                     Id = 7, EmployeeId = 12, EvaluatorId = 3, Sheet = EvaluationSheet.C, Status = EvaluationStatus.Completed, SheetConfirmedAt = new DateTime(2024, 12, 23, 9, 0, 0),
-                    PeriodStart = new DateOnly(2024, 12, 20), PeriodEnd = new DateOnly(2025, 12, 19), DueDate = new DateOnly(2025, 12, 20),
-                    ConversationAt = new DateTime(2025, 12, 17, 12, 0, 0), ConversationStatus = ConversationStatus.Held,
+                    PeriodStart = new DateOnly(2025, 1, 8), PeriodEnd = new DateOnly(2025, 12, 19), DueDate = new DateOnly(2025, 12, 20),
+                    Expectations = "Cykliczne raporty przekazywane w terminie, z krótkim omówieniem najważniejszych zmian w danych.",
+                    PartIConfirmedAt = new DateTime(2025, 1, 8, 14, 0, 0), EmployeeAcquaintedOn = new DateOnly(2025, 1, 8),
                     StartedAt = new DateTime(2025, 11, 24, 9, 0, 0), CompletedAt = new DateTime(2025, 12, 18, 10, 0, 0),
                 },
                 new Evaluation
                 {
                     Id = 8, EmployeeId = 13, EvaluatorId = 3, Sheet = EvaluationSheet.C, Status = EvaluationStatus.NotStarted, SheetConfirmedAt = new DateTime(2025, 12, 12, 9, 0, 0),
-                    PeriodStart = new DateOnly(2025, 12, 10), PeriodEnd = new DateOnly(2026, 12, 9), DueDate = new DateOnly(2026, 12, 10),
-                    ConversationAt = new DateTime(2026, 11, 14, 10, 0, 0), ConversationStatus = ConversationStatus.Scheduled,
+                    PeriodStart = new DateOnly(2025, 12, 17), PeriodEnd = new DateOnly(2026, 12, 9), DueDate = new DateOnly(2026, 12, 10),
+                    Expectations = "Analizy danych przygotowywane samodzielnie, z wnioskami zrozumiałymi dla odbiorców spoza wydziału.",
+                    PartIConfirmedAt = new DateTime(2025, 12, 17, 15, 0, 0), EmployeeAcquaintedOn = new DateOnly(2025, 12, 17),
+                },
+                new Evaluation
+                {
+                    Id = 9, EmployeeId = 10, EvaluatorId = 3, Sheet = EvaluationSheet.C, Status = EvaluationStatus.NotStarted, SheetConfirmedAt = new DateTime(2026, 11, 12, 9, 0, 0),
+                    PeriodStart = new DateOnly(2026, 11, 6), PeriodEnd = new DateOnly(2027, 11, 9), DueDate = new DateOnly(2027, 11, 10),
+                    Expectations = "Analizy wpływu zmian na usługi cyfrowe z rekomendacją i oceną ryzyka. Samodzielne przedstawianie stanowiska wydziału na posiedzeniach zespołów międzyresortowych.",
                 });
+        });
+
+        modelBuilder.Entity<Conversation>(c =>
+        {
+            c.ToTable("Conversations");
+            c.Property(p => p.Type).HasConversion<string>().HasMaxLength(30);
+            c.Property(p => p.Status).HasConversion<string>().HasMaxLength(30);
+            c.HasIndex(p => new { p.EvaluationId, p.Type }).IsUnique();
+            c.HasOne(p => p.Evaluation)
+                .WithMany(p => p.Conversations)
+                .HasForeignKey(p => p.EvaluationId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            c.HasData(
+                new Conversation { Id = 1, EvaluationId = 1, Type = ConversationType.Starting, At = new DateTime(2024, 12, 16, 10, 0, 0), Status = ConversationStatus.Held },
+                new Conversation { Id = 2, EvaluationId = 1, Type = ConversationType.Assessment, At = new DateTime(2025, 12, 8, 10, 0, 0), Status = ConversationStatus.Held },
+                new Conversation { Id = 3, EvaluationId = 2, Type = ConversationType.Starting, At = new DateTime(2025, 12, 16, 10, 0, 0), Status = ConversationStatus.Held },
+                new Conversation { Id = 4, EvaluationId = 2, Type = ConversationType.Assessment, At = new DateTime(2026, 11, 27, 10, 0, 0), Status = ConversationStatus.Scheduled },
+                new Conversation { Id = 5, EvaluationId = 3, Type = ConversationType.Starting, At = new DateTime(2024, 11, 7, 10, 0, 0), Status = ConversationStatus.Held },
+                new Conversation { Id = 6, EvaluationId = 3, Type = ConversationType.Assessment, At = new DateTime(2025, 10, 27, 11, 0, 0), Status = ConversationStatus.Held },
+                new Conversation { Id = 7, EvaluationId = 4, Type = ConversationType.Starting, At = new DateTime(2025, 1, 16, 10, 0, 0), Status = ConversationStatus.Held },
+                new Conversation { Id = 8, EvaluationId = 4, Type = ConversationType.Assessment, At = new DateTime(2026, 1, 7, 9, 30, 0), Status = ConversationStatus.Held },
+                new Conversation { Id = 9, EvaluationId = 5, Type = ConversationType.Starting, At = new DateTime(2025, 11, 17, 10, 0, 0), Status = ConversationStatus.Held },
+                new Conversation { Id = 10, EvaluationId = 5, Type = ConversationType.Assessment, At = new DateTime(2026, 11, 5, 13, 0, 0), Status = ConversationStatus.Held },
+                new Conversation { Id = 11, EvaluationId = 6, Type = ConversationType.Starting, At = new DateTime(2026, 1, 15, 10, 0, 0), Status = ConversationStatus.Held },
+                new Conversation { Id = 12, EvaluationId = 6, Type = ConversationType.Assessment, At = new DateTime(2026, 12, 18, 9, 0, 0), Status = ConversationStatus.Scheduled },
+                new Conversation { Id = 13, EvaluationId = 7, Type = ConversationType.Starting, At = new DateTime(2025, 1, 8, 10, 0, 0), Status = ConversationStatus.Held },
+                new Conversation { Id = 14, EvaluationId = 7, Type = ConversationType.Assessment, At = new DateTime(2025, 12, 17, 12, 0, 0), Status = ConversationStatus.Held },
+                new Conversation { Id = 15, EvaluationId = 8, Type = ConversationType.Starting, At = new DateTime(2025, 12, 17, 11, 0, 0), Status = ConversationStatus.Held },
+                new Conversation { Id = 16, EvaluationId = 8, Type = ConversationType.Assessment, At = new DateTime(2026, 11, 14, 10, 0, 0), Status = ConversationStatus.Scheduled },
+                new Conversation { Id = 17, EvaluationId = 9, Type = ConversationType.Starting, At = new DateTime(2026, 11, 26, 10, 0, 0), Status = ConversationStatus.Scheduled });
+        });
+
+        modelBuilder.Entity<EvaluationAdditionalCriterion>(a =>
+        {
+            a.ToTable("EvaluationAdditionalCriteria");
+            a.HasKey(p => new { p.EvaluationId, p.Criterion });
+            a.Property(p => p.Criterion).HasConversion<string>().HasMaxLength(40);
+            a.HasOne(p => p.Evaluation)
+                .WithMany(p => p.AdditionalCriteria)
+                .HasForeignKey(p => p.EvaluationId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            a.HasData(
+                new EvaluationAdditionalCriterion { EvaluationId = 1, Criterion = Criterion.AnalyticalThinking },
+                new EvaluationAdditionalCriterion { EvaluationId = 2, Criterion = Criterion.AnalyticalThinking },
+                new EvaluationAdditionalCriterion { EvaluationId = 2, Criterion = Criterion.Creativity },
+                new EvaluationAdditionalCriterion { EvaluationId = 3, Criterion = Criterion.AnalyticalThinking },
+                new EvaluationAdditionalCriterion { EvaluationId = 4, Criterion = Criterion.CustomerOrientation },
+                new EvaluationAdditionalCriterion { EvaluationId = 5, Criterion = Criterion.AnalyticalThinking },
+                new EvaluationAdditionalCriterion { EvaluationId = 6, Criterion = Criterion.CustomerOrientation },
+                new EvaluationAdditionalCriterion { EvaluationId = 6, Criterion = Criterion.AnalyticalThinking },
+                new EvaluationAdditionalCriterion { EvaluationId = 7, Criterion = Criterion.AnalyticalThinking },
+                new EvaluationAdditionalCriterion { EvaluationId = 8, Criterion = Criterion.AnalyticalThinking },
+                new EvaluationAdditionalCriterion { EvaluationId = 9, Criterion = Criterion.AnalyticalThinking },
+                new EvaluationAdditionalCriterion { EvaluationId = 9, Criterion = Criterion.PublicSpeaking });
         });
     }
 

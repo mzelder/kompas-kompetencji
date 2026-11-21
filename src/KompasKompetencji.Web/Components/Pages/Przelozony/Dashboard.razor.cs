@@ -49,33 +49,24 @@ public partial class Dashboard
         overview = await EvaluationService.GetSupervisorOverviewAsync(supervisorId, DateTime.Now);
     }
 
-    private async Task EditConversationAsync(EvaluationTask task)
+    private async Task EditConversationAsync(EvaluationTask task, ConversationType type)
     {
-        var saved = await DialogService.OpenAsync<ConversationDialog>(
-            task.ConversationAt is null ? "Wyznacz termin rozmowy" : "Rozmowa okresowa",
-            new Dictionary<string, object?>
-            {
-                [nameof(ConversationDialog.Task)] = task,
-                [nameof(ConversationDialog.SupervisorId)] = supervisorId,
-                [nameof(ConversationDialog.Today)] = today,
-            },
-            new DialogOptions { Width = "520px" });
-        if (saved is true)
+        if (await ConversationDialog.OpenAsync(DialogService, task, type, supervisorId, today))
         {
             await LoadOverviewAsync();
-            NotificationService.Notify(NotificationSeverity.Success, "Zapisano termin rozmowy", task.Employee.FullName);
+            NotificationService.Notify(NotificationSeverity.Success, "Zapisano termin rozmowy", $"{task.Employee.FullName} · {EvaluationText.ConversationTypeName(type)}");
         }
     }
 
-    private async Task MarkHeldAsync(EvaluationTask task)
+    private async Task MarkHeldAsync(EvaluationTask task, ConversationType type)
     {
-        if (task.ConversationAt is not DateTime conversationAt)
+        if (task.ConversationAtFor(type) is not DateTime conversationAt)
         {
             return;
         }
 
         var result = await EvaluationService.SaveConversationAsync(
-            supervisorId, task.Employee.Id, conversationAt, ConversationStatus.Held, DateTime.Now);
+            supervisorId, task.Employee.Id, type, conversationAt, ConversationStatus.Held, DateTime.Now);
         if (!result.Succeeded)
         {
             NotificationService.Notify(NotificationSeverity.Error, "Nie udało się zapisać", result.Error ?? string.Empty);
@@ -123,13 +114,13 @@ public partial class Dashboard
 
         if (conversation.IsEditable && overview?.TaskFor(conversation.Employee.Id) is EvaluationTask task)
         {
-            await EditConversationAsync(task);
+            await EditConversationAsync(task, conversation.Type);
             return;
         }
 
         await DialogService.Alert(
             $"{EvaluationText.Date(conversation.Start)} – {conversation.End:HH:mm}. Status rozmowy: {EvaluationText.Conversation(conversation.Status).ToLowerInvariant()}.",
-            $"Rozmowa okresowa: {conversation.Employee.FullName}",
+            conversation.Title,
             new AlertOptions { OkButtonText = "Zamknij" });
     }
 }

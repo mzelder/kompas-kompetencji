@@ -45,7 +45,7 @@
                                          SlotRender="@OnSlotRender"
                                          Style="height: auto;" class="conversation-calendar fill-grid">
                             <Template Context="conversation">
-                                <strong>@conversation.Start.ToString("HH:mm")</strong> @conversation.Employee.FullName
+                                <strong>@conversation.Start.ToString("HH:mm")</strong> @conversation.Title
                             </Template>
                             <ChildContent>
                                 <RadzenMonthView Text="Miesiąc" MoreText="+ {0} więcej" />
@@ -62,7 +62,7 @@
                         <RadzenStack Gap="0">
                             <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H2" class="rz-m-0">Do zrobienia</RadzenText>
                             <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">
-                                Rozmowy z minionym terminem do oznaczenia oraz osoby z terminem oceny w ciągu 2 miesięcy bez wyznaczonej rozmowy.
+                                Rozmowy z minionym terminem do oznaczenia, osoby na początku cyklu bez zatwierdzonej części I arkusza oraz osoby z terminem oceny w ciągu 2 miesięcy bez wyznaczonej rozmowy oceniającej.
                             </RadzenText>
                         </RadzenStack>
 
@@ -71,13 +71,14 @@
                             {
                                 <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.75rem">
                                     <RadzenIcon Icon="check_circle" IconColor="@Colors.Success" />
-                                    <RadzenText TextStyle="TextStyle.Body1" class="rz-m-0">Nie ma rozmów do wyznaczenia.</RadzenText>
+                                    <RadzenText TextStyle="TextStyle.Body1" class="rz-m-0">Nie ma zadań do wykonania.</RadzenText>
                                 </RadzenStack>
                             }
                             @foreach (var task in overview.ToDo)
                             {
-                                <EvaluationTaskItem Task="@task" Today="@today" ConversationPastDue="@overview.IsConversationPastDue(task)"
-                                                    OnConversation="@EditConversationAsync" OnMarkHeld="@MarkHeldAsync" />
+                                <EvaluationTaskItem Task="@task" Today="@today" PastDueConversation="@overview.PastDueConversation(task)"
+                                                    OnConversation="@(type => EditConversationAsync(task, type))"
+                                                    OnMarkHeld="@(type => MarkHeldAsync(task, type))" />
                             }
                         </RadzenStack>
                     </RadzenStack>

@@ -36,6 +36,11 @@ public static class ConversationRules
         {
             return $"Rozmowa musi się odbyć najpóźniej w dniu oceny ({EvaluationText.Date(dueDate)}).";
         }
+        return ValidateStatus(newAt, currentAt, status, now);
+    }
+
+    public static string? ValidateStatus(DateTime newAt, DateTime? currentAt, ConversationStatus status, DateTime now)
+    {
         if (status == ConversationStatus.Held && !CanBeHeld(newAt, now))
         {
             return "Rozmowę można oznaczyć jako odbytą dopiero po jej terminie.";

@@ -291,3 +291,7 @@ h1:focus {
 .align-self-start {
     align-self: flex-start;
 }
+
+.pre-line {
+    white-space: pre-line;
+}

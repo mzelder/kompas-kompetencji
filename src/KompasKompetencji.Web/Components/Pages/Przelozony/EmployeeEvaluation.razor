@@ -43,6 +43,11 @@ else
                         <JobDescriptionStage @key="@view" View="@view" SupervisorId="@supervisorId"
                                              ReadOnly="@(view.CurrentStage > stage)" OnConfirmed="@LoadAsync" />
                     }
+                    else if (stage == EvaluationStage.StartingConversation)
+                    {
+                        <StartingConversationStage @key="@view" View="@view" SupervisorId="@supervisorId"
+                                                   ReadOnly="@view.IsPartIConfirmed" OnChanged="@LoadAsync" />
+                    }
                     else
                     {
                         <RadzenText TextStyle="TextStyle.Body1" class="rz-color-base-300">@EvaluationText.StageDescription(stage)</RadzenText>

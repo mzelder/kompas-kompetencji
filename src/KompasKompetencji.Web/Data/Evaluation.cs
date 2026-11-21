@@ -15,12 +15,6 @@ public enum EvaluationSheet
     C,
 }
 
-public enum ConversationStatus
-{
-    Scheduled,
-    Held,
-}
-
 public class Evaluation
 {
     public int Id { get; set; }
@@ -45,11 +39,22 @@ public class Evaluation
 
     public DateOnly DueDate { get; set; }
 
-    public DateTime? ConversationAt { get; set; }
+    public string? Expectations { get; set; }
 
-    public ConversationStatus? ConversationStatus { get; set; }
+    public string? Goals { get; set; }
+
+    public DateTime? PartIConfirmedAt { get; set; }
+
+    public DateOnly? EmployeeAcquaintedOn { get; set; }
 
     public DateTime? StartedAt { get; set; }
 
     public DateTime? CompletedAt { get; set; }
+
+    public List<Conversation> Conversations { get; set; } = [];
+
+    public List<EvaluationAdditionalCriterion> AdditionalCriteria { get; set; } = [];
+
+    public Conversation? FindConversation(ConversationType type) =>
+        Conversations.FirstOrDefault(c => c.Type == type);
 }

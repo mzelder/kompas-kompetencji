@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace KompasKompetencji.Web.Data.Migrations;
 
 [DbContext(typeof(AppDbContext))]
-[Migration("20261121203358_AddJobDescriptionsAndSheetConfirmation")]
-partial class _20261121203358_AddJobDescriptionsAndSheetConfirmation
+[Migration("20261121212602_Initial")]
+partial class _20261121212602_Initial
 {
     /// <inheritdoc />
     protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -64,6 +64,176 @@ partial class _20261121203358_AddJobDescriptionsAndSheetConfirmation
                     .IsUnique();
 
                 b.ToTable("Users");
+            });
+
+        modelBuilder.Entity("KompasKompetencji.Web.Data.Conversation", b =>
+            {
+                var id = b.Property<int>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("int");
+
+                SqlServerPropertyBuilderExtensions.UseIdentityColumn(id);
+
+                b.Property<DateTime>("At")
+                    .HasColumnType("datetime2");
+
+                b.Property<int>("EvaluationId")
+                    .HasColumnType("int");
+
+                b.Property<string>("Status")
+                    .IsRequired()
+                    .HasMaxLength(30)
+                    .HasColumnType("nvarchar(30)");
+
+                b.Property<string>("Type")
+                    .IsRequired()
+                    .HasMaxLength(30)
+                    .HasColumnType("nvarchar(30)");
+
+                b.HasKey("Id");
+
+                b.HasIndex("EvaluationId", "Type")
+                    .IsUnique();
+
+                b.ToTable("Conversations");
+
+                b.HasData(
+                    new
+                    {
+                        Id = 1,
+                        At = new DateTime(2024, 12, 16, 10, 0, 0, 0, DateTimeKind.Unspecified),
+                        EvaluationId = 1,
+                        Status = "Held",
+                        Type = "Starting"
+                    },
+                    new
+                    {
+                        Id = 2,
+                        At = new DateTime(2025, 12, 8, 10, 0, 0, 0, DateTimeKind.Unspecified),
+                        EvaluationId = 1,
+                        Status = "Held",
+                        Type = "Assessment"
+                    },
+                    new
+                    {
+                        Id = 3,
+                        At = new DateTime(2025, 12, 16, 10, 0, 0, 0, DateTimeKind.Unspecified),
+                        EvaluationId = 2,
+                        Status = "Held",
+                        Type = "Starting"
+                    },
+                    new
+                    {
+                        Id = 4,
+                        At = new DateTime(2026, 11, 27, 10, 0, 0, 0, DateTimeKind.Unspecified),
+                        EvaluationId = 2,
+                        Status = "Scheduled",
+                        Type = "Assessment"
+                    },
+                    new
+                    {
+                        Id = 5,
+                        At = new DateTime(2024, 11, 7, 10, 0, 0, 0, DateTimeKind.Unspecified),
+                        EvaluationId = 3,
+                        Status = "Held",
+                        Type = "Starting"
+                    },
+                    new
+                    {
+                        Id = 6,
+                        At = new DateTime(2025, 10, 27, 11, 0, 0, 0, DateTimeKind.Unspecified),
+                        EvaluationId = 3,
+                        Status = "Held",
+                        Type = "Assessment"
+                    },
+                    new
+                    {
+                        Id = 7,
+                        At = new DateTime(2025, 1, 16, 10, 0, 0, 0, DateTimeKind.Unspecified),
+                        EvaluationId = 4,
+                        Status = "Held",
+                        Type = "Starting"
+                    },
+                    new
+                    {
+                        Id = 8,
+                        At = new DateTime(2026, 1, 7, 9, 30, 0, 0, DateTimeKind.Unspecified),
+                        EvaluationId = 4,
+                        Status = "Held",
+                        Type = "Assessment"
+                    },
+                    new
+                    {
+                        Id = 9,
+                        At = new DateTime(2025, 11, 17, 10, 0, 0, 0, DateTimeKind.Unspecified),
+                        EvaluationId = 5,
+                        Status = "Held",
+                        Type = "Starting"
+                    },
+                    new
+                    {
+                        Id = 10,
+                        At = new DateTime(2026, 11, 5, 13, 0, 0, 0, DateTimeKind.Unspecified),
+                        EvaluationId = 5,
+                        Status = "Held",
+                        Type = "Assessment"
+                    },
+                    new
+                    {
+                        Id = 11,
+                        At = new DateTime(2026, 1, 15, 10, 0, 0, 0, DateTimeKind.Unspecified),
+                        EvaluationId = 6,
+                        Status = "Held",
+                        Type = "Starting"
+                    },
+                    new
+                    {
+                        Id = 12,
+                        At = new DateTime(2026, 12, 18, 9, 0, 0, 0, DateTimeKind.Unspecified),
+                        EvaluationId = 6,
+                        Status = "Scheduled",
+                        Type = "Assessment"
+                    },
+                    new
+                    {
+                        Id = 13,
+                        At = new DateTime(2025, 1, 8, 10, 0, 0, 0, DateTimeKind.Unspecified),
+                        EvaluationId = 7,
+                        Status = "Held",
+                        Type = "Starting"
+                    },
+                    new
+                    {
+                        Id = 14,
+                        At = new DateTime(2025, 12, 17, 12, 0, 0, 0, DateTimeKind.Unspecified),
+                        EvaluationId = 7,
+                        Status = "Held",
+                        Type = "Assessment"
+                    },
+                    new
+                    {
+                        Id = 15,
+                        At = new DateTime(2025, 12, 17, 11, 0, 0, 0, DateTimeKind.Unspecified),
+                        EvaluationId = 8,
+                        Status = "Held",
+                        Type = "Starting"
+                    },
+                    new
+                    {
+                        Id = 16,
+                        At = new DateTime(2026, 11, 14, 10, 0, 0, 0, DateTimeKind.Unspecified),
+                        EvaluationId = 8,
+                        Status = "Scheduled",
+                        Type = "Assessment"
+                    },
+                    new
+                    {
+                        Id = 17,
+                        At = new DateTime(2026, 11, 26, 10, 0, 0, 0, DateTimeKind.Unspecified),
+                        EvaluationId = 9,
+                        Status = "Scheduled",
+                        Type = "Starting"
+                    });
             });
 
         modelBuilder.Entity("KompasKompetencji.Web.Data.Employee", b =>
@@ -209,11 +379,11 @@ partial class _20261121203358_AddJobDescriptionsAndSheetConfirmation
                     {
                         Id = 11,
                         Department = "Wydział Analiz Danych",
-                        EmployedSince = new DateOnly(2026, 7, 1),
+                        EmployedSince = new DateOnly(2026, 11, 5),
                         FirstName = "Paweł",
                         IsSupervisor = false,
                         LastName = "Kozłowski",
-                        Position = "Specjalista"
+                        Position = "Starszy specjalista"
                     },
                     new
                     {
@@ -333,14 +503,10 @@ partial class _20261121203358_AddJobDescriptionsAndSheetConfirmation
                 b.Property<DateTime?>("CompletedAt")
                     .HasColumnType("datetime2");
 
-                b.Property<DateTime?>("ConversationAt")
-                    .HasColumnType("datetime2");
-
-                b.Property<string>("ConversationStatus")
-                    .HasMaxLength(30)
-                    .HasColumnType("nvarchar(30)");
-
                 b.Property<DateOnly>("DueDate")
+                    .HasColumnType("date");
+
+                b.Property<DateOnly?>("EmployeeAcquaintedOn")
                     .HasColumnType("date");
 
                 b.Property<int>("EmployeeId")
@@ -348,6 +514,17 @@ partial class _20261121203358_AddJobDescriptionsAndSheetConfirmation
 
                 b.Property<int>("EvaluatorId")
                     .HasColumnType("int");
+
+                b.Property<string>("Expectations")
+                    .HasMaxLength(4000)
+                    .HasColumnType("nvarchar(4000)");
+
+                b.Property<string>("Goals")
+                    .HasMaxLength(4000)
+                    .HasColumnType("nvarchar(4000)");
+
+                b.Property<DateTime?>("PartIConfirmedAt")
+                    .HasColumnType("datetime2");
 
                 b.Property<DateOnly>("PeriodEnd")
                     .HasColumnType("date");
@@ -384,30 +561,33 @@ partial class _20261121203358_AddJobDescriptionsAndSheetConfirmation
                     {
                         Id = 1,
                         CompletedAt = new DateTime(2025, 12, 10, 14, 0, 0, 0, DateTimeKind.Unspecified),
-                        ConversationAt = new DateTime(2025, 12, 8, 10, 0, 0, 0, DateTimeKind.Unspecified),
-                        ConversationStatus = "Held",
                         DueDate = new DateOnly(2025, 12, 15),
+                        EmployeeAcquaintedOn = new DateOnly(2024, 12, 16),
                         EmployeeId = 1,
                         EvaluatorId = 3,
+                        Expectations = "Samodzielne przygotowywanie analiz dla kierownictwa w uzgodnionych terminach, z opisem źródeł i ograniczeń danych.",
+                        PartIConfirmedAt = new DateTime(2024, 12, 16, 15, 0, 0, 0, DateTimeKind.Unspecified),
                         PeriodEnd = new DateOnly(2025, 12, 14),
-                        PeriodStart = new DateOnly(2024, 12, 15),
+                        PeriodStart = new DateOnly(2024, 12, 16),
                         Sheet = "C",
-                        SheetConfirmedAt = new DateTime(2024, 12, 18, 9, 0, 0, 0, DateTimeKind.Unspecified),
+                        SheetConfirmedAt = new DateTime(2024, 12, 11, 9, 0, 0, 0, DateTimeKind.Unspecified),
                         StartedAt = new DateTime(2025, 11, 20, 9, 0, 0, 0, DateTimeKind.Unspecified),
                         Status = "Completed"
                     },
                     new
                     {
                         Id = 2,
-                        ConversationAt = new DateTime(2026, 11, 27, 10, 0, 0, 0, DateTimeKind.Unspecified),
-                        ConversationStatus = "Scheduled",
                         DueDate = new DateOnly(2026, 12, 15),
+                        EmployeeAcquaintedOn = new DateOnly(2025, 12, 16),
                         EmployeeId = 1,
                         EvaluatorId = 3,
+                        Expectations = "Analizy dla kierownictwa oddawane w terminie i bez poprawek merytorycznych. Propozycje nowych wskaźników zgłaszane z własnej inicjatywy, co najmniej raz na kwartał.",
+                        Goals = "Opracowanie zestawu wskaźników realizacji zadań departamentu do końca II kwartału 2026 r.",
+                        PartIConfirmedAt = new DateTime(2025, 12, 16, 15, 0, 0, 0, DateTimeKind.Unspecified),
                         PeriodEnd = new DateOnly(2026, 12, 14),
-                        PeriodStart = new DateOnly(2025, 12, 15),
+                        PeriodStart = new DateOnly(2025, 12, 16),
                         Sheet = "C",
-                        SheetConfirmedAt = new DateTime(2025, 12, 18, 9, 0, 0, 0, DateTimeKind.Unspecified),
+                        SheetConfirmedAt = new DateTime(2025, 12, 11, 9, 0, 0, 0, DateTimeKind.Unspecified),
                         StartedAt = new DateTime(2026, 11, 12, 10, 30, 0, 0, DateTimeKind.Unspecified),
                         Status = "InProgress"
                     },
@@ -415,13 +595,14 @@ partial class _20261121203358_AddJobDescriptionsAndSheetConfirmation
                     {
                         Id = 3,
                         CompletedAt = new DateTime(2025, 10, 28, 12, 0, 0, 0, DateTimeKind.Unspecified),
-                        ConversationAt = new DateTime(2025, 10, 27, 11, 0, 0, 0, DateTimeKind.Unspecified),
-                        ConversationStatus = "Held",
                         DueDate = new DateOnly(2025, 11, 2),
+                        EmployeeAcquaintedOn = new DateOnly(2024, 11, 7),
                         EmployeeId = 2,
                         EvaluatorId = 3,
+                        Expectations = "Zestawienia danych przygotowywane według przyjętego wzoru i sprawdzone przed przekazaniem.",
+                        PartIConfirmedAt = new DateTime(2024, 11, 7, 14, 0, 0, 0, DateTimeKind.Unspecified),
                         PeriodEnd = new DateOnly(2025, 11, 1),
-                        PeriodStart = new DateOnly(2024, 11, 2),
+                        PeriodStart = new DateOnly(2024, 11, 7),
                         Sheet = "C",
                         SheetConfirmedAt = new DateTime(2024, 11, 5, 9, 0, 0, 0, DateTimeKind.Unspecified),
                         StartedAt = new DateTime(2025, 10, 6, 9, 0, 0, 0, DateTimeKind.Unspecified),
@@ -431,13 +612,14 @@ partial class _20261121203358_AddJobDescriptionsAndSheetConfirmation
                     {
                         Id = 4,
                         CompletedAt = new DateTime(2026, 1, 8, 11, 0, 0, 0, DateTimeKind.Unspecified),
-                        ConversationAt = new DateTime(2026, 1, 7, 9, 30, 0, 0, DateTimeKind.Unspecified),
-                        ConversationStatus = "Held",
                         DueDate = new DateOnly(2026, 1, 10),
+                        EmployeeAcquaintedOn = new DateOnly(2025, 1, 16),
                         EmployeeId = 9,
                         EvaluatorId = 3,
+                        Expectations = "Korespondencja wydziału rejestrowana na bieżąco, odpowiedzi na proste pytania udzielane w ciągu dwóch dni.",
+                        PartIConfirmedAt = new DateTime(2025, 1, 16, 14, 0, 0, 0, DateTimeKind.Unspecified),
                         PeriodEnd = new DateOnly(2026, 1, 9),
-                        PeriodStart = new DateOnly(2025, 1, 10),
+                        PeriodStart = new DateOnly(2025, 1, 16),
                         Sheet = "C",
                         SheetConfirmedAt = new DateTime(2025, 1, 14, 9, 0, 0, 0, DateTimeKind.Unspecified),
                         StartedAt = new DateTime(2025, 12, 15, 9, 0, 0, 0, DateTimeKind.Unspecified),
@@ -446,29 +628,31 @@ partial class _20261121203358_AddJobDescriptionsAndSheetConfirmation
                     new
                     {
                         Id = 5,
-                        CompletedAt = new DateTime(2026, 5, 27, 13, 0, 0, 0, DateTimeKind.Unspecified),
-                        ConversationAt = new DateTime(2026, 5, 26, 13, 0, 0, 0, DateTimeKind.Unspecified),
-                        ConversationStatus = "Held",
-                        DueDate = new DateOnly(2026, 6, 1),
+                        CompletedAt = new DateTime(2026, 11, 6, 13, 0, 0, 0, DateTimeKind.Unspecified),
+                        DueDate = new DateOnly(2026, 11, 10),
+                        EmployeeAcquaintedOn = new DateOnly(2025, 11, 17),
                         EmployeeId = 10,
                         EvaluatorId = 3,
-                        PeriodEnd = new DateOnly(2026, 5, 31),
-                        PeriodStart = new DateOnly(2025, 6, 1),
+                        Expectations = "Opinie do projektów dokumentów przygotowywane w terminie, z konkretnymi propozycjami zmian wskaźników.",
+                        PartIConfirmedAt = new DateTime(2025, 11, 17, 14, 0, 0, 0, DateTimeKind.Unspecified),
+                        PeriodEnd = new DateOnly(2026, 11, 9),
+                        PeriodStart = new DateOnly(2025, 11, 17),
                         Sheet = "C",
-                        SheetConfirmedAt = new DateTime(2025, 6, 4, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                        StartedAt = new DateTime(2026, 5, 4, 9, 0, 0, 0, DateTimeKind.Unspecified),
+                        SheetConfirmedAt = new DateTime(2025, 11, 12, 9, 0, 0, 0, DateTimeKind.Unspecified),
+                        StartedAt = new DateTime(2026, 10, 12, 9, 0, 0, 0, DateTimeKind.Unspecified),
                         Status = "Completed"
                     },
                     new
                     {
                         Id = 6,
-                        ConversationAt = new DateTime(2026, 12, 18, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                        ConversationStatus = "Scheduled",
                         DueDate = new DateOnly(2027, 1, 10),
+                        EmployeeAcquaintedOn = new DateOnly(2026, 1, 15),
                         EmployeeId = 9,
                         EvaluatorId = 3,
+                        Expectations = "Rejestr korespondencji prowadzony bez zaległości. Zestawienia danych przygotowywane samodzielnie według wskazówek, bez konieczności poprawek.",
+                        PartIConfirmedAt = new DateTime(2026, 1, 15, 14, 0, 0, 0, DateTimeKind.Unspecified),
                         PeriodEnd = new DateOnly(2027, 1, 9),
-                        PeriodStart = new DateOnly(2026, 1, 10),
+                        PeriodStart = new DateOnly(2026, 1, 15),
                         Sheet = "C",
                         SheetConfirmedAt = new DateTime(2026, 1, 13, 9, 0, 0, 0, DateTimeKind.Unspecified),
                         StartedAt = new DateTime(2026, 11, 16, 14, 0, 0, 0, DateTimeKind.Unspecified),
@@ -478,13 +662,14 @@ partial class _20261121203358_AddJobDescriptionsAndSheetConfirmation
                     {
                         Id = 7,
                         CompletedAt = new DateTime(2025, 12, 18, 10, 0, 0, 0, DateTimeKind.Unspecified),
-                        ConversationAt = new DateTime(2025, 12, 17, 12, 0, 0, 0, DateTimeKind.Unspecified),
-                        ConversationStatus = "Held",
                         DueDate = new DateOnly(2025, 12, 20),
+                        EmployeeAcquaintedOn = new DateOnly(2025, 1, 8),
                         EmployeeId = 12,
                         EvaluatorId = 3,
+                        Expectations = "Cykliczne raporty przekazywane w terminie, z krótkim omówieniem najważniejszych zmian w danych.",
+                        PartIConfirmedAt = new DateTime(2025, 1, 8, 14, 0, 0, 0, DateTimeKind.Unspecified),
                         PeriodEnd = new DateOnly(2025, 12, 19),
-                        PeriodStart = new DateOnly(2024, 12, 20),
+                        PeriodStart = new DateOnly(2025, 1, 8),
                         Sheet = "C",
                         SheetConfirmedAt = new DateTime(2024, 12, 23, 9, 0, 0, 0, DateTimeKind.Unspecified),
                         StartedAt = new DateTime(2025, 11, 24, 9, 0, 0, 0, DateTimeKind.Unspecified),
@@ -493,16 +678,106 @@ partial class _20261121203358_AddJobDescriptionsAndSheetConfirmation
                     new
                     {
                         Id = 8,
-                        ConversationAt = new DateTime(2026, 11, 14, 10, 0, 0, 0, DateTimeKind.Unspecified),
-                        ConversationStatus = "Scheduled",
                         DueDate = new DateOnly(2026, 12, 10),
+                        EmployeeAcquaintedOn = new DateOnly(2025, 12, 17),
                         EmployeeId = 13,
                         EvaluatorId = 3,
+                        Expectations = "Analizy danych przygotowywane samodzielnie, z wnioskami zrozumiałymi dla odbiorców spoza wydziału.",
+                        PartIConfirmedAt = new DateTime(2025, 12, 17, 15, 0, 0, 0, DateTimeKind.Unspecified),
                         PeriodEnd = new DateOnly(2026, 12, 9),
-                        PeriodStart = new DateOnly(2025, 12, 10),
+                        PeriodStart = new DateOnly(2025, 12, 17),
                         Sheet = "C",
                         SheetConfirmedAt = new DateTime(2025, 12, 12, 9, 0, 0, 0, DateTimeKind.Unspecified),
                         Status = "NotStarted"
+                    },
+                    new
+                    {
+                        Id = 9,
+                        DueDate = new DateOnly(2027, 11, 10),
+                        EmployeeId = 10,
+                        EvaluatorId = 3,
+                        Expectations = "Analizy wpływu zmian na usługi cyfrowe z rekomendacją i oceną ryzyka. Samodzielne przedstawianie stanowiska wydziału na posiedzeniach zespołów międzyresortowych.",
+                        PeriodEnd = new DateOnly(2027, 11, 9),
+                        PeriodStart = new DateOnly(2026, 11, 6),
+                        Sheet = "C",
+                        SheetConfirmedAt = new DateTime(2026, 11, 12, 9, 0, 0, 0, DateTimeKind.Unspecified),
+                        Status = "NotStarted"
+                    });
+            });
+
+        modelBuilder.Entity("KompasKompetencji.Web.Data.EvaluationAdditionalCriterion", b =>
+            {
+                b.Property<int>("EvaluationId")
+                    .HasColumnType("int");
+
+                b.Property<string>("Criterion")
+                    .HasMaxLength(40)
+                    .HasColumnType("nvarchar(40)");
+
+                b.HasKey("EvaluationId", "Criterion");
+
+                b.ToTable("EvaluationAdditionalCriteria");
+
+                b.HasData(
+                    new
+                    {
+                        EvaluationId = 1,
+                        Criterion = "AnalyticalThinking"
+                    },
+                    new
+                    {
+                        EvaluationId = 2,
+                        Criterion = "AnalyticalThinking"
+                    },
+                    new
+                    {
+                        EvaluationId = 2,
+                        Criterion = "Creativity"
+                    },
+                    new
+                    {
+                        EvaluationId = 3,
+                        Criterion = "AnalyticalThinking"
+                    },
+                    new
+                    {
+                        EvaluationId = 4,
+                        Criterion = "CustomerOrientation"
+                    },
+                    new
+                    {
+                        EvaluationId = 5,
+                        Criterion = "AnalyticalThinking"
+                    },
+                    new
+                    {
+                        EvaluationId = 6,
+                        Criterion = "CustomerOrientation"
+                    },
+                    new
+                    {
+                        EvaluationId = 6,
+                        Criterion = "AnalyticalThinking"
+                    },
+                    new
+                    {
+                        EvaluationId = 7,
+                        Criterion = "AnalyticalThinking"
+                    },
+                    new
+                    {
+                        EvaluationId = 8,
+                        Criterion = "AnalyticalThinking"
+                    },
+                    new
+                    {
+                        EvaluationId = 9,
+                        Criterion = "AnalyticalThinking"
+                    },
+                    new
+                    {
+                        EvaluationId = 9,
+                        Criterion = "PublicSpeaking"
                     });
             });
 
@@ -572,6 +847,13 @@ partial class _20261121203358_AddJobDescriptionsAndSheetConfirmation
                     },
                     new
                     {
+                        EmployeeId = 11,
+                        Purpose = "Prowadzenie spraw dotyczących reagowania na incydenty i sytuacje kryzysowe w zakresie danych i usług cyfrowych departamentu.",
+                        RequiredCompetencies = "Organizacja pracy i orientacja na osiąganie celów\nWspółpraca\nMyślenie analityczne\nWykorzystywanie wiedzy i doskonalenie zawodowe\nRadzenie sobie w sytuacjach kryzysowych",
+                        Tasks = "Udział w opracowaniu i aktualizacji planu reagowania na incydenty dotyczące danych i usług cyfrowych\nAnaliza zgłoszonych incydentów i przygotowywanie rekomendacji działań naprawczych\nWspółpraca z zespołami reagowania na incydenty w innych urzędach i instytucjach\nUdział w przygotowaniu i przeprowadzaniu ćwiczeń z reagowania na sytuacje kryzysowe\nProwadzenie kontroli przestrzegania procedur bezpieczeństwa danych w jednostkach podległych"
+                    },
+                    new
+                    {
                         EmployeeId = 12,
                         Purpose = "Realizacja zadań związanych z analizą danych i przygotowywaniem informacji dla kierownictwa.",
                         RequiredCompetencies = "Myślenie analityczne\nRzetelność\nKomunikacja pisemna",
@@ -587,6 +869,17 @@ partial class _20261121203358_AddJobDescriptionsAndSheetConfirmation
                     .OnDelete(DeleteBehavior.SetNull);
 
                 b.Navigation("Employee");
+            });
+
+        modelBuilder.Entity("KompasKompetencji.Web.Data.Conversation", b =>
+            {
+                b.HasOne("KompasKompetencji.Web.Data.Evaluation", "Evaluation")
+                    .WithMany("Conversations")
+                    .HasForeignKey("EvaluationId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
+
+                b.Navigation("Evaluation");
             });
 
         modelBuilder.Entity("KompasKompetencji.Web.Data.EmployeeSupervisor", b =>
@@ -627,6 +920,17 @@ partial class _20261121203358_AddJobDescriptionsAndSheetConfirmation
                 b.Navigation("Evaluator");
             });
 
+        modelBuilder.Entity("KompasKompetencji.Web.Data.EvaluationAdditionalCriterion", b =>
+            {
+                b.HasOne("KompasKompetencji.Web.Data.Evaluation", "Evaluation")
+                    .WithMany("AdditionalCriteria")
+                    .HasForeignKey("EvaluationId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
+
+                b.Navigation("Evaluation");
+            });
+
         modelBuilder.Entity("KompasKompetencji.Web.Data.JobDescription", b =>
             {
                 b.HasOne("KompasKompetencji.Web.Data.Employee", "Employee")
@@ -645,6 +949,13 @@ partial class _20261121203358_AddJobDescriptionsAndSheetConfirmation
                 b.Navigation("SubordinateLinks");
 
                 b.Navigation("SupervisorLinks");
+            });
+
+        modelBuilder.Entity("KompasKompetencji.Web.Data.Evaluation", b =>
+            {
+                b.Navigation("AdditionalCriteria");
+
+                b.Navigation("Conversations");
             });
 #pragma warning restore 612, 618
     }

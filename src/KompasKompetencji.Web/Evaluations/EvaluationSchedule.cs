@@ -19,17 +19,34 @@ public sealed record EvaluationTask(
     EvaluationUrgency Urgency,
     DateTime? ConversationAt,
     ConversationStatus? ConversationStatus,
-    bool IsSheetConfirmed)
+    bool IsSheetConfirmed,
+    DateOnly CycleStart,
+    DateTime? StartingConversationAt,
+    ConversationStatus? StartingConversationStatus,
+    bool IsPartIConfirmed)
 {
+    public DateOnly StartingConversationDeadline => StartingConversationRules.Deadline(CycleStart);
+
+    public DateTime? ConversationAtFor(ConversationType type) =>
+        type == ConversationType.Starting ? StartingConversationAt : ConversationAt;
+
+    public ConversationStatus? ConversationStatusFor(ConversationType type) =>
+        type == ConversationType.Starting ? StartingConversationStatus : ConversationStatus;
+
+    public ConversationType? PastDueConversation(DateTime now) =>
+        ConversationRules.IsPastDue(StartingConversationAt, StartingConversationStatus, now) ? ConversationType.Starting
+        : ConversationRules.IsPastDue(ConversationAt, ConversationStatus, now) ? ConversationType.Assessment
+        : null;
+
     public bool IsInConversationWindow => Urgency != EvaluationUrgency.Planned;
 
-    public bool CanScheduleConversation => IsInConversationWindow && IsSheetConfirmed;
+    public bool CanScheduleConversation => IsInConversationWindow && IsSheetConfirmed && IsPartIConfirmed;
 
-    public bool NeedsSheet => IsInConversationWindow && !IsSheetConfirmed;
+    public bool NeedsStart => !IsPartIConfirmed && StartingConversationStatus != Data.ConversationStatus.Scheduled;
 
     public bool NeedsConversation => CanScheduleConversation && ConversationAt is null;
 
-    public bool NeedsAction => NeedsSheet || NeedsConversation;
+    public bool NeedsAction => NeedsStart || NeedsConversation;
 }
 
 public static class EvaluationSchedule
@@ -42,6 +59,14 @@ public static class EvaluationSchedule
     public static EvaluationSheet SheetFor(Employee employee) =>
         employee.IsSupervisor ? EvaluationSheet.B : EvaluationSheet.C;
 
+    public static Evaluation? LastCompleted(IEnumerable<Evaluation> evaluations) =>
+        evaluations.Where(v => v.Status == EvaluationStatus.Completed).MaxBy(v => v.DueDate);
+
+    public static DateOnly CycleStart(Employee employee, IEnumerable<Evaluation> evaluations) =>
+        LastCompleted(evaluations)?.CompletedAt is DateTime completedAt
+            ? DateOnly.FromDateTime(completedAt)
+            : employee.EmployedSince;
+
     public static Evaluation? OpenEvaluation(IEnumerable<Evaluation> evaluations) =>
         evaluations.Where(v => v.Status != EvaluationStatus.Completed).MaxBy(v => v.DueDate);
 
@@ -49,9 +74,11 @@ public static class EvaluationSchedule
     {
         var list = evaluations.ToList();
         var open = OpenEvaluation(list);
-        var lastCompleted = list.Where(v => v.Status == EvaluationStatus.Completed).MaxBy(v => v.DueDate);
+        var lastCompleted = LastCompleted(list);
         var dueDate = open?.DueDate ?? NextDueDate(employee.EmployedSince, lastCompleted?.DueDate);
         var started = open is not null && open.Status != EvaluationStatus.NotStarted;
+        var assessmentConversation = open?.FindConversation(ConversationType.Assessment);
+        var startingConversation = open?.FindConversation(ConversationType.Starting);
 
         var urgency =
             dueDate < today ? EvaluationUrgency.Overdue
@@ -66,8 +93,12 @@ public static class EvaluationSchedule
             OpenStatus: open?.Status,
             Sheet: open?.Sheet ?? SheetFor(employee),
             urgency,
-            ConversationAt: open?.ConversationAt,
-            ConversationStatus: open?.ConversationStatus,
-            IsSheetConfirmed: open?.SheetConfirmedAt is not null);
+            ConversationAt: assessmentConversation?.At,
+            ConversationStatus: assessmentConversation?.Status,
+            IsSheetConfirmed: open?.SheetConfirmedAt is not null,
+            CycleStart: CycleStart(employee, list),
+            StartingConversationAt: startingConversation?.At,
+            StartingConversationStatus: startingConversation?.Status,
+            IsPartIConfirmed: open?.PartIConfirmedAt is not null);
     }
 }

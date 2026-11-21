@@ -24,6 +24,26 @@ public static class EvaluationText
         _ => status.ToString(),
     };
 
+    public static string ConversationTypeName(ConversationType type) => type switch
+    {
+        ConversationType.Starting => "rozmowa rozpoczynająca",
+        ConversationType.Assessment => "rozmowa oceniająca",
+        _ => type.ToString(),
+    };
+
+    public static string ConversationTypeTitle(ConversationType type)
+    {
+        var name = ConversationTypeName(type);
+        return char.ToUpper(name[0], Polish) + name[1..];
+    }
+
+    public static string ConversationDateTitle(ConversationType type) => type switch
+    {
+        ConversationType.Starting => "Termin rozmowy rozpoczynającej",
+        ConversationType.Assessment => "Termin rozmowy oceniającej",
+        _ => type.ToString(),
+    };
+
     public static string Sheet(EvaluationSheet sheet) => $"Arkusz {sheet}";
 
     public static string SheetDescription(EvaluationSheet sheet) => sheet switch
@@ -62,7 +82,7 @@ public static class EvaluationText
     public static string StageDescription(EvaluationStage stage) => stage switch
     {
         EvaluationStage.JobDescriptionReview => "Przejrzyj opis stanowiska pracownika i zatwierdź arkusz oceny.",
-        EvaluationStage.StartingConversation => "W ciągu 30 dni od początku cyklu przeprowadź z pracownikiem rozmowę rozpoczynającą: ustalcie 5 kryteriów obowiązkowych, do 3 dodatkowych, oczekiwania i cele.",
+        EvaluationStage.StartingConversation => "Przygotuj propozycję kryteriów, odbądź rozmowę rozpoczynającą w ciągu 30 dni od początku cyklu, a po rozmowie zatwierdź część I arkusza.",
         EvaluationStage.Assessment => "Przez cały okres oceny obserwuj realizację kryteriów i zapisuj notatki.",
         EvaluationStage.AssessmentConversation => "Około 2 miesiące przed terminem oceny wyznacz rozmowę oceniającą, najpóźniej w dniu oceny.",
         EvaluationStage.WrittenEvaluation => "Uzupełnij część II arkusza: poziomy kryteriów, uzasadnienie i wnioski do IPRZ.",

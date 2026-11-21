@@ -1,0 +1,226 @@
+<RadzenStack Gap="1.5rem">
+    <RadzenCard Variant="Variant.Outlined">
+        <RadzenStack Gap="1rem">
+            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween"
+                         Gap="1rem" Wrap="FlexWrap.Wrap">
+                <RadzenStack Gap="0.25rem" class="card-heading">
+                    <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H2" class="rz-m-0">Rozmowa rozpoczynająca</RadzenText>
+                    <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300 rz-text-truncate">@ConversationSubtitle</RadzenText>
+                    @if (IsHeld)
+                    {
+                        <RadzenBadge BadgeStyle="BadgeStyle.Success" Variant="Variant.Flat" Shade="Shade.Lighter" IsPill="true"
+                                     Text="@EvaluationText.Conversation(ConversationStatus.Held)" class="align-self-start" />
+                    }
+                </RadzenStack>
+
+                <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="1.5rem" Wrap="FlexWrap.Wrap" class="no-shrink">
+                    @if (!IsHeld)
+                    {
+                        <RadzenStack Gap="0" AlignItems="AlignItems.End">
+                            <RadzenText TextStyle="TextStyle.Body2" class="rz-m-0">Termin: do @EvaluationText.Date(View.StartingConversationDeadline)</RadzenText>
+                            <RadzenText TextStyle="TextStyle.Caption" class="@(IsDeadlineOverdue ? "rz-m-0 rz-color-danger text-small" : "rz-m-0 rz-color-base-500 text-small")">
+                                @EvaluationText.RelativeToToday(View.StartingConversationDeadline, Today)
+                            </RadzenText>
+                        </RadzenStack>
+                    }
+                    @if (!ReadOnly)
+                    {
+                        <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem">
+                            @if (Conversation is null)
+                            {
+                                <RadzenButton Text="Wyznacz termin" Icon="edit_calendar" ButtonStyle="ButtonStyle.Primary" Click="@EditConversationAsync" />
+                            }
+                            else
+                            {
+                                <RadzenButton Text="Zmień termin" Icon="edit_calendar" ButtonStyle="ButtonStyle.Secondary" Click="@EditConversationAsync" />
+                            }
+                            @if (IsConversationPastDue)
+                            {
+                                <RadzenButton Text="Oznacz jako odbytą" Icon="task_alt" ButtonStyle="ButtonStyle.Primary"
+                                              IsBusy="@markingHeld" BusyText="Zapisywanie..." Click="@MarkHeldAsync" />
+                            }
+                        </RadzenStack>
+                    }
+                </RadzenStack>
+            </RadzenStack>
+
+            @if (IsConversationPastDue)
+            {
+                <RadzenAlert AlertStyle="AlertStyle.Warning" Variant="Variant.Flat" Shade="Shade.Lighter" AllowClose="false" class="rz-m-0">
+                    Termin rozmowy minął @EvaluationText.Date(Conversation!.At). Oznacz ją jako odbytą albo wyznacz nowy termin.
+                </RadzenAlert>
+            }
+        </RadzenStack>
+    </RadzenCard>
+
+    <RadzenRow Gap="1.5rem">
+        @if (!ReadOnly)
+        {
+            <RadzenColumn Size="12" SizeMD="6">
+                <StartingConversationTopics JobDescription="@View.JobDescription" />
+            </RadzenColumn>
+        }
+
+        <RadzenColumn Size="12" SizeMD="@(ReadOnly ? 12 : 6)">
+            <RadzenCard Variant="Variant.Outlined" class="rz-h-100">
+                <RadzenStack Gap="1.5rem">
+                    <RadzenStack Gap="0">
+                        <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H2" class="rz-m-0">Część I arkusza</RadzenText>
+                        <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">@PartISubtitle</RadzenText>
+                    </RadzenStack>
+
+                    @if (IsReadyToConfirm && !ReadOnly)
+                    {
+                        <RadzenAlert AlertStyle="AlertStyle.Info" Variant="Variant.Flat" Shade="Shade.Lighter" AllowClose="false" class="rz-m-0">
+                            Rozmowa odbyła się @EvaluationText.Date(ConversationDay). Sprawdź kryteria, oczekiwania i cele i popraw je zgodnie z ustaleniami.
+                        </RadzenAlert>
+                    }
+
+                    <RadzenStack Gap="0.25rem">
+                        <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">Kryteria obowiązkowe (arkusz @Sheet)</RadzenText>
+                        <ul class="rz-m-0">
+                            @foreach (var criterion in View.MandatoryCriteria)
+                            {
+                                <li><RadzenText TextStyle="TextStyle.Body2" class="rz-m-0">@EvaluationCriteria.Name(criterion)</RadzenText></li>
+                            }
+                        </ul>
+                    </RadzenStack>
+
+                    @if (ReadOnly)
+                    {
+                        <RadzenStack Gap="0.25rem">
+                            <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">Kryteria dodatkowe</RadzenText>
+                            @if (View.AdditionalCriteria.Count == 0)
+                            {
+                                <RadzenText TextStyle="TextStyle.Body2" class="rz-m-0">Brak kryteriów dodatkowych</RadzenText>
+                            }
+                            else
+                            {
+                                <ul class="rz-m-0">
+                                    @foreach (var criterion in View.AdditionalCriteria)
+                                    {
+                                        <li><RadzenText TextStyle="TextStyle.Body2" class="rz-m-0">@EvaluationCriteria.Name(criterion)</RadzenText></li>
+                                    }
+                                </ul>
+                            }
+                        </RadzenStack>
+
+                        <RadzenStack Gap="0.25rem">
+                            <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">Oczekiwania</RadzenText>
+                            <RadzenText TextStyle="TextStyle.Body2" class="rz-m-0 pre-line">@View.Expectations</RadzenText>
+                        </RadzenStack>
+
+                        @if (!string.IsNullOrWhiteSpace(View.Goals))
+                        {
+                            <RadzenStack Gap="0.25rem">
+                                <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">Cele</RadzenText>
+                                <RadzenText TextStyle="TextStyle.Body2" class="rz-m-0 pre-line">@View.Goals</RadzenText>
+                            </RadzenStack>
+                        }
+
+                        <DetailItem Label="Arkusz" Value="@EvaluationText.Sheet(Sheet)" />
+                        <DetailItem Label="Termin oceny" Value="@EvaluationText.Date(View.Task.DueDate)" />
+                        @if (View.EmployeeAcquaintedOn is DateOnly employeeAcquaintedOn)
+                        {
+                            <DetailItem Label="Zapoznanie pracownika" Value="@EvaluationText.Date(employeeAcquaintedOn)" />
+                        }
+                        @if (View.OpenEvaluation is not null)
+                        {
+                            <DetailItem Label="Okres oceny od" Value="@EvaluationText.Date(View.OpenEvaluation.PeriodStart)" />
+                        }
+                    }
+                    else
+                    {
+                        <RadzenStack Gap="0.5rem">
+                            <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">Kryteria dodatkowe (do @EvaluationCriteria.MaxAdditional)</RadzenText>
+                            <RadzenCheckBoxList TValue="Criterion" @bind-Value="additionalCriteria" Orientation="Orientation.Vertical" Gap="0.75rem">
+                                <Items>
+                                    @foreach (var criterion in EvaluationCriteria.AvailableAdditional(Sheet))
+                                    {
+                                        <RadzenCheckBoxListItem TValue="Criterion" Value="@criterion" Text="@EvaluationCriteria.Name(criterion)"
+                                                                Disabled="@IsOptionDisabled(criterion)">
+                                            <Template Context="item">
+                                                <RadzenStack Gap="0">
+                                                    <RadzenText TextStyle="TextStyle.Body1" class="rz-m-0">@EvaluationCriteria.Name(criterion)</RadzenText>
+                                                    @if (CriteriaSuggestion.CompetencyFor(View.SuggestedCriteria, criterion) is string competency)
+                                                    {
+                                                        <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">podpowiedź z OSP: @competency</RadzenText>
+                                                    }
+                                                </RadzenStack>
+                                            </Template>
+                                        </RadzenCheckBoxListItem>
+                                    }
+                                </Items>
+                            </RadzenCheckBoxList>
+                            <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">
+                                Możesz wybrać najwyżej @EvaluationCriteria.MaxAdditional kryteria dodatkowe. Nie musisz wybierać żadnego.
+                            </RadzenText>
+                        </RadzenStack>
+
+                        <RadzenFormField Text="Oczekiwania" Variant="Variant.Outlined">
+                            <ChildContent>
+                                <RadzenTextArea @bind-Value="expectations" Rows="5" MaxLength="@EvaluationService.MaxPartITextLength" />
+                            </ChildContent>
+                            <Helper>
+                                <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">
+                                    Jak pracownik ma spełniać kryteria. Odwołasz się do tego na rozmowie oceniającej.
+                                </RadzenText>
+                            </Helper>
+                        </RadzenFormField>
+
+                        <RadzenFormField Text="Cele (opcjonalnie)" Variant="Variant.Outlined">
+                            <ChildContent>
+                                <RadzenTextArea @bind-Value="goals" Rows="4" MaxLength="@EvaluationService.MaxPartITextLength" />
+                            </ChildContent>
+                            <Helper>
+                                <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">
+                                    Wpisz, jeśli charakter stanowiska to uzasadnia, razem ze sposobem realizacji.
+                                </RadzenText>
+                            </Helper>
+                        </RadzenFormField>
+
+                        @if (IsReadyToConfirm)
+                        {
+                            <RadzenFormField Text="Data zapoznania pracownika z częścią I" Variant="Variant.Outlined">
+                                <ChildContent>
+                                    <RadzenDatePicker TValue="DateOnly?" @bind-Value="acquaintedOn" DateFormat="dd.MM.yyyy"
+                                                      Min="@ConversationDay.ToDateTime(TimeOnly.MinValue)" Max="@Today.ToDateTime(TimeOnly.MinValue)" />
+                                </ChildContent>
+                                <Helper>
+                                    <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">
+                                        Data podpisu pracownika na części I. Od tego dnia liczy się okres oceny.
+                                    </RadzenText>
+                                </Helper>
+                            </RadzenFormField>
+                        }
+
+                        <DetailItem Label="Termin oceny" Value="@EvaluationText.Date(View.Task.DueDate)" />
+
+                        @if (errorMessage is not null)
+                        {
+                            <RadzenAlert AlertStyle="AlertStyle.Danger" Variant="Variant.Flat" Shade="Shade.Lighter" AllowClose="false" class="rz-m-0">
+                                @errorMessage
+                            </RadzenAlert>
+                        }
+
+                        <RadzenStack Gap="0.5rem" AlignItems="AlignItems.End">
+                            <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End" Gap="0.5rem" Wrap="FlexWrap.Wrap">
+                                <RadzenButton Text="Zapisz propozycję" Icon="save" ButtonStyle="ButtonStyle.Secondary"
+                                              IsBusy="@saving" BusyText="Zapisywanie..." Disabled="@confirming" Click="@SaveDraftAsync" />
+                                @if (IsReadyToConfirm)
+                                {
+                                    <RadzenButton Text="Zatwierdź część I" Icon="task_alt" ButtonStyle="ButtonStyle.Primary"
+                                                  IsBusy="@confirming" BusyText="Zatwierdzanie..." Disabled="@saving" Click="@ConfirmPartIAsync" />
+                                }
+                            </RadzenStack>
+                            @if (!IsReadyToConfirm)
+                            {
+                                <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">Część I zatwierdzisz po rozmowie rozpoczynającej.</RadzenText>
+                            }
+                        </RadzenStack>
+                    }
+                </RadzenStack>
+            </RadzenCard>
+        </RadzenColumn>
+    </RadzenRow>
+</RadzenStack>
