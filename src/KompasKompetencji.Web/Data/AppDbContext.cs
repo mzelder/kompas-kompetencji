@@ -48,7 +48,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
                 new Employee { Id = 9, FirstName = "Michał", LastName = "Szymański", Position = "Referent", Department = "Wydział Analiz Danych", EmployedSince = new DateOnly(2018, 1, 10) },
                 new Employee { Id = 10, FirstName = "Agnieszka", LastName = "Woźniak", Position = "Starszy specjalista", Department = "Wydział Analiz Danych", EmployedSince = new DateOnly(2020, 6, 1) },
                 new Employee { Id = 11, FirstName = "Paweł", LastName = "Kozłowski", Position = "Specjalista", Department = "Wydział Analiz Danych", EmployedSince = new DateOnly(2026, 7, 1) },
-                new Employee { Id = 12, FirstName = "Karolina", LastName = "Mazur", Position = "Specjalista", Department = "Wydział Analiz Danych", EmployedSince = new DateOnly(2021, 12, 20) });
+                new Employee { Id = 12, FirstName = "Karolina", LastName = "Mazur", Position = "Specjalista", Department = "Wydział Analiz Danych", EmployedSince = new DateOnly(2021, 12, 20) },
+                new Employee { Id = 13, FirstName = "Łukasz", LastName = "Grabowski", Position = "Specjalista", Department = "Wydział Analiz Danych", EmployedSince = new DateOnly(2020, 12, 10) });
         });
 
         modelBuilder.Entity<EmployeeSupervisor>(l =>
@@ -77,7 +78,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
                 new EmployeeSupervisor { EmployeeId = 9, SupervisorId = 3 },
                 new EmployeeSupervisor { EmployeeId = 10, SupervisorId = 3 },
                 new EmployeeSupervisor { EmployeeId = 11, SupervisorId = 3 },
-                new EmployeeSupervisor { EmployeeId = 12, SupervisorId = 3 });
+                new EmployeeSupervisor { EmployeeId = 12, SupervisorId = 3 },
+                new EmployeeSupervisor { EmployeeId = 13, SupervisorId = 3 });
         });
 
         modelBuilder.Entity<Evaluation>(v =>
@@ -108,7 +110,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
                 {
                     Id = 2, EmployeeId = 1, EvaluatorId = 3, Sheet = EvaluationSheet.C, Status = EvaluationStatus.InProgress,
                     PeriodStart = new DateOnly(2025, 12, 15), PeriodEnd = new DateOnly(2026, 12, 14), DueDate = new DateOnly(2026, 12, 15),
-                    ConversationAt = new DateTime(2026, 11, 27, 10, 0, 0), ConversationStatus = ConversationStatus.AcceptedByEmployee,
+                    ConversationAt = new DateTime(2026, 11, 27, 10, 0, 0), ConversationStatus = ConversationStatus.Scheduled,
                     StartedAt = new DateTime(2026, 11, 12, 10, 30, 0),
                 },
                 new Evaluation
@@ -145,6 +147,12 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
                     PeriodStart = new DateOnly(2024, 12, 20), PeriodEnd = new DateOnly(2025, 12, 19), DueDate = new DateOnly(2025, 12, 20),
                     ConversationAt = new DateTime(2025, 12, 17, 12, 0, 0), ConversationStatus = ConversationStatus.Held,
                     StartedAt = new DateTime(2025, 11, 24, 9, 0, 0), CompletedAt = new DateTime(2025, 12, 18, 10, 0, 0),
+                },
+                new Evaluation
+                {
+                    Id = 8, EmployeeId = 13, EvaluatorId = 3, Sheet = EvaluationSheet.C, Status = EvaluationStatus.NotStarted,
+                    PeriodStart = new DateOnly(2025, 12, 10), PeriodEnd = new DateOnly(2026, 12, 9), DueDate = new DateOnly(2026, 12, 10),
+                    ConversationAt = new DateTime(2026, 11, 14, 10, 0, 0), ConversationStatus = ConversationStatus.Scheduled,
                 });
         });
     }

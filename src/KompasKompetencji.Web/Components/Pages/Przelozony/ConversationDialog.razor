@@ -7,7 +7,13 @@
         <DetailItem Label="Termin oceny" Value="@($"{EvaluationText.Date(Task.DueDate)} ({EvaluationText.RelativeToToday(Task.DueDate, Today)})")" />
     </RadzenStack>
 
-    @if (overdue)
+    @if (ConversationRules.IsPastDue(Task.ConversationAt, Task.ConversationStatus, DateTime.Now))
+    {
+        <RadzenAlert AlertStyle="AlertStyle.Warning" Variant="Variant.Flat" Shade="Shade.Lighter" AllowClose="false" class="rz-m-0">
+            Termin rozmowy minął @EvaluationText.Date(Task.ConversationAt!.Value). Oznacz ją jako odbytą albo wyznacz nowy termin.
+        </RadzenAlert>
+    }
+    else if (overdue)
     {
         <RadzenAlert AlertStyle="AlertStyle.Warning" Variant="Variant.Flat" Shade="Shade.Lighter" AllowClose="false" class="rz-m-0">
             Termin oceny minął @EvaluationText.Date(Task.DueDate). Wyznacz rozmowę jak najszybciej.
@@ -18,11 +24,11 @@
         <ChildContent>
             <RadzenDatePicker TValue="DateTime" Name="ConversationAt" Value="@conversationAt" ValueChanged="@OnDateChanged"
                               ShowTime="true" HourFormat="24" MinutesStep="15" DateFormat="dd.MM.yyyy HH:mm"
-                              Min="@DateTime.Today" Max="@latestAllowed" />
+                              Max="@latestAllowed" />
         </ChildContent>
         <Helper>
             <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">
-                @(overdue ? "Wybierz najbliższy możliwy termin." : $"Najpóźniej w dniu oceny: {EvaluationText.Date(Task.DueDate)}.")
+                @(overdue ? "Wybierz najbliższy możliwy termin albo datę rozmowy, która już się odbyła." : $"Najpóźniej w dniu oceny: {EvaluationText.Date(Task.DueDate)}.")
             </RadzenText>
         </Helper>
     </RadzenFormField>
@@ -32,20 +38,16 @@
         <RadzenRadioButtonList TValue="ConversationStatus" @bind-Value="status" Orientation="Orientation.Vertical" Gap="0.5rem">
             <Items>
                 <RadzenRadioButtonListItem TValue="ConversationStatus" Value="ConversationStatus.Scheduled"
-                                           Text="@EvaluationText.Conversation(ConversationStatus.Scheduled)" />
-                <RadzenRadioButtonListItem TValue="ConversationStatus" Value="ConversationStatus.AcceptedByEmployee"
-                                           Text="@EvaluationText.Conversation(ConversationStatus.AcceptedByEmployee)" Disabled="@dateChanged" />
+                                           Text="@EvaluationText.Conversation(ConversationStatus.Scheduled)"
+                                           Disabled="@(!ConversationRules.CanBeScheduled(conversationAt, Task.ConversationAt, DateTime.Now))" />
                 <RadzenRadioButtonListItem TValue="ConversationStatus" Value="ConversationStatus.Held"
-                                           Text="@EvaluationText.Conversation(ConversationStatus.Held)" Disabled="@(dateChanged || conversationAt > DateTime.Now)" />
+                                           Text="@EvaluationText.Conversation(ConversationStatus.Held)"
+                                           Disabled="@(!ConversationRules.CanBeHeld(conversationAt, DateTime.Now))" />
             </Items>
         </RadzenRadioButtonList>
-        @if (dateChanged)
+        @if (StatusHint is not null)
         {
-            <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">
-                @(Task.ConversationAt is null
-                    ? "Nowa rozmowa ma status „Zaplanowana”, dopóki pracownik nie zaakceptuje terminu."
-                    : "Po zmianie terminu pracownik musi go ponownie zaakceptować, dlatego status wraca do „Zaplanowana”.")
-            </RadzenText>
+            <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">@StatusHint</RadzenText>
         }
     </RadzenStack>
 
@@ -80,6 +82,11 @@
 
     private bool dateChanged => Task.ConversationAt != conversationAt;
 
+    private string? StatusHint =>
+        !ConversationRules.CanBeHeld(conversationAt, DateTime.Now) ? "Rozmowę można oznaczyć jako odbytą po jej terminie."
+        : !ConversationRules.CanBeScheduled(conversationAt, Task.ConversationAt, DateTime.Now) ? "Termin w przeszłości: rozmowa zostanie zapisana jako odbyta."
+        : null;
+
     protected override void OnInitialized()
     {
         var now = DateTime.Now;
@@ -93,7 +100,9 @@
     {
         conversationAt = value;
         errorMessage = null;
-        status = dateChanged ? ConversationStatus.Scheduled : Task.ConversationStatus ?? ConversationStatus.Scheduled;
+        status = dateChanged
+            ? ConversationRules.StatusForNewDate(value, DateTime.Now)
+            : Task.ConversationStatus ?? ConversationStatus.Scheduled;
     }
 
     private async Task SaveAsync()

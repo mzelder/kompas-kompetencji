@@ -19,24 +19,30 @@ public static class ConversationRules
         return suggestion < now ? now.Date.AddDays(1).AddHours(10) : suggestion;
     }
 
-    public static ConversationStatus ResolveStatus(DateTime newAt, DateTime? currentAt, ConversationStatus requested) =>
-        currentAt == newAt ? requested : ConversationStatus.Scheduled;
+    public static bool IsPastDue(DateTime? conversationAt, ConversationStatus? status, DateTime now) =>
+        conversationAt is DateTime at && at < now && status != ConversationStatus.Held;
+
+    public static ConversationStatus StatusForNewDate(DateTime newAt, DateTime now) =>
+        newAt < now ? ConversationStatus.Held : ConversationStatus.Scheduled;
+
+    public static bool CanBeScheduled(DateTime conversationAt, DateTime? currentAt, DateTime now) =>
+        conversationAt >= now || conversationAt == currentAt;
+
+    public static bool CanBeHeld(DateTime conversationAt, DateTime now) => conversationAt <= now;
 
     public static string? Validate(DateTime newAt, DateTime? currentAt, ConversationStatus status, DateOnly dueDate, DateTime now)
     {
-        var dateChanged = currentAt != newAt;
-
-        if (dateChanged && newAt < now)
-        {
-            return "Termin rozmowy nie może być w przeszłości.";
-        }
         if (!IsOverdue(dueDate, now) && DateOnly.FromDateTime(newAt) > dueDate)
         {
             return $"Rozmowa musi się odbyć najpóźniej w dniu oceny ({EvaluationText.Date(dueDate)}).";
         }
-        if (status == ConversationStatus.Held && newAt > now)
+        if (status == ConversationStatus.Held && !CanBeHeld(newAt, now))
         {
             return "Rozmowę można oznaczyć jako odbytą dopiero po jej terminie.";
+        }
+        if (status == ConversationStatus.Scheduled && !CanBeScheduled(newAt, currentAt, now))
+        {
+            return "Termin w przeszłości: oznacz rozmowę jako odbytą albo wybierz przyszły termin.";
         }
         return null;
     }

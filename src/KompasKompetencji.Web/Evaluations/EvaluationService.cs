@@ -9,20 +9,29 @@ public sealed record EvaluationConversation(Employee Employee, DateTime Start, D
     public string Title => $"{Employee.FullName} · rozmowa okresowa";
 }
 
-public sealed record SupervisorOverview(IReadOnlyList<EvaluationTask> Tasks, IReadOnlyList<EvaluationConversation> Conversations)
+public sealed record SupervisorOverview(IReadOnlyList<EvaluationTask> Tasks, IReadOnlyList<EvaluationConversation> Conversations, DateTime Now)
 {
+    public bool IsConversationPastDue(EvaluationTask task) =>
+        ConversationRules.IsPastDue(task.ConversationAt, task.ConversationStatus, Now);
+
     public IReadOnlyList<EvaluationTask> WithUrgency(params EvaluationUrgency[] urgencies) =>
         Tasks.Where(t => urgencies.Contains(t.Urgency)).ToList();
 
     public EvaluationTask? TaskFor(int employeeId) => Tasks.FirstOrDefault(t => t.Employee.Id == employeeId);
+
+    public IReadOnlyList<EvaluationTask> ToDo => Tasks
+        .Where(t => IsConversationPastDue(t) || t.NeedsConversation)
+        .OrderByDescending(IsConversationPastDue)
+        .ToList();
 }
 
 public sealed class EvaluationService(IDbContextFactory<AppDbContext> dbFactory)
 {
     public static readonly TimeSpan ConversationLength = TimeSpan.FromHours(1);
 
-    public async Task<SupervisorOverview> GetSupervisorOverviewAsync(int supervisorId, DateOnly today, CancellationToken ct = default)
+    public async Task<SupervisorOverview> GetSupervisorOverviewAsync(int supervisorId, DateTime now, CancellationToken ct = default)
     {
+        var today = DateOnly.FromDateTime(now);
         await using var db = await dbFactory.CreateDbContextAsync(ct);
 
         var subordinates = await db.EmployeeSupervisors.AsNoTracking()
@@ -56,7 +65,7 @@ public sealed class EvaluationService(IDbContextFactory<AppDbContext> dbFactory)
             .OrderBy(c => c.Start)
             .ToList();
 
-        return new SupervisorOverview(tasks, conversations);
+        return new SupervisorOverview(tasks, conversations, now);
     }
 
     public async Task<OperationResult> SaveConversationAsync(
@@ -81,8 +90,7 @@ public sealed class EvaluationService(IDbContextFactory<AppDbContext> dbFactory)
         }
 
         var open = EvaluationSchedule.OpenEvaluation(evaluations);
-        var status = ConversationRules.ResolveStatus(conversationAt, open?.ConversationAt, requestedStatus);
-        var error = ConversationRules.Validate(conversationAt, open?.ConversationAt, status, task.DueDate, now);
+        var error = ConversationRules.Validate(conversationAt, open?.ConversationAt, requestedStatus, task.DueDate, now);
         if (error is not null)
         {
             return OperationResult.Fail(error);
@@ -104,7 +112,7 @@ public sealed class EvaluationService(IDbContextFactory<AppDbContext> dbFactory)
         }
 
         open.ConversationAt = conversationAt;
-        open.ConversationStatus = status;
+        open.ConversationStatus = requestedStatus;
         await db.SaveChangesAsync(ct);
         return OperationResult.Success;
     }

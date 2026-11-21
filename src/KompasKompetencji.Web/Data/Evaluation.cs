@@ -18,7 +18,6 @@ public enum EvaluationSheet
 public enum ConversationStatus
 {
     Scheduled,
-    AcceptedByEmployee,
     Held,
 }
 

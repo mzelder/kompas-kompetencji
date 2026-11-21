@@ -5,6 +5,7 @@ Prototyp aplikacji wspierającej przełożonego w ocenie pracownika służby cyw
 **To projekt czysto demonstracyjny i nigdy nie zostanie wdrożony.** Ewentualne wdrożenie to osobna wersja budowana od zera w innych technologiach. Wynika z tego:
 - Nie kieruj się wymaganiami produkcyjnymi (utwardzanie bezpieczeństwa, skalowanie, konfiguracja wdrożenia, kompatybilność wstecz). Wystarczy, że działa poprawnie na demo.
 - Nie dodawaj w UI informacji o prototypie, ograniczeniach czy przyszłym wdrożeniu.
+- **Nie przejmuj się zachowaniem istniejących danych w bazie.** Baza może być w każdej chwili usunięta i utworzona od nowa z migracji i danych demo (`HasData`, konta testowe). Przy zmianach modelu nie pisz migracji przenoszących ani uzupełniających dane (np. `migrationBuilder.Sql` z `UPDATE`); wystarczy migracja schematu i aktualne dane demo. W Development baza i tak jest usuwana i tworzona od nowa przy każdym starcie aplikacji.
 
 - Treść zadania i wymagania: `podsumowanie_rozwiazania.md`, `tresci_zadania/Pełna treść zadania konkursowego.pdf`
 - Zakres MVP i kolejność prac: `mvp.md` (stack z sekcji 7 jest nieaktualny, obowiązuje ten poniżej)
@@ -24,7 +25,7 @@ Ten proces jest nadrzędny przy budowie kolejnych funkcji. Gdy obecny kod się z
 1. **HR wpisuje termin oceny ręcznie.** Po zatrudnieniu pracownika HR wprowadza datę, kiedy ma się odbyć ocena okresowa. Termin nie jest wyliczany automatycznie; cykl roczny (pierwsza po roku pracy, potem co rok) może jedynie podpowiadać datę w formularzu HR.
 2. **Na miesiąc lub dwa przed terminem przełożony dowiaduje się, że ma przeprowadzić rozmowę.** HR kontaktuje się z przełożonym bezpośrednio, poza aplikacją; w aplikacji **nie ma przycisku ani akcji HR „przekaż przełożonemu”**. Pracownik pojawia się na **pulpicie przełożonego** sam, gdy do terminu oceny zostaje mniej niż ok. 2 miesiące, z jasną informacją, z kim przełożony ma odbyć rozmowę i że powinien wyznaczyć jej termin.
 3. **Przełożony wyznacza termin rozmowy.** Termin oceny zna z kalendarza i dopasowuje do niego rozmowę: **rozmowa odbywa się najpóźniej w dniu oceny** (walidacja: data rozmowy ≤ termin oceny). Przełożony może później **zmienić termin rozmowy** (z tą samą walidacją).
-4. **Rozmowa ma status wybierany przez przełożonego**, dokładnie trzy statusy w tej kolejności: **Zaplanowana** (przełożony wyznaczył termin) → **Zaakceptowana przez pracownika** → **Odbyta**. Zmiana terminu rozmowy wraca status do „Zaplanowana”.
+4. **Rozmowa ma status wybierany przez przełożonego**, dokładnie dwa statusy: **Zaplanowana** (przełożony wyznaczył termin; obejmuje też termin uzgodniony z pracownikiem, osobnego statusu akceptacji nie ma) → **Odbyta**. Zmiana terminu rozmowy wraca status do „Zaplanowana”. **„Termin minął” nie jest statusem**, tylko dodatkową informacją wyliczaną automatycznie, gdy data rozmowy minęła, a rozmowa nie jest oznaczona jako odbyta (podpowiada: oznacz jako odbytą albo zmień termin). Zasada nadrzędna: aplikacja ma być jak najprostsza w użyciu, więc nie dokładamy statusów, które aplikacja może wyliczyć sama.
 5. **Ocenę sporządza przełożony z pomocą asystenta AI.** AI tylko wspiera, decyzja o poziomie zawsze należy do przełożonego (zob. Konwencje).
 6. **Po ocenie informacja trafia do HR**: że rozmowa się odbyła i ocena została sporządzona.
 7. **Bez powiadomień.** Ani HR, ani przełożony nie dostają powiadomień, maili ani przypomnień w aplikacji. Cała komunikacja odbywa się przez **kalendarze**: HR i przełożeni widzą w swoich kalendarzach terminy ocen, terminy rozmów i ich statusy oraz informację o sporządzonej ocenie.
@@ -32,7 +33,7 @@ Ten proces jest nadrzędny przy budowie kolejnych funkcji. Gdy obecny kod się z
 Wynikające z tego zasady dla aplikacji:
 - Dwa różne terminy: **termin oceny** (ustala HR) i **termin rozmowy** (ustala przełożony, nie później niż termin oceny). W UI zawsze rozróżniamy je nazwą.
 - Kalendarz jest głównym miejscem informacji: przełożony widzi terminy ocen swoich podwładnych i swoje rozmowy, HR widzi terminy ocen, rozmowy i sporządzone oceny wszystkich pracowników.
-- Pulpit przełożonego wyróżnia pracowników, którym zbliża się termin oceny, a nie mają jeszcze wyznaczonej rozmowy (to jest „do zrobienia” numer jeden).
+- Lista „Do zrobienia” na pulpicie przełożonego (`SupervisorOverview.ToDo`) pokazuje: **najpierw rozmowy z minionym terminem, nieoznaczone jako odbyte** (przyciski „Oznacz jako odbytą” jednym kliknięciem i „Zmień termin”), **potem osoby z terminem oceny w ciągu 2 miesięcy (albo już po terminie) bez wyznaczonej rozmowy** (przycisk „Wyznacz termin”). Dalsze terminy ocen i rozmowy zaplanowane na przyszłość albo odbyte nie trafiają na listę; są w kalendarzu (tam też „termin minął” jako pomarańczowa ramka, a kliknięcie otwiera edycję).
 
 Różnice względem obecnej implementacji (do dostosowania przy kolejnych zmianach):
 - Termin oceny jest dziś liczony automatycznie z `EmployedSince` w `EvaluationSchedule`; ma być wpisywany przez HR (np. pole na ocenie lub osobny rekord tworzony przez HR), a wyliczenie roczne zostaje tylko jako podpowiedź.
@@ -58,7 +59,7 @@ dotnet tool restore                                                       # raz,
 dotnet ef migrations add <Nazwa> --project src/KompasKompetencji.Web --output-dir Data/Migrations
 ```
 
-W Development migracje i konta testowe tworzą się same przy starcie (`Program.cs`).
+W Development **przy każdym uruchomieniu baza jest usuwana i tworzona od nowa** (`EnsureDeleted` + `Migrate` w `Program.cs`), razem z danymi demo i kontami testowymi. Wszystko, co zostało zmienione w aplikacji, znika po restarcie.
 
 ## Konwencje
 
@@ -90,7 +91,6 @@ W Development migracje i konta testowe tworzą się same przy starcie (`Program.
   - `EmployeeSupervisor`: powiązanie wiele-do-wielu pracownik → przełożony (klucz złożony, check constraint „nie można być swoim przełożonym”). Pracownik może mieć kilku przełożonych.
   - `AppUser.EmployeeId` (opcjonalne, unikalne): konto w systemie powiązane z osobą. Konto testowe `przelozony` jest powiązane z Ewą Wiśniewską.
 - Logika struktury: `Organization/OrganizationService.cs` (odczyt i zmiany) i `Organization/OrganizationChart.cs` (migawka w pamięci: przełożeni i podwładni danej osoby, lista przełożonych możliwych do przypisania bez tworzenia cyklu).
-- Dane demo (8 osób, 8 powiązań) są w `HasData` w `AppDbContext`.
 
 ### Asystent AI
 - Czat: `Components/Assistant/AssistantChat.razor` (`RadzenAIChat`, prompt systemowy, szablon źródeł z numerem fragmentu). Montowany w `MainLayout` dla zalogowanych. Polskie teksty Radzena: `Assistant/PolishRadzenLocalizer.cs`.
@@ -100,10 +100,10 @@ W Development migracje i konta testowe tworzą się same przy starcie (`Program.
 - Wyszukiwarka: `Assistant/KnowledgeBase/` (BM25, normalizacja `Text/TextNormalizer.cs`, słowa pomijalne, obcinanie słów do 7 znaków, synonimy). Baza wiedzy: `knowledge-base/` (źródła, skrypt Python, `knowledge-base.json` kopiowany do `bin/Assistant/`).
 - Nowe pytanie, na które asystent źle trafia: dopisz je do `tests/KompasKompetencji.Tests/retrieval-questions.json` i popraw synonimy albo bazę, aż test przejdzie.
 - Oceny:
-  - `Evaluation`: ocena okresowa pracownika (oceniający, arkusz B/C, okres, termin oceny `DueDate`, status oceny: `NotStarted` → `CriteriaSet` → `InProgress` → `ReadyForConversation` → `Completed`) oraz rozmowa: `ConversationAt` i `ConversationStatus` (`Scheduled` → `AcceptedByEmployee` → `Held`). Rekord powstaje najpóźniej przy wyznaczeniu rozmowy (wtedy ze statusem `NotStarted`); bez rekordu ocena jest „nierozpoczęta”, a termin wynika z harmonogramu.
-  - Wyznaczanie i zmiana rozmowy: `EvaluationService.SaveConversationAsync` (sprawdza, że pracownik jest w zespole przełożonego, i zakłada ocenę `NotStarted`, jeśli jej nie ma). Zasady w `Evaluations/ConversationRules.cs`: rozmowa najpóźniej w dniu oceny (po terminie oceny: jak najszybciej, bez górnej granicy), nowa lub zmieniona data nie w przeszłości, „Odbyta” dopiero po terminie rozmowy, zmiana daty cofa status do „Zaplanowana”. Rozmowę można wyznaczyć tylko dla oceny w oknie 2 miesięcy, w toku lub po terminie (`EvaluationTask.CanScheduleConversation`).
+  - `Evaluation`: ocena okresowa pracownika (oceniający, arkusz B/C, okres, termin oceny `DueDate`, status oceny: `NotStarted` → `CriteriaSet` → `InProgress` → `ReadyForConversation` → `Completed`) oraz rozmowa: `ConversationAt` i `ConversationStatus` (`Scheduled` → `Held`). „Termin minął” wylicza `ConversationRules.IsPastDue`. Rekord powstaje najpóźniej przy wyznaczeniu rozmowy (wtedy ze statusem `NotStarted`); bez rekordu ocena jest „nierozpoczęta”, a termin wynika z harmonogramu.
+  - Wyznaczanie i zmiana rozmowy: `EvaluationService.SaveConversationAsync` (sprawdza, że pracownik jest w zespole przełożonego, i zakłada ocenę `NotStarted`, jeśli jej nie ma). Zasady w `Evaluations/ConversationRules.cs`: rozmowa najpóźniej w dniu oceny (po terminie oceny: jak najszybciej, bez górnej granicy), status wynika z daty: data przyszła = tylko „Zaplanowana”, data z przeszłości = „Odbyta” (można od razu zapisać rozmowę, która już się odbyła; przy zmianie daty okno samo ustawia odpowiedni status), niezmieniona data z minionym terminem = do wyboru „Zaplanowana” albo „Odbyta”. Rozmowę można wyznaczyć tylko dla oceny w oknie 2 miesięcy, w toku lub po terminie (`EvaluationTask.CanScheduleConversation`).
   - Przypomnień i powiadomień w aplikacji nie ma i nie dodajemy ich (zob. „Proces oceny okresowej”). Informacje przekazują kalendarze.
   - Terminy liczy obecnie `Evaluations/EvaluationSchedule.cs` według cyklu rocznego (do zmiany: termin ma wpisywać HR, zob. proces): pierwsza ocena rok po `EmployedSince`, kolejna rok po terminie ostatniej zakończonej. Tam też podział na: po terminie, w toku, do rozpoczęcia (w ciągu 60 dni), zaplanowane. Arkusz domyślny: B dla przełożonych, C dla pozostałych.
   - Dane pulpitu (zadania i rozmowy do kalendarza): `Evaluations/EvaluationService.cs`. Teksty statusów i daty po polsku: `Evaluations/EvaluationText.cs`.
-- Dane demo (12 osób, 12 powiązań, 7 ocen) są w `HasData` w `AppDbContext`. Podwładni Ewy Wiśniewskiej (konto `przelozony`) pokrywają wszystkie przypadki pulpitu: po terminie, w toku, do rozpoczęcia, zaplanowana, pierwsza ocena. Zaplanowane rozmowy: Anna 27.11.2026, Michał 18.12.2026; zakończone oceny mają rozmowy w historii kalendarza.
+- Dane demo (13 osób, 13 powiązań, 8 ocen) są w `HasData` w `AppDbContext`. Podwładni Ewy Wiśniewskiej (konto `przelozony`) pokrywają przypadki pulpitu: Łukasz Grabowski ma rozmowę z minionym terminem (14.11.2026, nieoznaczona jako odbyta), Jan Nowak ocenę po terminie bez rozmowy, Karolina Mazur termin oceny za mniej niż 2 miesiące bez rozmowy, Anna (27.11.2026) i Michał (18.12.2026) zaplanowane rozmowy, Agnieszka i Paweł dalsze terminy (Paweł: pierwsza ocena). Zakończone oceny mają rozmowy w historii kalendarza. Daty demo są ustawione pod 21.11.2026.
 - Kultura aplikacji to `pl-PL` (`UseRequestLocalization` w `Program.cs`), więc komponenty Radzen (kalendarz, wybór daty) mają polskie nazwy miesięcy i tydzień od poniedziałku.
