@@ -9,8 +9,10 @@
 
 ## Motyw: Radzen Standard Dark
 
-- **Cała aplikacja, łącznie z ekranem logowania, używa wyłącznie motywu Radzen `standard-dark`** (`<RadzenTheme Theme="standard-dark" />` w `App.razor`). Podgląd motywu i komponentów: https://blazor.radzen.com (przełącznik motywu „Standard Dark”).
+- **Cała aplikacja, łącznie z ekranem logowania, używa wyłącznie motywu Radzen `standard-dark`** (`<RadzenTheme Theme="@AppTheme.Name" />` w `App.razor`, nazwa motywu w `Components/AppTheme.cs`). Podgląd motywu i komponentów: https://blazor.radzen.com (przełącznik motywu „Standard Dark”).
 - Wygląd bierzemy z motywu bez zmian: jego font, kolory, zaokrąglenia, cienie i rozmiary. Nie nadpisujemy zmiennych `--rz-*` ani stylów komponentów Radzen, nie dodajemy własnych fontów ani palet.
+- Jedyny wyjątek: motyw ma dekoracyjną grafikę tła (kolorowe rozmyte plamy po prawej). Wyłącza ją reguła `html body { background-image: none; }` w `app.css`. Tło to jednolity kolor motywu.
+- `RadzenTheme` jest renderowany **statycznie, bez `@rendermode`**. Gdyby był interaktywny, Blazor po połączeniu obwodu podmieniałby `<link>` do CSS motywu i przy każdym F5 lub przejściu z logowania strona na chwilę traciłaby style (białe tło). Motyw w `ThemeService` dla komponentów interaktywnych ustawia `Routes.razor`. `<meta name="color-scheme" content="dark">` w `App.razor` sprawia, że przed załadowaniem CSS przeglądarka maluje ciemne tło.
 - Kolory tylko przez parametry, zmienne i klasy Radzen: `Colors.Primary`, `Colors.Warning`, `ButtonStyle`, `BadgeStyle`, `AlertStyle`, `var(--rz-body-background-color)`, `var(--rz-primary)` itd. Bez kolorów wpisanych na sztywno.
 - W motywie ciemnym skala `base-*` jest odwrócona: `base-50`…`base-400` to kolory **jasne**, `base-500`…`base-900` to **ciemne**. Dlatego:
   - tekst pomocniczy (podpisy, opisy): klasa `rz-color-base-300`,
@@ -35,7 +37,7 @@
 | Przyciski | `RadzenButton`: główna akcja `ButtonStyle.Primary`, poboczna `ButtonStyle.Secondary` lub `ButtonStyle.Base`, mniej ważna `Variant.Text`; przy operacjach async `IsBusy` + `BusyText` | `Login.razor` |
 | Kroki procesu (kreator oceny) | `RadzenSteps` | do zastosowania w ścieżce oceny |
 | Okna dialogowe | `DialogService` | |
-| Ikony | Material Symbols przez `RadzenIcon Icon="..."`; ikony ról z `AppRoles.Icon(...)`; większy rozmiar klasą `icon-lg` / `icon-xl` | `Login.razor` |
+| Ikony | Material Symbols przez `RadzenIcon Icon="..."`; ikony ról z `AppRoles.Icon(...)`; większy rozmiar klasą `icon-md` (1.75rem, przy tytule karty) / `icon-lg` (2.5rem) / `icon-xl` (3rem) | `Login.razor` |
 | Awatar użytkownika | `<UserAvatar Login="..." />` (inicjały w kółku) | `Components/Shared/UserAvatar.razor` |
 
 ## Teksty

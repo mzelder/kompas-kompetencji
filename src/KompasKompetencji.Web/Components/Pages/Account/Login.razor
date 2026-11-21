@@ -60,7 +60,7 @@
                                     </Helper>
                                 </RadzenFormField>
                                 <RadzenButton ButtonType="ButtonType.Submit" Text="Zaloguj się" Icon="login"
-                                              ButtonStyle="ButtonStyle.Primary" IsBusy="@busy" BusyText="Logowanie…" />
+                                              ButtonStyle="ButtonStyle.Secondary" IsBusy="@busy" BusyText="Logowanie…" />
                             </RadzenStack>
                         </RadzenTemplateForm>
                     </RadzenTabsItem>
@@ -95,7 +95,7 @@
                                                     TextProperty="@nameof(RoleOption.Text)" ValueProperty="@nameof(RoleOption.Value)" />
                                 </RadzenFormField>
                                 <RadzenButton ButtonType="ButtonType.Submit" Text="Utwórz konto i zaloguj" Icon="person_add"
-                                              ButtonStyle="ButtonStyle.Primary" IsBusy="@busy" BusyText="Tworzenie konta…" />
+                                              ButtonStyle="ButtonStyle.Secondary" IsBusy="@busy" BusyText="Tworzenie konta…" />
                             </RadzenStack>
                         </RadzenTemplateForm>
                     </RadzenTabsItem>
@@ -109,7 +109,7 @@
         <RadzenCard Variant="Variant.Outlined" class="login-card">
             <RadzenStack Gap="1rem">
                 <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.5rem">
-                    <RadzenIcon Icon="bug_report" IconColor="@Colors.Warning" />
+                    <RadzenIcon Icon="bug_report" IconColor="@Colors.Warning" class="icon-md" />
                     <RadzenText TextStyle="TextStyle.H6" class="rz-m-0">Konta testowe</RadzenText>
                 </RadzenStack>
 
