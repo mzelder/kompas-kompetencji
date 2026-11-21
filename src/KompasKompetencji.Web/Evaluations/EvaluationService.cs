@@ -46,7 +46,8 @@ public sealed record EmployeeEvaluationView(
     IReadOnlyList<SuggestedCriterion> SuggestedCriteria,
     string? Expectations,
     string? Goals,
-    DateOnly? EmployeeAcquaintedOn)
+    DateOnly? EmployeeAcquaintedOn,
+    IReadOnlyList<EvaluationNote> Notes)
 {
     public bool IsPartIConfirmed => StartingConversationStep == StartingConversationStep.Confirmed;
 }
@@ -271,6 +272,13 @@ public sealed class EvaluationService(IDbContextFactory<AppDbContext> dbFactory)
             ? open.AdditionalCriteria.Select(a => a.Criterion).OrderBy(c => c).ToList()
             : suggestedCriteria.Select(s => s.Criterion).ToList();
 
+        var notes = open is null
+            ? []
+            : await db.EvaluationNotes.AsNoTracking()
+                .Where(n => n.EvaluationId == open.Id)
+                .OrderByDescending(n => n.CreatedAt)
+                .ToListAsync(ct);
+
         return new EmployeeEvaluationView(
             employee,
             jobDescription,
@@ -288,7 +296,54 @@ public sealed class EvaluationService(IDbContextFactory<AppDbContext> dbFactory)
             suggestedCriteria,
             open?.Expectations,
             open?.Goals,
-            open?.EmployeeAcquaintedOn);
+            open?.EmployeeAcquaintedOn,
+            notes);
+    }
+
+    public async Task<OperationResult> AddNoteAsync(
+        int supervisorId, int employeeId, string text, DateTime now, CancellationToken ct = default)
+    {
+        var trimmed = text.Trim();
+        if (trimmed.Length == 0)
+        {
+            return OperationResult.Fail("Wpisz treść notatki.");
+        }
+
+        if (trimmed.Length > EvaluationNote.MaxTextLength)
+        {
+            return OperationResult.Fail($"Notatka może mieć najwyżej {EvaluationNote.MaxTextLength} znaków.");
+        }
+
+        await using var db = await dbFactory.CreateDbContextAsync(ct);
+
+        var open = await FindAssessmentEvaluationAsync(db, supervisorId, employeeId, ct);
+        if (open is null)
+        {
+            return OperationResult.Fail("Notatki dodaje się na etapie oceny pracownika z Twojego zespołu.");
+        }
+
+        db.EvaluationNotes.Add(new EvaluationNote { EvaluationId = open.Id, CreatedAt = now, Text = trimmed });
+        await db.SaveChangesAsync(ct);
+        return OperationResult.Success;
+    }
+
+    public async Task<OperationResult> DeleteNoteAsync(
+        int supervisorId, int employeeId, int noteId, CancellationToken ct = default)
+    {
+        await using var db = await dbFactory.CreateDbContextAsync(ct);
+
+        var open = await FindAssessmentEvaluationAsync(db, supervisorId, employeeId, ct);
+        var note = open is null
+            ? null
+            : await db.EvaluationNotes.SingleOrDefaultAsync(n => n.Id == noteId && n.EvaluationId == open.Id, ct);
+        if (note is null)
+        {
+            return OperationResult.Fail("Nie znaleziono notatki.");
+        }
+
+        db.EvaluationNotes.Remove(note);
+        await db.SaveChangesAsync(ct);
+        return OperationResult.Success;
     }
 
     public async Task<OperationResult> ConfirmSheetAsync(
@@ -320,6 +375,19 @@ public sealed class EvaluationService(IDbContextFactory<AppDbContext> dbFactory)
         open.SheetConfirmedAt = now;
         await db.SaveChangesAsync(ct);
         return OperationResult.Success;
+    }
+
+    private static async Task<Evaluation?> FindAssessmentEvaluationAsync(
+        AppDbContext db, int supervisorId, int employeeId, CancellationToken ct)
+    {
+        if (await FindSubordinateAsync(db, supervisorId, employeeId, ct) is null)
+        {
+            return null;
+        }
+
+        var evaluations = await db.Evaluations.AsNoTracking().Where(v => v.EmployeeId == employeeId).ToListAsync(ct);
+        var open = EvaluationSchedule.OpenEvaluation(evaluations);
+        return EvaluationStages.Current(open) == EvaluationStage.Assessment ? open : null;
     }
 
     private static async Task<Employee?> FindSubordinateAsync(AppDbContext db, int supervisorId, int employeeId, CancellationToken ct)

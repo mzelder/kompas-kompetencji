@@ -7,8 +7,6 @@ public enum EvaluationStage
     JobDescriptionReview,
     StartingConversation,
     Assessment,
-    AssessmentConversation,
-    WrittenEvaluation,
     Completion,
 }
 

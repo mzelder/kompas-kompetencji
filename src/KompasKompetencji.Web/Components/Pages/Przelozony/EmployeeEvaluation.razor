@@ -25,33 +25,40 @@ else if (view is null)
 }
 else
 {
-    <PageHeader Title="@view.Employee.FullName" Subtitle="@($"{view.Employee.Position} · {view.Employee.Department}")">
-        <StatTile Icon="event" IconColor="@Colors.Primary" Label="Termin oceny" Compact="true"
-                  Value="@($"{EvaluationText.Date(view.Task.DueDate)} ({EvaluationText.RelativeToToday(view.Task.DueDate, today)})")" />
-    </PageHeader>
+    <PageHeader Title="@view.Employee.FullName" Subtitle="@($"{view.Employee.Position} · {view.Employee.Department}")" />
 
-    <RadzenSteps @bind-SelectedIndex="selectedIndex" ShowStepsButtons="false">
+    <RadzenSteps @bind-SelectedIndex="selectedIndex" ShowStepsButtons="false" class="stage-steps">
         <Steps>
             @foreach (var stage in EvaluationStages.All)
             {
                 <RadzenStepsItem Text="@EvaluationText.Stage(stage)" Disabled="@(stage > view.CurrentStage)">
-                    <RadzenText TextStyle="TextStyle.H5" TagName="TagName.H2" class="rz-my-6">
-                        Etap @EvaluationText.StageNumber(stage). @EvaluationText.Stage(stage)
-                    </RadzenText>
-                    @if (stage == EvaluationStage.JobDescriptionReview)
-                    {
-                        <JobDescriptionStage @key="@view" View="@view" SupervisorId="@supervisorId"
-                                             ReadOnly="@(view.CurrentStage > stage)" OnConfirmed="@LoadAsync" />
-                    }
-                    else if (stage == EvaluationStage.StartingConversation)
-                    {
-                        <StartingConversationStage @key="@view" View="@view" SupervisorId="@supervisorId"
-                                                   ReadOnly="@view.IsPartIConfirmed" OnChanged="@LoadAsync" />
-                    }
-                    else
-                    {
-                        <RadzenText TextStyle="TextStyle.Body1" class="rz-color-base-300">@EvaluationText.StageDescription(stage)</RadzenText>
-                    }
+                    <Template Context="item">
+                        <StageStepLabel Stage="@stage" />
+                    </Template>
+                    <ChildContent>
+                        <RadzenText TextStyle="TextStyle.H5" TagName="TagName.H2" class="rz-my-6">
+                            Etap @EvaluationText.StageNumber(stage). @EvaluationText.Stage(stage)
+                        </RadzenText>
+                        @if (stage == EvaluationStage.JobDescriptionReview)
+                        {
+                            <JobDescriptionStage @key="@view" View="@view" SupervisorId="@supervisorId"
+                                                 ReadOnly="@(view.CurrentStage > stage)" OnConfirmed="@LoadAsync" />
+                        }
+                        else if (stage == EvaluationStage.StartingConversation)
+                        {
+                            <StartingConversationStage @key="@view" View="@view" SupervisorId="@supervisorId"
+                                                       ReadOnly="@view.IsPartIConfirmed" OnChanged="@LoadAsync" />
+                        }
+                        else if (stage == EvaluationStage.Assessment)
+                        {
+                            <AssessmentStage @key="@view" View="@view" SupervisorId="@supervisorId"
+                                             ReadOnly="@(view.CurrentStage > stage)" OnChanged="@LoadAsync" />
+                        }
+                        else
+                        {
+                            <RadzenText TextStyle="TextStyle.Body1" class="rz-color-base-300">@EvaluationText.StageDescription(stage)</RadzenText>
+                        }
+                    </ChildContent>
                 </RadzenStepsItem>
             }
         </Steps>

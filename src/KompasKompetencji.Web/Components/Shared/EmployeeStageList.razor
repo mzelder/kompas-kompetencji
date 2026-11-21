@@ -21,7 +21,13 @@
                 </RadzenDataGridColumn>
                 <RadzenDataGridColumn Title="Etap oceny" Sortable="false">
                     <Template Context="employee">
-                        <EvaluationStageText Stage="@(Stages.TryGetValue(employee.Id, out var stage) ? stage : null)" />
+                        <RadzenStack Gap="0.5rem">
+                            <EvaluationStageText Stage="@(Stages.TryGetValue(employee.Id, out var stage) ? stage : null)" />
+                            @if (StageDetails is not null)
+                            {
+                                @StageDetails(employee)
+                            }
+                        </RadzenStack>
                     </Template>
                 </RadzenDataGridColumn>
             </Columns>

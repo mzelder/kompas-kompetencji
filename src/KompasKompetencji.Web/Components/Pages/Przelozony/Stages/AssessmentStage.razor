@@ -1,0 +1,79 @@
+<RadzenCard Variant="Variant.Outlined" class="rz-mb-6">
+    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween" Gap="1rem">
+        <RadzenStack Gap="0" class="card-heading">
+            <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H2" class="rz-m-0">Rozmowa oceniająca</RadzenText>
+            <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">@ConversationHint</RadzenText>
+        </RadzenStack>
+        @if (!ReadOnly)
+        {
+            <RadzenButton Text="@(View.Task.ConversationAt is null ? "Wyznacz termin" : "Zmień termin")" Icon="edit_calendar"
+                          ButtonStyle="ButtonStyle.Primary" Size="ButtonSize.Small" class="no-shrink"
+                          Disabled="@(!View.Task.CanScheduleConversation)" Click="@ScheduleConversationAsync" />
+        }
+    </RadzenStack>
+</RadzenCard>
+
+<RadzenCard Variant="Variant.Outlined">
+    <RadzenStack Gap="1rem">
+        <RadzenStack Gap="0">
+            <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H2" class="rz-m-0">Notatki</RadzenText>
+            <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">
+                @(ReadOnly ? "Notatki zapisane w trakcie okresu oceny." : "Przez cały okres oceny zapisuj konkretne przykłady pracy. Przydadzą się na rozmowie oceniającej i przy ocenie na piśmie.")
+            </RadzenText>
+        </RadzenStack>
+
+        @if (!ReadOnly)
+        {
+            <RadzenStack Gap="0.5rem">
+                <RadzenFormField Text="Nowa notatka" Variant="Variant.Outlined" class="rz-w-100">
+                    <ChildContent>
+                        <RadzenTextArea @bind-Value="text" Name="NoteText" Rows="3" MaxLength="@EvaluationNote.MaxTextLength" />
+                    </ChildContent>
+                    <Helper>
+                        <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">
+                            Opisz konkretną sytuację: co pracownik zrobił i z jakim skutkiem. Data zapisze się sama.
+                        </RadzenText>
+                    </Helper>
+                </RadzenFormField>
+
+                @if (errorMessage is not null)
+                {
+                    <RadzenAlert AlertStyle="AlertStyle.Danger" Variant="Variant.Flat" Shade="Shade.Lighter" AllowClose="false" class="rz-m-0">
+                        @errorMessage
+                    </RadzenAlert>
+                }
+
+                <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End">
+                    <RadzenButton Text="Dodaj notatkę" Icon="note_add" ButtonStyle="ButtonStyle.Primary"
+                                  IsBusy="@busy" BusyText="Zapisywanie..." Click="@AddAsync" />
+                </RadzenStack>
+            </RadzenStack>
+        }
+
+        @if (View.Notes.Count == 0)
+        {
+            <RadzenText TextStyle="TextStyle.Body2" class="rz-m-0 rz-color-base-300">Nie ma jeszcze notatek.</RadzenText>
+        }
+        else
+        {
+            <RadzenStack Gap="0.75rem" class="notes-list">
+                @foreach (var note in View.Notes)
+                {
+                    <RadzenCard Variant="Variant.Filled" class="rz-p-3">
+                        <RadzenStack Gap="0.25rem">
+                            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween" Gap="1rem">
+                                <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">@EvaluationText.Date(note.CreatedAt)</RadzenText>
+                                @if (!ReadOnly)
+                                {
+                                    <RadzenButton Icon="delete" Variant="Variant.Text" ButtonStyle="ButtonStyle.Base" Size="ButtonSize.Small"
+                                                  title="Usuń notatkę" Click="@(() => DeleteAsync(note))" />
+                                }
+                            </RadzenStack>
+                            <RadzenText TextStyle="TextStyle.Body2" class="rz-m-0 note-text">@note.Text</RadzenText>
+                        </RadzenStack>
+                    </RadzenCard>
+                }
+            </RadzenStack>
+        }
+    </RadzenStack>
+</RadzenCard>

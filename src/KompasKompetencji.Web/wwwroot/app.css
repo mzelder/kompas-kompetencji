@@ -295,3 +295,29 @@ h1:focus {
 .pre-line {
     white-space: pre-line;
 }
+
+.note-text {
+    white-space: pre-line;
+}
+
+.notes-list {
+    max-height: 22rem;
+    overflow-y: auto;
+    padding-right: 0.25rem;
+}
+
+.stage-steps .rz-steps-number:not(.stage-number) {
+    display: none;
+}
+
+.stage-steps-compact > ul {
+    gap: 0.5rem;
+}
+
+.stage-steps-compact .rz-steps-item:not(:last-child) {
+    flex: none;
+}
+
+.stage-steps-compact .rz-steps-item:not(:last-child)::after {
+    content: none;
+}
