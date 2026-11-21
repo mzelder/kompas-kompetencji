@@ -20,7 +20,6 @@ public static class EvaluationText
     public static string Conversation(ConversationStatus status) => status switch
     {
         ConversationStatus.Scheduled => "Zaplanowana",
-        ConversationStatus.AcceptedByEmployee => "Zaakceptowana przez pracownika",
         ConversationStatus.Held => "Odbyta",
         _ => status.ToString(),
     };

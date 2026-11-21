@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace KompasKompetencji.Web.Data.Migrations;
 
 /// <inheritdoc />
-public partial class _20261121193905_AddJobDescriptionsAndSheetConfirmation : Migration
+public partial class _20261121203358_AddJobDescriptionsAndSheetConfirmation : Migration
 {
     /// <inheritdoc />
     protected override void Up(MigrationBuilder migrationBuilder)
@@ -88,6 +88,13 @@ public partial class _20261121193905_AddJobDescriptionsAndSheetConfirmation : Mi
             keyValue: 7,
             column: "SheetConfirmedAt",
             value: new DateTime(2024, 12, 23, 9, 0, 0, 0, DateTimeKind.Unspecified));
+
+        migrationBuilder.UpdateData(
+            table: "Evaluations",
+            keyColumn: "Id",
+            keyValue: 8,
+            column: "SheetConfirmedAt",
+            value: new DateTime(2025, 12, 12, 9, 0, 0, 0, DateTimeKind.Unspecified));
 
         migrationBuilder.InsertData(
             table: "JobDescriptions",

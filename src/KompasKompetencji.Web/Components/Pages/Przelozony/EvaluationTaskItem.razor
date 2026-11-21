@@ -7,22 +7,36 @@
                 <RadzenText TextStyle="TextStyle.Body2" class="rz-m-0 rz-text-truncate">
                     <RadzenLink Path="@EmployeeEvaluation.PathFor(Task.Employee.Id)" Text="@Task.Employee.FullName" />
                 </RadzenText>
-                <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.5rem" class="min-w-0">
-                    @if (BadgeText is not null)
-                    {
-                        <RadzenBadge BadgeStyle="@BadgeStyle" Variant="Variant.Flat" Shade="Shade.Lighter" IsPill="true" Text="@BadgeText" class="no-shrink" />
-                    }
-                    <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300 rz-text-truncate min-w-0" title="@Details">@Details</RadzenText>
-                </RadzenStack>
+                @if (Task.Urgency == EvaluationUrgency.Overdue)
+                {
+                    <RadzenBadge BadgeStyle="BadgeStyle.Danger" Variant="Variant.Flat" Shade="Shade.Lighter" IsPill="true" Text="Po terminie" class="align-self-start" />
+                }
             </RadzenStack>
 
             <RadzenStack Gap="0" AlignItems="AlignItems.End" class="no-shrink">
                 <RadzenText TextStyle="TextStyle.Body2" class="rz-m-0">@EvaluationText.Date(Task.DueDate)</RadzenText>
-                <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">@EvaluationText.RelativeToToday(Task.DueDate, Today)</RadzenText>
+                <RadzenText TextStyle="TextStyle.Caption" class="@(OverdueDays > 0 ? "rz-m-0 rz-color-danger text-small" : "rz-m-0 rz-color-base-500 text-small")">@EvaluationText.RelativeToToday(Task.DueDate, Today)</RadzenText>
             </RadzenStack>
         </RadzenStack>
 
-        @if (Task.NeedsSheet)
+        @if (ConversationPastDue && Task.ConversationAt is DateTime pastConversationAt)
+        {
+            <RadzenStack Gap="0.5rem" class="conversation-row">
+                <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.5rem" class="min-w-0">
+                    <RadzenIcon Icon="warning" IconColor="@Colors.Warning" class="no-shrink" />
+                    <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0">
+                        Rozmowa @EvaluationText.Date(pastConversationAt): termin minął
+                    </RadzenText>
+                </RadzenStack>
+                <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End" Gap="0.5rem">
+                    <RadzenButton Text="Zmień termin" Icon="edit_calendar" Variant="Variant.Text" ButtonStyle="ButtonStyle.Base" Size="ButtonSize.Small"
+                                  Click="@(() => OnConversation.InvokeAsync(Task))" />
+                    <RadzenButton Text="Oznacz jako odbytą" Icon="task_alt" ButtonStyle="ButtonStyle.Primary" Size="ButtonSize.Small"
+                                  Click="@(() => OnMarkHeld.InvokeAsync(Task))" />
+                </RadzenStack>
+            </RadzenStack>
+        }
+        else if (Task.NeedsSheet)
         {
             <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween"
                          Gap="0.75rem" class="conversation-row">
@@ -34,36 +48,20 @@
                               class="no-shrink" Click="@(() => Navigation.NavigateTo(EmployeeEvaluation.PathFor(Task.Employee.Id)))" />
             </RadzenStack>
         }
-        else if (Task.CanScheduleConversation)
+        else if (Task.NeedsConversation)
         {
             <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween"
                          Gap="0.75rem" class="conversation-row">
-                @if (Task.ConversationAt is DateTime conversationAt)
-                {
-                    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Start" Gap="0.5rem" class="min-w-0">
-                        <RadzenIcon Icon="event" class="no-shrink" />
-                        <RadzenStack Gap="0.25rem" AlignItems="AlignItems.Start" class="min-w-0">
-                            <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0">Rozmowa: @EvaluationText.Date(conversationAt)</RadzenText>
-                            <RadzenBadge BadgeStyle="@ConversationBadgeStyle" Variant="Variant.Flat" Shade="Shade.Lighter" IsPill="true"
-                                         Text="@EvaluationText.Conversation(Task.ConversationStatus ?? ConversationStatus.Scheduled)" />
-                        </RadzenStack>
-                    </RadzenStack>
-                    <RadzenButton Text="Zmień" Icon="edit_calendar" Variant="Variant.Text" ButtonStyle="ButtonStyle.Base" Size="ButtonSize.Small"
-                                  class="no-shrink" Click="@(() => OnConversation.InvokeAsync(Task))" />
-                }
-                else
-                {
-                    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.5rem" class="min-w-0">
-                        <RadzenIcon Icon="event_busy" IconColor="@Colors.Warning" class="no-shrink" />
-                        <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0">
-                            @(Task.Urgency == EvaluationUrgency.Overdue
-                                ? "Wyznacz termin rozmowy jak najszybciej"
-                                : $"Wyznacz termin rozmowy, najpóźniej {EvaluationText.Date(Task.DueDate)}")
-                        </RadzenText>
-                    </RadzenStack>
-                    <RadzenButton Text="Wyznacz termin" Icon="edit_calendar" ButtonStyle="ButtonStyle.Primary" Size="ButtonSize.Small"
-                                  class="no-shrink" Click="@(() => OnConversation.InvokeAsync(Task))" />
-                }
+                <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.5rem" class="min-w-0">
+                    <RadzenIcon Icon="event_busy" IconColor="@Colors.Warning" class="no-shrink" />
+                    <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0">
+                        @(Task.Urgency == EvaluationUrgency.Overdue
+                            ? "Wyznacz termin rozmowy jak najszybciej"
+                            : $"Wyznacz termin rozmowy, najpóźniej {EvaluationText.Date(Task.DueDate)}")
+                    </RadzenText>
+                </RadzenStack>
+                <RadzenButton Text="Wyznacz termin" Icon="edit_calendar" ButtonStyle="ButtonStyle.Primary" Size="ButtonSize.Small"
+                              class="no-shrink" Click="@(() => OnConversation.InvokeAsync(Task))" />
             </RadzenStack>
         }
     </RadzenStack>
@@ -74,46 +72,11 @@
 
     [Parameter, EditorRequired] public DateOnly Today { get; set; }
 
+    [Parameter] public bool ConversationPastDue { get; set; }
+
     [Parameter] public EventCallback<EvaluationTask> OnConversation { get; set; }
 
-    private string? BadgeText => Task.Urgency switch
-    {
-        EvaluationUrgency.Overdue => "Po terminie",
-        EvaluationUrgency.InProgress => EvaluationText.Status(Task.OpenStatus),
-        EvaluationUrgency.DueSoon => "Do rozpoczęcia",
-        _ => null,
-    };
+    [Parameter] public EventCallback<EvaluationTask> OnMarkHeld { get; set; }
 
-    private BadgeStyle BadgeStyle => Task.Urgency switch
-    {
-        EvaluationUrgency.Overdue => BadgeStyle.Danger,
-        EvaluationUrgency.InProgress => BadgeStyle.Info,
-        _ => BadgeStyle.Warning,
-    };
-
-    private BadgeStyle ConversationBadgeStyle => Task.ConversationStatus switch
-    {
-        ConversationStatus.AcceptedByEmployee => BadgeStyle.Success,
-        ConversationStatus.Held => BadgeStyle.Light,
-        _ => BadgeStyle.Warning,
-    };
-
-    private string Details
-    {
-        get
-        {
-            var parts = new List<string>();
-            if (Task.Urgency == EvaluationUrgency.Overdue)
-            {
-                parts.Add(EvaluationText.Status(Task.OpenStatus));
-            }
-            parts.Add(Task.Employee.Department);
-            parts.Add(EvaluationText.Sheet(Task.Sheet));
-            if (Task.IsFirstEvaluation)
-            {
-                parts.Add("pierwsza ocena");
-            }
-            return string.Join(" · ", parts);
-        }
-    }
+    private int OverdueDays => Today.DayNumber - Task.DueDate.DayNumber;
 }

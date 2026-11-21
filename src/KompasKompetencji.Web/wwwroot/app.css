@@ -283,3 +283,11 @@ h1:focus {
     margin: 0;
     padding-inline-start: 1.25rem;
 }
+
+.text-small {
+    font-size: 0.6875rem;
+}
+
+.align-self-start {
+    align-self: flex-start;
+}

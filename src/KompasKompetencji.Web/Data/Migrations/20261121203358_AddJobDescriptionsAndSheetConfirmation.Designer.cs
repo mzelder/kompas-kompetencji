@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace KompasKompetencji.Web.Data.Migrations;
 
 [DbContext(typeof(AppDbContext))]
-[Migration("20261121193905_AddJobDescriptionsAndSheetConfirmation")]
-partial class _20261121193905_AddJobDescriptionsAndSheetConfirmation
+[Migration("20261121203358_AddJobDescriptionsAndSheetConfirmation")]
+partial class _20261121203358_AddJobDescriptionsAndSheetConfirmation
 {
     /// <inheritdoc />
     protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -224,6 +224,16 @@ partial class _20261121193905_AddJobDescriptionsAndSheetConfirmation
                         IsSupervisor = false,
                         LastName = "Mazur",
                         Position = "Specjalista"
+                    },
+                    new
+                    {
+                        Id = 13,
+                        Department = "Wydział Analiz Danych",
+                        EmployedSince = new DateOnly(2020, 12, 10),
+                        FirstName = "Łukasz",
+                        IsSupervisor = false,
+                        LastName = "Grabowski",
+                        Position = "Specjalista"
                     });
             });
 
@@ -303,6 +313,11 @@ partial class _20261121193905_AddJobDescriptionsAndSheetConfirmation
                     new
                     {
                         EmployeeId = 12,
+                        SupervisorId = 3
+                    },
+                    new
+                    {
+                        EmployeeId = 13,
                         SupervisorId = 3
                     });
             });
@@ -385,7 +400,7 @@ partial class _20261121193905_AddJobDescriptionsAndSheetConfirmation
                     {
                         Id = 2,
                         ConversationAt = new DateTime(2026, 11, 27, 10, 0, 0, 0, DateTimeKind.Unspecified),
-                        ConversationStatus = "AcceptedByEmployee",
+                        ConversationStatus = "Scheduled",
                         DueDate = new DateOnly(2026, 12, 15),
                         EmployeeId = 1,
                         EvaluatorId = 3,
@@ -474,6 +489,20 @@ partial class _20261121193905_AddJobDescriptionsAndSheetConfirmation
                         SheetConfirmedAt = new DateTime(2024, 12, 23, 9, 0, 0, 0, DateTimeKind.Unspecified),
                         StartedAt = new DateTime(2025, 11, 24, 9, 0, 0, 0, DateTimeKind.Unspecified),
                         Status = "Completed"
+                    },
+                    new
+                    {
+                        Id = 8,
+                        ConversationAt = new DateTime(2026, 11, 14, 10, 0, 0, 0, DateTimeKind.Unspecified),
+                        ConversationStatus = "Scheduled",
+                        DueDate = new DateOnly(2026, 12, 10),
+                        EmployeeId = 13,
+                        EvaluatorId = 3,
+                        PeriodEnd = new DateOnly(2026, 12, 9),
+                        PeriodStart = new DateOnly(2025, 12, 10),
+                        Sheet = "C",
+                        SheetConfirmedAt = new DateTime(2025, 12, 12, 9, 0, 0, 0, DateTimeKind.Unspecified),
+                        Status = "NotStarted"
                     });
             });
 

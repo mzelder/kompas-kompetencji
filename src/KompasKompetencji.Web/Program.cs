@@ -66,6 +66,7 @@ if (app.Environment.IsDevelopment())
     var factory = scope.ServiceProvider.GetRequiredService<IDbContextFactory<AppDbContext>>();
     using (var db = factory.CreateDbContext())
     {
+        db.Database.EnsureDeleted();
         db.Database.Migrate();
     }
     await scope.ServiceProvider.GetRequiredService<UserService>().EnsureTestAccountsAsync();

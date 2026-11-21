@@ -40,7 +40,7 @@
                         <RadzenStack Gap="0">
                             <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H2" class="rz-m-0">Kalendarz rozmów</RadzenText>
                             <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">
-                                Kliknij rozmowę, aby zmienić termin lub status. Przerywana ramka: termin czeka na akceptację pracownika.
+                                Kliknij rozmowę, aby zmienić termin albo oznaczyć ją jako odbytą. Pomarańczowa ramka: termin minął.
                             </RadzenText>
                         </RadzenStack>
 
@@ -69,18 +69,22 @@
                         <RadzenStack Gap="0">
                             <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H2" class="rz-m-0">Do zrobienia</RadzenText>
                             <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">
-                                Najpierw rozmowy do wyznaczenia, dalej oceny w toku i kolejne terminy.
+                                Rozmowy z minionym terminem do oznaczenia oraz osoby z terminem oceny w ciągu 2 miesięcy bez wyznaczonej rozmowy.
                             </RadzenText>
                         </RadzenStack>
 
                         <RadzenStack Gap="0.75rem" class="scroll-list">
-                            @if (overview.Tasks.Count == 0)
+                            @if (overview.ToDo.Count == 0)
                             {
-                                <RadzenText TextStyle="TextStyle.Body1" class="rz-m-0 rz-color-base-300">Nie masz jeszcze podwładnych.</RadzenText>
+                                <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.75rem">
+                                    <RadzenIcon Icon="check_circle" IconColor="@Colors.Success" />
+                                    <RadzenText TextStyle="TextStyle.Body1" class="rz-m-0">Nie ma rozmów do wyznaczenia.</RadzenText>
+                                </RadzenStack>
                             }
-                            @foreach (var task in overview.Tasks)
+                            @foreach (var task in overview.ToDo)
                             {
-                                <EvaluationTaskItem Task="@task" Today="@today" OnConversation="@EditConversationAsync" />
+                                <EvaluationTaskItem Task="@task" Today="@today" ConversationPastDue="@overview.IsConversationPastDue(task)"
+                                                    OnConversation="@EditConversationAsync" OnMarkHeld="@MarkHeldAsync" />
                             }
                         </RadzenStack>
                     </RadzenStack>
@@ -122,7 +126,7 @@
 
     private async Task LoadOverviewAsync()
     {
-        overview = await EvaluationService.GetSupervisorOverviewAsync(supervisorId, today);
+        overview = await EvaluationService.GetSupervisorOverviewAsync(supervisorId, DateTime.Now);
     }
 
     private async Task EditConversationAsync(EvaluationTask task)
@@ -141,6 +145,25 @@
             await LoadOverviewAsync();
             NotificationService.Notify(NotificationSeverity.Success, "Zapisano termin rozmowy", task.Employee.FullName);
         }
+    }
+
+    private async Task MarkHeldAsync(EvaluationTask task)
+    {
+        if (task.ConversationAt is not DateTime conversationAt)
+        {
+            return;
+        }
+
+        var result = await EvaluationService.SaveConversationAsync(
+            supervisorId, task.Employee.Id, conversationAt, ConversationStatus.Held, DateTime.Now);
+        if (!result.Succeeded)
+        {
+            NotificationService.Notify(NotificationSeverity.Error, "Nie udało się zapisać", result.Error ?? string.Empty);
+            return;
+        }
+
+        await LoadOverviewAsync();
+        NotificationService.Notify(NotificationSeverity.Success, "Rozmowa oznaczona jako odbyta", task.Employee.FullName);
     }
 
     private void OnSlotRender(SchedulerSlotRenderEventArgs args)
@@ -162,10 +185,11 @@
 
     private void OnConversationRender(SchedulerAppointmentRenderEventArgs<EvaluationConversation> args)
     {
-        args.Attributes["style"] = args.Data?.Status switch
+        args.Attributes["style"] = args.Data switch
         {
-            ConversationStatus.Held => "background-color: var(--rz-base-600); color: var(--rz-text-color);",
-            ConversationStatus.Scheduled => "background-color: transparent; color: var(--rz-primary); outline: 1px dashed var(--rz-primary); outline-offset: -1px;",
+            { Status: ConversationStatus.Held } => "background-color: var(--rz-base-600); color: var(--rz-text-color);",
+            { } conversation when ConversationRules.IsPastDue(conversation.Start, conversation.Status, DateTime.Now)
+                => "outline: 2px solid var(--rz-warning); outline-offset: -2px;",
             _ => "",
         };
     }
