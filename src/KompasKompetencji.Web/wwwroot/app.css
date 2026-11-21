@@ -257,3 +257,29 @@ h1:focus {
     padding-top: 0.75rem;
     border-top: 1px solid var(--rz-base-700);
 }
+
+.rz-steps > ul {
+    display: flex;
+}
+
+.rz-steps .rz-steps-item:not(:last-child) {
+    flex: auto;
+    display: flex;
+    align-items: center;
+}
+
+.rz-steps .rz-steps-item:not(:last-child)::after {
+    content: "";
+    flex: auto;
+    height: 1px;
+    margin-inline-end: 1rem;
+    background-color: var(--rz-base-600);
+}
+
+.process-points {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin: 0;
+    padding-inline-start: 1.25rem;
+}

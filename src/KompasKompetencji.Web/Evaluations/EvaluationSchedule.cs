@@ -18,11 +18,18 @@ public sealed record EvaluationTask(
     EvaluationSheet Sheet,
     EvaluationUrgency Urgency,
     DateTime? ConversationAt,
-    ConversationStatus? ConversationStatus)
+    ConversationStatus? ConversationStatus,
+    bool IsSheetConfirmed)
 {
-    public bool CanScheduleConversation => Urgency != EvaluationUrgency.Planned;
+    public bool IsInConversationWindow => Urgency != EvaluationUrgency.Planned;
+
+    public bool CanScheduleConversation => IsInConversationWindow && IsSheetConfirmed;
+
+    public bool NeedsSheet => IsInConversationWindow && !IsSheetConfirmed;
 
     public bool NeedsConversation => CanScheduleConversation && ConversationAt is null;
+
+    public bool NeedsAction => NeedsSheet || NeedsConversation;
 }
 
 public static class EvaluationSchedule
@@ -60,6 +67,7 @@ public static class EvaluationSchedule
             Sheet: open?.Sheet ?? SheetFor(employee),
             urgency,
             ConversationAt: open?.ConversationAt,
-            ConversationStatus: open?.ConversationStatus);
+            ConversationStatus: open?.ConversationStatus,
+            IsSheetConfirmed: open?.SheetConfirmedAt is not null);
     }
 }

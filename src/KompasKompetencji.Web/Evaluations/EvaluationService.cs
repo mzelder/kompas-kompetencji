@@ -17,6 +17,15 @@ public sealed record SupervisorOverview(IReadOnlyList<EvaluationTask> Tasks, IRe
     public EvaluationTask? TaskFor(int employeeId) => Tasks.FirstOrDefault(t => t.Employee.Id == employeeId);
 }
 
+public sealed record EmployeeEvaluationView(
+    Employee Employee,
+    JobDescription? JobDescription,
+    EvaluationTask Task,
+    Evaluation? OpenEvaluation,
+    EvaluationStage CurrentStage,
+    EvaluationSheet SuggestedSheet,
+    string SuggestionReason);
+
 public sealed class EvaluationService(IDbContextFactory<AppDbContext> dbFactory)
 {
     public static readonly TimeSpan ConversationLength = TimeSpan.FromHours(1);
@@ -39,7 +48,7 @@ public sealed class EvaluationService(IDbContextFactory<AppDbContext> dbFactory)
 
         var tasks = subordinates
             .Select(e => EvaluationSchedule.Describe(e, evaluationsByEmployee[e.Id], today))
-            .OrderByDescending(t => t.NeedsConversation)
+            .OrderByDescending(t => t.NeedsAction)
             .ThenBy(t => t.Urgency)
             .ThenBy(t => t.DueDate)
             .ThenBy(t => t.Employee.LastName)
@@ -65,9 +74,7 @@ public sealed class EvaluationService(IDbContextFactory<AppDbContext> dbFactory)
     {
         await using var db = await dbFactory.CreateDbContextAsync(ct);
 
-        var isSubordinate = await db.EmployeeSupervisors
-            .AnyAsync(l => l.SupervisorId == supervisorId && l.EmployeeId == employeeId, ct);
-        var employee = isSubordinate ? await db.Employees.SingleOrDefaultAsync(e => e.Id == employeeId, ct) : null;
+        var employee = await FindSubordinateAsync(db, supervisorId, employeeId, ct);
         if (employee is null)
         {
             return OperationResult.Fail("Nie znaleziono pracownika w Twoim zespole.");
@@ -75,32 +82,22 @@ public sealed class EvaluationService(IDbContextFactory<AppDbContext> dbFactory)
 
         var evaluations = await db.Evaluations.Where(v => v.EmployeeId == employeeId).ToListAsync(ct);
         var task = EvaluationSchedule.Describe(employee, evaluations, DateOnly.FromDateTime(now));
-        if (!task.CanScheduleConversation)
+        var open = EvaluationSchedule.OpenEvaluation(evaluations);
+        if (open?.SheetConfirmedAt is null)
+        {
+            return OperationResult.Fail("Najpierw zatwierdź arkusz oceny na stronie pracownika.");
+        }
+
+        if (!task.IsInConversationWindow)
         {
             return OperationResult.Fail("Rozmowę wyznacza się, gdy do terminu oceny zostają mniej niż 2 miesiące.");
         }
 
-        var open = EvaluationSchedule.OpenEvaluation(evaluations);
-        var status = ConversationRules.ResolveStatus(conversationAt, open?.ConversationAt, requestedStatus);
-        var error = ConversationRules.Validate(conversationAt, open?.ConversationAt, status, task.DueDate, now);
+        var status = ConversationRules.ResolveStatus(conversationAt, open.ConversationAt, requestedStatus);
+        var error = ConversationRules.Validate(conversationAt, open.ConversationAt, status, task.DueDate, now);
         if (error is not null)
         {
             return OperationResult.Fail(error);
-        }
-
-        if (open is null)
-        {
-            open = new Evaluation
-            {
-                EmployeeId = employeeId,
-                EvaluatorId = supervisorId,
-                Sheet = task.Sheet,
-                Status = EvaluationStatus.NotStarted,
-                PeriodStart = task.DueDate.AddYears(-1),
-                PeriodEnd = task.DueDate.AddDays(-1),
-                DueDate = task.DueDate,
-            };
-            db.Evaluations.Add(open);
         }
 
         open.ConversationAt = conversationAt;
@@ -108,4 +105,93 @@ public sealed class EvaluationService(IDbContextFactory<AppDbContext> dbFactory)
         await db.SaveChangesAsync(ct);
         return OperationResult.Success;
     }
+
+    public async Task<IReadOnlyDictionary<int, EvaluationStage>> GetCurrentStagesAsync(
+        IReadOnlyCollection<int> employeeIds, CancellationToken ct = default)
+    {
+        await using var db = await dbFactory.CreateDbContextAsync(ct);
+
+        var evaluations = await db.Evaluations.AsNoTracking()
+            .Where(v => employeeIds.Contains(v.EmployeeId))
+            .ToListAsync(ct);
+        var evaluationsByEmployee = evaluations.ToLookup(v => v.EmployeeId);
+
+        return employeeIds.ToDictionary(
+            id => id,
+            id => EvaluationStages.Current(EvaluationSchedule.OpenEvaluation(evaluationsByEmployee[id])));
+    }
+
+    public async Task<EmployeeEvaluationView?> GetEmployeeEvaluationAsync(
+        int supervisorId, int employeeId, DateOnly today, CancellationToken ct = default)
+    {
+        await using var db = await dbFactory.CreateDbContextAsync(ct);
+
+        var employee = await FindSubordinateAsync(db, supervisorId, employeeId, ct);
+        if (employee is null)
+        {
+            return null;
+        }
+
+        var jobDescription = await db.JobDescriptions.AsNoTracking().SingleOrDefaultAsync(j => j.EmployeeId == employeeId, ct);
+        var evaluations = await db.Evaluations.AsNoTracking().Where(v => v.EmployeeId == employeeId).ToListAsync(ct);
+        var open = EvaluationSchedule.OpenEvaluation(evaluations);
+
+        return new EmployeeEvaluationView(
+            employee,
+            jobDescription,
+            EvaluationSchedule.Describe(employee, evaluations, today),
+            open,
+            EvaluationStages.Current(open),
+            EvaluationSchedule.SheetFor(employee),
+            EvaluationText.SheetSuggestionReason(employee));
+    }
+
+    public async Task<OperationResult> ConfirmSheetAsync(
+        int supervisorId, int employeeId, EvaluationSheet sheet, DateTime now, CancellationToken ct = default)
+    {
+        await using var db = await dbFactory.CreateDbContextAsync(ct);
+
+        var employee = await FindSubordinateAsync(db, supervisorId, employeeId, ct);
+        if (employee is null)
+        {
+            return OperationResult.Fail("Nie znaleziono pracownika w Twoim zespole.");
+        }
+
+        var evaluations = await db.Evaluations.Where(v => v.EmployeeId == employeeId).ToListAsync(ct);
+        var open = EvaluationSchedule.OpenEvaluation(evaluations);
+        if (open?.SheetConfirmedAt is not null)
+        {
+            return OperationResult.Fail("Arkusz oceny jest już zatwierdzony.");
+        }
+
+        if (open is null)
+        {
+            var task = EvaluationSchedule.Describe(employee, evaluations, DateOnly.FromDateTime(now));
+            open = CreateOpenEvaluation(employeeId, supervisorId, task);
+            db.Evaluations.Add(open);
+        }
+
+        open.Sheet = sheet;
+        open.SheetConfirmedAt = now;
+        await db.SaveChangesAsync(ct);
+        return OperationResult.Success;
+    }
+
+    private static async Task<Employee?> FindSubordinateAsync(AppDbContext db, int supervisorId, int employeeId, CancellationToken ct)
+    {
+        var isSubordinate = await db.EmployeeSupervisors
+            .AnyAsync(l => l.SupervisorId == supervisorId && l.EmployeeId == employeeId, ct);
+        return isSubordinate ? await db.Employees.SingleOrDefaultAsync(e => e.Id == employeeId, ct) : null;
+    }
+
+    private static Evaluation CreateOpenEvaluation(int employeeId, int supervisorId, EvaluationTask task) => new()
+    {
+        EmployeeId = employeeId,
+        EvaluatorId = supervisorId,
+        Sheet = task.Sheet,
+        Status = EvaluationStatus.NotStarted,
+        PeriodStart = task.DueDate.AddYears(-1),
+        PeriodEnd = task.DueDate.AddDays(-1),
+        DueDate = task.DueDate,
+    };
 }

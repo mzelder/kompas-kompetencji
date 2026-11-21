@@ -16,7 +16,7 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
     // If you encounter a merge conflict in the line below, it means you need to
     // discard one of the migration branches and recreate its migrations on top of
     // the other branch. See https://aka.ms/efcore-docs-migrations-conflicts for more info.
-    public override string LastMigrationId => "20261121182425_AddConversationStatus";
+    public override string LastMigrationId => "20261121193905_AddJobDescriptionsAndSheetConfirmation";
 
     protected override void BuildModel(ModelBuilder modelBuilder)
     {
@@ -347,6 +347,9 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
                     .HasMaxLength(1)
                     .HasColumnType("nvarchar(1)");
 
+                b.Property<DateTime?>("SheetConfirmedAt")
+                    .HasColumnType("datetime2");
+
                 b.Property<DateTime?>("StartedAt")
                     .HasColumnType("datetime2");
 
@@ -376,6 +379,7 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
                         PeriodEnd = new DateOnly(2025, 12, 14),
                         PeriodStart = new DateOnly(2024, 12, 15),
                         Sheet = "C",
+                        SheetConfirmedAt = new DateTime(2024, 12, 18, 9, 0, 0, 0, DateTimeKind.Unspecified),
                         StartedAt = new DateTime(2025, 11, 20, 9, 0, 0, 0, DateTimeKind.Unspecified),
                         Status = "Completed"
                     },
@@ -390,6 +394,7 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
                         PeriodEnd = new DateOnly(2026, 12, 14),
                         PeriodStart = new DateOnly(2025, 12, 15),
                         Sheet = "C",
+                        SheetConfirmedAt = new DateTime(2025, 12, 18, 9, 0, 0, 0, DateTimeKind.Unspecified),
                         StartedAt = new DateTime(2026, 11, 12, 10, 30, 0, 0, DateTimeKind.Unspecified),
                         Status = "InProgress"
                     },
@@ -405,6 +410,7 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
                         PeriodEnd = new DateOnly(2025, 11, 1),
                         PeriodStart = new DateOnly(2024, 11, 2),
                         Sheet = "C",
+                        SheetConfirmedAt = new DateTime(2024, 11, 5, 9, 0, 0, 0, DateTimeKind.Unspecified),
                         StartedAt = new DateTime(2025, 10, 6, 9, 0, 0, 0, DateTimeKind.Unspecified),
                         Status = "Completed"
                     },
@@ -420,6 +426,7 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
                         PeriodEnd = new DateOnly(2026, 1, 9),
                         PeriodStart = new DateOnly(2025, 1, 10),
                         Sheet = "C",
+                        SheetConfirmedAt = new DateTime(2025, 1, 14, 9, 0, 0, 0, DateTimeKind.Unspecified),
                         StartedAt = new DateTime(2025, 12, 15, 9, 0, 0, 0, DateTimeKind.Unspecified),
                         Status = "Completed"
                     },
@@ -435,6 +442,7 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
                         PeriodEnd = new DateOnly(2026, 5, 31),
                         PeriodStart = new DateOnly(2025, 6, 1),
                         Sheet = "C",
+                        SheetConfirmedAt = new DateTime(2025, 6, 4, 9, 0, 0, 0, DateTimeKind.Unspecified),
                         StartedAt = new DateTime(2026, 5, 4, 9, 0, 0, 0, DateTimeKind.Unspecified),
                         Status = "Completed"
                     },
@@ -449,6 +457,7 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
                         PeriodEnd = new DateOnly(2027, 1, 9),
                         PeriodStart = new DateOnly(2026, 1, 10),
                         Sheet = "C",
+                        SheetConfirmedAt = new DateTime(2026, 1, 13, 9, 0, 0, 0, DateTimeKind.Unspecified),
                         StartedAt = new DateTime(2026, 11, 16, 14, 0, 0, 0, DateTimeKind.Unspecified),
                         Status = "CriteriaSet"
                     },
@@ -464,8 +473,82 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
                         PeriodEnd = new DateOnly(2025, 12, 19),
                         PeriodStart = new DateOnly(2024, 12, 20),
                         Sheet = "C",
+                        SheetConfirmedAt = new DateTime(2024, 12, 23, 9, 0, 0, 0, DateTimeKind.Unspecified),
                         StartedAt = new DateTime(2025, 11, 24, 9, 0, 0, 0, DateTimeKind.Unspecified),
                         Status = "Completed"
+                    });
+            });
+
+        modelBuilder.Entity("KompasKompetencji.Web.Data.JobDescription", b =>
+            {
+                b.Property<int>("EmployeeId")
+                    .HasColumnType("int");
+
+                b.Property<string>("Purpose")
+                    .IsRequired()
+                    .HasMaxLength(1000)
+                    .HasColumnType("nvarchar(1000)");
+
+                b.Property<string>("RequiredCompetencies")
+                    .IsRequired()
+                    .HasMaxLength(1000)
+                    .HasColumnType("nvarchar(1000)");
+
+                b.Property<int?>("SubordinatesCount")
+                    .HasColumnType("int");
+
+                b.Property<string>("Tasks")
+                    .IsRequired()
+                    .HasMaxLength(4000)
+                    .HasColumnType("nvarchar(4000)");
+
+                b.HasKey("EmployeeId");
+
+                b.ToTable("JobDescriptions");
+
+                b.HasData(
+                    new
+                    {
+                        EmployeeId = 1,
+                        Purpose = "Przygotowywanie analiz danych wspierających decyzje kierownictwa departamentu oraz dbanie o jakość danych wykorzystywanych w raportach.",
+                        RequiredCompetencies = "Myślenie analityczne\nOrientacja na cele\nKomunikacja pisemna\nWspółpraca",
+                        Tasks = "Przygotowywanie analiz i raportów na potrzeby kierownictwa departamentu\nOpracowywanie wskaźników i metod pomiaru realizacji zadań\nWeryfikacja jakości i kompletności danych z systemów dziedzinowych\nPrzygotowywanie projektów stanowisk do dokumentów przekazanych do zaopiniowania\nWsparcie merytoryczne mniej doświadczonych pracowników wydziału"
+                    },
+                    new
+                    {
+                        EmployeeId = 2,
+                        Purpose = "Realizacja zadań związanych z gromadzeniem, przetwarzaniem i udostępnianiem danych na potrzeby wydziału.",
+                        RequiredCompetencies = "Myślenie analityczne\nRzetelność\nKomunikacja\nWspółpraca",
+                        Tasks = "Gromadzenie i porządkowanie danych z jednostek podległych\nPrzygotowywanie zestawień i wizualizacji danych\nUdzielanie odpowiedzi na zapytania dotyczące danych publicznych\nProwadzenie dokumentacji źródeł danych"
+                    },
+                    new
+                    {
+                        EmployeeId = 3,
+                        Purpose = "Kierowanie Wydziałem Analiz Danych, zapewnienie terminowej i rzetelnej realizacji zadań wydziału oraz rozwój kompetencji podległych pracowników.",
+                        RequiredCompetencies = "Zarządzanie zespołem\nPodejmowanie decyzji\nMyślenie strategiczne\nZarządzanie rozwojem pracowników\nKomunikacja",
+                        SubordinatesCount = 6,
+                        Tasks = "Planowanie, organizowanie i nadzorowanie pracy wydziału\nPrzydzielanie zadań i ocena ich realizacji przez pracowników\nPrzygotowywanie stanowisk i rekomendacji dla dyrektora departamentu\nWspółpraca z innymi komórkami organizacyjnymi i instytucjami\nProwadzenie ocen okresowych i planowanie rozwoju zawodowego pracowników"
+                    },
+                    new
+                    {
+                        EmployeeId = 9,
+                        Purpose = "Obsługa administracyjna wydziału i wsparcie pracowników w przygotowywaniu zestawień danych.",
+                        RequiredCompetencies = "Rzetelność\nOrganizacja pracy własnej\nKomunikacja",
+                        Tasks = "Prowadzenie rejestru korespondencji wydziału\nPrzygotowywanie prostych zestawień danych według wskazówek\nArchiwizowanie dokumentacji wydziału\nOrganizacja spotkań i przygotowywanie notatek"
+                    },
+                    new
+                    {
+                        EmployeeId = 10,
+                        Purpose = "Przygotowywanie i opiniowanie analiz dotyczących usług cyfrowych oraz koordynacja współpracy z dostawcami danych.",
+                        RequiredCompetencies = "Myślenie analityczne\nWspółpraca\nKomunikacja\nOrientacja na cele",
+                        Tasks = "Opracowywanie analiz wpływu planowanych zmian na usługi cyfrowe\nOpiniowanie projektów dokumentów pod kątem danych i wskaźników\nKoordynowanie współpracy z instytucjami przekazującymi dane\nProwadzenie spotkań roboczych z udziałem innych komórek\nPrzygotowywanie materiałów na posiedzenia zespołów międzyresortowych"
+                    },
+                    new
+                    {
+                        EmployeeId = 12,
+                        Purpose = "Realizacja zadań związanych z analizą danych i przygotowywaniem informacji dla kierownictwa.",
+                        RequiredCompetencies = "Myślenie analityczne\nRzetelność\nKomunikacja pisemna",
+                        Tasks = "Przygotowywanie cyklicznych raportów z danych wydziału\nAnaliza danych ankietowych i statystycznych\nPrzygotowywanie projektów odpowiedzi na pisma\nAktualizacja danych publikowanych w serwisie urzędu"
                     });
             });
 
@@ -517,8 +600,21 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
                 b.Navigation("Evaluator");
             });
 
+        modelBuilder.Entity("KompasKompetencji.Web.Data.JobDescription", b =>
+            {
+                b.HasOne("KompasKompetencji.Web.Data.Employee", "Employee")
+                    .WithOne("JobDescription")
+                    .HasForeignKey("KompasKompetencji.Web.Data.JobDescription", "EmployeeId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
+
+                b.Navigation("Employee");
+            });
+
         modelBuilder.Entity("KompasKompetencji.Web.Data.Employee", b =>
             {
+                b.Navigation("JobDescription");
+
                 b.Navigation("SubordinateLinks");
 
                 b.Navigation("SupervisorLinks");

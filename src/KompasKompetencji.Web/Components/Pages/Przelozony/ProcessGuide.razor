@@ -1,0 +1,41 @@
+@page "/przelozony/przebieg-oceny"
+
+<PageTitle>Przebieg oceny – Kompas kompetencji</PageTitle>
+
+<PageHeader Title="Przebieg oceny" Subtitle="Co robisz na każdym etapie oceny okresowej i kiedy." />
+
+<RadzenAlert AlertStyle="AlertStyle.Info" Variant="Variant.Flat" Shade="Shade.Lighter" AllowClose="false" Icon="event_repeat" class="rz-mb-6">
+    Ocena odbywa się co roku. Pierwsza jest po roku pracy, a jej termin wpisuje HR.
+</RadzenAlert>
+
+<RadzenCard Variant="Variant.Outlined">
+    <RadzenTimeline Orientation="Orientation.Vertical" LinePosition="LinePosition.Start" AlignItems="AlignItems.Start">
+        <Items>
+            @foreach (var guide in EvaluationProcessGuide.Stages)
+            {
+                <RadzenTimelineItem PointStyle="PointStyle.Primary" PointVariant="Variant.Flat" PointSize="PointSize.Large">
+                    <PointContent>
+                        <RadzenIcon Icon="@guide.Icon" />
+                    </PointContent>
+                    <ChildContent>
+                        <RadzenStack Gap="0.5rem" class="rz-pb-6">
+                            <RadzenStack Gap="0">
+                                <RadzenText TextStyle="TextStyle.Overline" class="rz-m-0 rz-color-base-300">
+                                    Etap @EvaluationText.StageNumber(guide.Stage) · @guide.When
+                                </RadzenText>
+                                <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H2" class="rz-m-0">@EvaluationText.Stage(guide.Stage)</RadzenText>
+                                <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">Kto: @guide.Who</RadzenText>
+                            </RadzenStack>
+                            <ul class="process-points">
+                                @foreach (var step in guide.Steps)
+                                {
+                                    <li><RadzenText TextStyle="TextStyle.Body1" class="rz-m-0">@step</RadzenText></li>
+                                }
+                            </ul>
+                        </RadzenStack>
+                    </ChildContent>
+                </RadzenTimelineItem>
+            }
+        </Items>
+    </RadzenTimeline>
+</RadzenCard>

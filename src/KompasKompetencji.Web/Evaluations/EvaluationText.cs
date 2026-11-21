@@ -27,6 +27,50 @@ public static class EvaluationText
 
     public static string Sheet(EvaluationSheet sheet) => $"Arkusz {sheet}";
 
+    public static string SheetDescription(EvaluationSheet sheet) => sheet switch
+    {
+        EvaluationSheet.B => "Dla osób kierujących zespołem: kryteria obejmują też zarządzanie ludźmi.",
+        EvaluationSheet.C => "Dla osób, które nie kierują zespołem.",
+        _ => sheet.ToString(),
+    };
+
+    public static string SheetSuggestionReason(Employee employee) => employee.IsSupervisor
+        ? "Pracownik kieruje zespołem, dlatego podpowiadamy arkusz B."
+        : "Pracownik nie kieruje zespołem, dlatego podpowiadamy arkusz C.";
+
+    public static string Stage(EvaluationStage stage) => stage switch
+    {
+        EvaluationStage.JobDescriptionReview => "Opis stanowiska",
+        EvaluationStage.StartingConversation => "Rozmowa rozpoczynająca",
+        EvaluationStage.Assessment => "Ocenianie",
+        EvaluationStage.AssessmentConversation => "Rozmowa oceniająca",
+        EvaluationStage.WrittenEvaluation => "Ocena na piśmie",
+        EvaluationStage.Completion => "Zakończenie",
+        _ => stage.ToString(),
+    };
+
+    public static string StageNumber(EvaluationStage stage) => stage switch
+    {
+        EvaluationStage.JobDescriptionReview => "0",
+        EvaluationStage.StartingConversation => "I",
+        EvaluationStage.Assessment => "II",
+        EvaluationStage.AssessmentConversation => "III",
+        EvaluationStage.WrittenEvaluation => "IV",
+        EvaluationStage.Completion => "V",
+        _ => string.Empty,
+    };
+
+    public static string StageDescription(EvaluationStage stage) => stage switch
+    {
+        EvaluationStage.JobDescriptionReview => "Przejrzyj opis stanowiska pracownika i zatwierdź arkusz oceny.",
+        EvaluationStage.StartingConversation => "W ciągu 30 dni od początku cyklu przeprowadź z pracownikiem rozmowę rozpoczynającą: ustalcie 5 kryteriów obowiązkowych, do 3 dodatkowych, oczekiwania i cele.",
+        EvaluationStage.Assessment => "Przez cały okres oceny obserwuj realizację kryteriów i zapisuj notatki.",
+        EvaluationStage.AssessmentConversation => "Około 2 miesiące przed terminem oceny wyznacz rozmowę oceniającą, najpóźniej w dniu oceny.",
+        EvaluationStage.WrittenEvaluation => "Uzupełnij część II arkusza: poziomy kryteriów, uzasadnienie i wnioski do IPRZ.",
+        EvaluationStage.Completion => "Zapoznaj pracownika z oceną i zamknij cykl. Od tego dnia zaczyna się nowy cykl oceny.",
+        _ => string.Empty,
+    };
+
     public static string Date(DateOnly date) => date.ToString("d MMMM yyyy", Polish);
 
     public static string Date(DateTime dateTime) => dateTime.ToString("d MMMM yyyy, HH:mm", Polish);

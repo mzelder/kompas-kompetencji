@@ -1,0 +1,19 @@
+@if (Stage is EvaluationStage current)
+{
+    <RadzenSteps SelectedIndex="@((int)current)" ShowStepsButtons="false" CanChange="@PreventChange">
+        <Steps>
+            @foreach (var stage in EvaluationStages.All)
+            {
+                <RadzenStepsItem Text="@(stage == current ? EvaluationText.Stage(stage) : string.Empty)"
+                                 Disabled="@(stage > current)"
+                                 title="@($"Etap {EvaluationText.StageNumber(stage)}. {EvaluationText.Stage(stage)}")" />
+            }
+        </Steps>
+    </RadzenSteps>
+}
+
+@code {
+    [Parameter] public EvaluationStage? Stage { get; set; }
+
+    private static void PreventChange(StepsCanChangeEventArgs args) => args.PreventDefault();
+}

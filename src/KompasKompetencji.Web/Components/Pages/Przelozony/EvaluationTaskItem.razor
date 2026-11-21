@@ -1,8 +1,12 @@
+@inject NavigationManager Navigation
+
 <RadzenCard Variant="Variant.Filled" class="rz-p-3">
     <RadzenStack Gap="0.75rem">
         <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween" Gap="1rem">
             <RadzenStack Gap="0.25rem" class="card-heading">
-                <RadzenText TextStyle="TextStyle.Body2" class="rz-m-0 rz-text-truncate">@Task.Employee.FullName</RadzenText>
+                <RadzenText TextStyle="TextStyle.Body2" class="rz-m-0 rz-text-truncate">
+                    <RadzenLink Path="@EmployeeEvaluation.PathFor(Task.Employee.Id)" Text="@Task.Employee.FullName" />
+                </RadzenText>
                 <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.5rem" class="min-w-0">
                     @if (BadgeText is not null)
                     {
@@ -18,7 +22,19 @@
             </RadzenStack>
         </RadzenStack>
 
-        @if (Task.CanScheduleConversation)
+        @if (Task.NeedsSheet)
+        {
+            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween"
+                         Gap="0.75rem" class="conversation-row">
+                <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.5rem" class="min-w-0">
+                    <RadzenIcon Icon="assignment_late" IconColor="@Colors.Warning" class="no-shrink" />
+                    <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0">Przed wyznaczeniem rozmowy zatwierdź arkusz</RadzenText>
+                </RadzenStack>
+                <RadzenButton Text="Zatwierdź arkusz" Icon="assignment" ButtonStyle="ButtonStyle.Primary" Size="ButtonSize.Small"
+                              class="no-shrink" Click="@(() => Navigation.NavigateTo(EmployeeEvaluation.PathFor(Task.Employee.Id)))" />
+            </RadzenStack>
+        }
+        else if (Task.CanScheduleConversation)
         {
             <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween"
                          Gap="0.75rem" class="conversation-row">
