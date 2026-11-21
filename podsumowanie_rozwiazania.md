@@ -1,3 +1,5 @@
+❯
+
 # Kompas kompetencji: podsumowanie zadania
 
 Źródło: `tresci_zadania/Pełna treść zadania konkursowego.pdf` (wyzwanie Ministerstwa Cyfryzacji)

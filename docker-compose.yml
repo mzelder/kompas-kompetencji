@@ -1,0 +1,15 @@
+# Alternative to LocalDB: SQL Server in a container (e.g. when LocalDB is not available).
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: kompas-sql
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "Kompas_Dev_123!"
+    ports:
+      - "1433:1433"
+    volumes:
+      - kompas-sql-data:/var/opt/mssql
+
+volumes:
+  kompas-sql-data:

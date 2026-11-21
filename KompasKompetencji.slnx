@@ -1,0 +1,5 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/KompasKompetencji.Web/KompasKompetencji.Web.csproj" />
+  </Folder>
+</Solution>
