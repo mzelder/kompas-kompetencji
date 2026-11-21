@@ -1,0 +1,32 @@
+@page "/admin"
+@using KompasKompetencji.Web.Data
+@inject UserService UserService
+
+<PageTitle>Użytkownicy – Kompas kompetencji</PageTitle>
+
+<PageHeader Title="Użytkownicy" Subtitle="Konta w systemie i ich role." />
+
+<RadzenDataGrid Data="@users" TItem="AppUser" IsLoading="@(users is null)"
+                AllowSorting="true" AllowFiltering="true" FilterMode="FilterMode.Simple">
+    <Columns>
+        <RadzenDataGridColumn Property="@nameof(AppUser.Login)" Title="Login" />
+        <RadzenDataGridColumn Property="@nameof(AppUser.Role)" Title="Rola">
+            <Template Context="user">
+                <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.5rem">
+                    <RadzenIcon Icon="@AppRoles.Icon(user.Role)" />
+                    @AppRoles.DisplayName(user.Role)
+                </RadzenStack>
+            </Template>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn Property="@nameof(AppUser.CreatedAt)" Title="Utworzono" FormatString="{0:yyyy-MM-dd HH:mm}" />
+    </Columns>
+</RadzenDataGrid>
+
+@code {
+    private List<AppUser>? users;
+
+    protected override async Task OnInitializedAsync()
+    {
+        users = await UserService.GetAllAsync();
+    }
+}

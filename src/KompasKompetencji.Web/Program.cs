@@ -1,5 +1,8 @@
+using KompasKompetencji.Web.Auth;
 using KompasKompetencji.Web.Components;
 using KompasKompetencji.Web.Data;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Radzen;
 
@@ -11,6 +14,25 @@ var connectionString = builder.Configuration.GetConnectionString("Default")
 builder.Services.AddDbContextFactory<AppDbContext>(options =>
     options.UseSqlServer(connectionString));
 
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = AuthEndpoints.LoginPagePath;
+        options.AccessDeniedPath = "/brak-dostepu";
+        options.ReturnUrlParameter = "returnUrl";
+        options.Cookie.Name = "kompas.auth";
+        options.Cookie.HttpOnly = true;
+        options.Cookie.SameSite = SameSiteMode.Lax;
+        options.ExpireTimeSpan = TimeSpan.FromHours(8);
+        options.SlidingExpiration = true;
+    });
+builder.Services.AddAuthorization();
+builder.Services.AddCascadingAuthenticationState();
+
+builder.Services.AddSingleton<LoginTicketStore>();
+builder.Services.AddSingleton<IPasswordHasher<AppUser>, PasswordHasher<AppUser>>();
+builder.Services.AddScoped<UserService>();
+
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
@@ -18,13 +40,15 @@ builder.Services.AddRadzenComponents();
 
 var app = builder.Build();
 
-// In Development, create/update the database from migrations on startup.
 if (app.Environment.IsDevelopment())
 {
     using var scope = app.Services.CreateScope();
     var factory = scope.ServiceProvider.GetRequiredService<IDbContextFactory<AppDbContext>>();
-    using var db = factory.CreateDbContext();
-    db.Database.Migrate();
+    using (var db = factory.CreateDbContext())
+    {
+        db.Database.Migrate();
+    }
+    await scope.ServiceProvider.GetRequiredService<UserService>().EnsureTestAccountsAsync();
 }
 
 if (!app.Environment.IsDevelopment())
@@ -35,7 +59,12 @@ if (!app.Environment.IsDevelopment())
 app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true);
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
+app.UseAuthorization();
+app.UseAntiforgery();
+
 app.MapStaticAssets();
+app.MapAuthEndpoints();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 

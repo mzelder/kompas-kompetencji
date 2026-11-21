@@ -1,59 +1,13 @@
 @page "/"
-@using KompasKompetencji.Web.Data
-@using Microsoft.EntityFrameworkCore
-@inject IDbContextFactory<AppDbContext> DbFactory
-@inject NotificationService NotificationService
-
-<PageTitle>Kompas kompetencji</PageTitle>
-
-<h1>Kompas kompetencji</h1>
-<p class="text-muted">Placeholder aplikacji: Blazor (.NET) + SQL Server.</p>
-
-<h2 class="h5 mt-4">Status bazy danych</h2>
-@if (error is not null)
-{
-    <div class="alert alert-danger">Brak połączenia z bazą: @error</div>
-}
-else if (employees is null)
-{
-    <p>Łączenie z bazą…</p>
-}
-else
-{
-    <RadzenAlert AlertStyle="AlertStyle.Success" Variant="Variant.Flat" Shade="Shade.Lighter" AllowClose="false">
-        Połączono z SQL Server. Liczba pracowników w bazie: @employees.Count
-    </RadzenAlert>
-
-    <RadzenDataGrid Data="@employees" TItem="Employee" AllowSorting="true" AllowFiltering="true"
-                    FilterMode="FilterMode.Simple" class="mt-3">
-        <Columns>
-            <RadzenDataGridColumn Property="@nameof(Employee.FirstName)" Title="Imię" />
-            <RadzenDataGridColumn Property="@nameof(Employee.LastName)" Title="Nazwisko" />
-            <RadzenDataGridColumn Property="@nameof(Employee.Position)" Title="Stanowisko" />
-        </Columns>
-    </RadzenDataGrid>
-
-    <RadzenButton Text="Test powiadomienia" Icon="notifications" ButtonStyle="ButtonStyle.Primary"
-                  Click="@ShowNotification" class="mt-3" />
-}
+@attribute [Authorize]
+@inject NavigationManager Navigation
 
 @code {
-    private List<Employee>? employees;
-    private string? error;
+    [CascadingParameter] private Task<AuthenticationState> AuthState { get; set; } = default!;
 
     protected override async Task OnInitializedAsync()
     {
-        try
-        {
-            await using var db = await DbFactory.CreateDbContextAsync();
-            employees = await db.Employees.AsNoTracking().OrderBy(e => e.LastName).ToListAsync();
-        }
-        catch (Exception ex)
-        {
-            error = ex.Message;
-        }
+        var user = (await AuthState).User;
+        Navigation.NavigateTo(AppRoles.HomePath(user.GetRole()), replace: true);
     }
-
-    private void ShowNotification() =>
-        NotificationService.Notify(NotificationSeverity.Info, "Radzen działa", "Komponenty Radzen są poprawnie skonfigurowane.");
 }

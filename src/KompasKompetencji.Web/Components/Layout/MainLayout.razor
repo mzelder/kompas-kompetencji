@@ -1,26 +1,61 @@
 ﻿@inherits LayoutComponentBase
 
-<div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
+<RadzenLayout>
+    <RadzenHeader>
+        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center"
+                     JustifyContent="JustifyContent.SpaceBetween" class="app-header">
+            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.25rem">
+                <RadzenSidebarToggle Click="@(() => sidebarExpanded = !sidebarExpanded)" />
+                <RadzenIcon Icon="explore" IconColor="@Colors.Primary" />
+                <RadzenText TextStyle="TextStyle.H6" class="rz-m-0 rz-ms-2">Kompas kompetencji</RadzenText>
+            </RadzenStack>
 
-    <main>
-        <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
-        </div>
+            <AuthorizeView>
+                <Authorized>
+                    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.75rem">
+                        <RadzenIcon Icon="@AppRoles.Icon(context.User.GetRole())" />
+                        <RadzenText TextStyle="TextStyle.Body1" class="rz-m-0">@context.User.Identity?.Name</RadzenText>
+                        <RadzenBadge BadgeStyle="BadgeStyle.Primary" Variant="Variant.Flat" Shade="Shade.Lighter"
+                                     Text="@AppRoles.DisplayName(context.User.GetRole())" />
+                        <form method="post" action="@AuthEndpoints.LogoutPath">
+                            <AntiforgeryToken />
+                            <RadzenButton ButtonType="ButtonType.Submit" Text="Wyloguj" Icon="logout"
+                                          Variant="Variant.Text" ButtonStyle="ButtonStyle.Base" Size="ButtonSize.Small" />
+                        </form>
+                    </RadzenStack>
+                </Authorized>
+            </AuthorizeView>
+        </RadzenStack>
+    </RadzenHeader>
 
-        <article class="content px-4">
+    <RadzenSidebar @bind-Expanded="sidebarExpanded">
+        <AuthorizeView>
+            <Authorized>
+                <RadzenPanelMenu>
+                    @foreach (var item in RoleNavigation.For(context.User.GetRole()))
+                    {
+                        <RadzenPanelMenuItem Text="@item.Text" Path="@item.Path" Icon="@item.Icon" />
+                    }
+                </RadzenPanelMenu>
+            </Authorized>
+        </AuthorizeView>
+    </RadzenSidebar>
+
+    <RadzenBody>
+        <div class="app-content">
             @Body
-        </article>
-    </main>
-</div>
+        </div>
+    </RadzenBody>
+</RadzenLayout>
 
-@* Hosts Radzen dialogs, notifications, context menus and tooltips. *@
 <RadzenComponents />
 
 <div id="blazor-error-ui" data-nosnippet>
-    An unhandled error has occurred.
-    <a href="." class="reload">Reload</a>
+    Wystąpił nieoczekiwany błąd.
+    <a href="." class="reload">Odśwież</a>
     <span class="dismiss">🗙</span>
 </div>
+
+@code {
+    private bool sidebarExpanded = true;
+}

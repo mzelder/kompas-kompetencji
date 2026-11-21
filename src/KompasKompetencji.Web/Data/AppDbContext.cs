@@ -6,8 +6,19 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
 {
     public DbSet<Employee> Employees => Set<Employee>();
 
+    public DbSet<AppUser> Users => Set<AppUser>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<AppUser>(u =>
+        {
+            u.ToTable("Users");
+            u.Property(p => p.Login).HasMaxLength(50);
+            u.HasIndex(p => p.Login).IsUnique();
+            u.Property(p => p.PasswordHash).HasMaxLength(200);
+            u.Property(p => p.Role).HasMaxLength(20);
+        });
+
         modelBuilder.Entity<Employee>(e =>
         {
             e.ToTable("Employees");
@@ -15,7 +26,6 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             e.Property(p => p.LastName).HasMaxLength(100);
             e.Property(p => p.Position).HasMaxLength(200);
 
-            // Fictional demo data.
             e.HasData(
                 new Employee { Id = 1, FirstName = "Anna", LastName = "Kowalska", Position = "Starszy specjalista" },
                 new Employee { Id = 2, FirstName = "Jan", LastName = "Nowak", Position = "Specjalista" },

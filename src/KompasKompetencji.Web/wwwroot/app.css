@@ -58,3 +58,30 @@ h1:focus {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
     text-align: start;
 }
+
+.app-header {
+    width: 100%;
+    padding-right: 1rem;
+}
+
+.app-content {
+    padding: 1.5rem 2rem;
+    max-width: 1400px;
+}
+
+.auth-layout {
+    min-height: 100vh;
+    padding: 4rem 1rem;
+    background: var(--rz-base-100);
+}
+
+.login-card {
+    width: 440px;
+    max-width: 100%;
+}
+
+.test-account-row {
+    padding: 0.5rem 0.75rem;
+    border-radius: var(--rz-border-radius);
+    background: var(--rz-base-50);
+}
