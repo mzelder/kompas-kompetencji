@@ -8,12 +8,12 @@ namespace KompasKompetencji.Web.Components.Shared;
 
 public partial class EmployeeStageList
 {
-    private IReadOnlyList<Employee> filteredEmployees = [];
+    private IReadOnlyList<EmployeeEvaluationRow> filteredRows = [];
     private string? search;
 
-    [Parameter, EditorRequired] public IReadOnlyList<Employee> Employees { get; set; } = [];
+    [Parameter, EditorRequired] public IReadOnlyList<EmployeeEvaluationRow> Rows { get; set; } = [];
 
-    [Parameter, EditorRequired] public IReadOnlyDictionary<int, EvaluationStage> Stages { get; set; } = default!;
+    [Parameter, EditorRequired] public DateOnly Today { get; set; }
 
     [Parameter] public bool Loading { get; set; }
 
@@ -23,28 +23,31 @@ public partial class EmployeeStageList
 
     [Parameter] public EventCallback<Employee> OnEmployeeClick { get; set; }
 
-    [Parameter] public RenderFragment<Employee>? StageDetails { get; set; }
+    [Parameter] public RenderFragment<EmployeeEvaluationRow>? NextStep { get; set; }
 
-    private string CountCaption => filteredEmployees.Count == Employees.Count
-        ? $"{CountLabel}: {Employees.Count}"
-        : $"Wyniki wyszukiwania: {filteredEmployees.Count} z {Employees.Count}";
+    private string CountCaption => filteredRows.Count == Rows.Count
+        ? $"{CountLabel}: {Rows.Count}"
+        : $"Wyniki wyszukiwania: {filteredRows.Count} z {Rows.Count}";
 
-    protected override void OnParametersSet()
+    protected override void OnParametersSet() => ApplyFilter();
+
+    private async Task OnRowClick(DataGridRowMouseEventArgs<EmployeeEvaluationRow> args)
     {
-        filteredEmployees = EmployeeSearch.Filter(Employees, search);
-    }
-
-    private async Task OnRowClick(DataGridRowMouseEventArgs<Employee> args)
-    {
-        if (args.Data is Employee employee)
+        if (args.Data is EmployeeEvaluationRow row)
         {
-            await OnEmployeeClick.InvokeAsync(employee);
+            await OnEmployeeClick.InvokeAsync(row.Employee);
         }
     }
 
     private void OnSearchChanged(string value)
     {
         search = value;
-        filteredEmployees = EmployeeSearch.Filter(Employees, search);
+        ApplyFilter();
+    }
+
+    private void ApplyFilter()
+    {
+        var matching = EmployeeSearch.Filter(Rows.Select(r => r.Employee).ToList(), search).ToHashSet();
+        filteredRows = Rows.Where(r => matching.Contains(r.Employee)).ToList();
     }
 }

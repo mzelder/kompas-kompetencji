@@ -39,6 +39,8 @@ public class Evaluation
 
     public DateTime? CriteriaConfirmedAt { get; set; }
 
+    public DateTime? WrittenEvaluationAt { get; set; }
+
     public EvaluationStatus Status { get; set; }
 
     public DateOnly PeriodStart { get; set; }
