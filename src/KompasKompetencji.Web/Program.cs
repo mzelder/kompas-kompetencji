@@ -1,6 +1,7 @@
 using KompasKompetencji.Web.Auth;
 using KompasKompetencji.Web.Components;
 using KompasKompetencji.Web.Data;
+using KompasKompetencji.Web.Organization;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -32,6 +33,7 @@ builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddSingleton<LoginTicketStore>();
 builder.Services.AddSingleton<IPasswordHasher<AppUser>, PasswordHasher<AppUser>>();
 builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<OrganizationService>();
 
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();

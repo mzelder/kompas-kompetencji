@@ -1,0 +1,82 @@
+@inject DialogService DialogService
+@inject OrganizationService Organization
+
+<RadzenTemplateForm TItem="EmployeeForm" Data="@form" Submit="@SaveAsync">
+    <RadzenStack Gap="1rem">
+        <RadzenRow Gap="1rem">
+            <RadzenColumn Size="12" SizeSM="6">
+                <RadzenFormField Text="Imię" Variant="Variant.Outlined" class="rz-w-100">
+                    <ChildContent>
+                        <RadzenTextBox Name="FirstName" @bind-Value="form.FirstName" MaxLength="100" />
+                    </ChildContent>
+                    <Helper>
+                        <RadzenRequiredValidator Component="FirstName" Text="Podaj imię." />
+                    </Helper>
+                </RadzenFormField>
+            </RadzenColumn>
+            <RadzenColumn Size="12" SizeSM="6">
+                <RadzenFormField Text="Nazwisko" Variant="Variant.Outlined" class="rz-w-100">
+                    <ChildContent>
+                        <RadzenTextBox Name="LastName" @bind-Value="form.LastName" MaxLength="100" />
+                    </ChildContent>
+                    <Helper>
+                        <RadzenRequiredValidator Component="LastName" Text="Podaj nazwisko." />
+                    </Helper>
+                </RadzenFormField>
+            </RadzenColumn>
+        </RadzenRow>
+
+        <RadzenFormField Text="Stanowisko" Variant="Variant.Outlined" class="rz-w-100">
+            <ChildContent>
+                <RadzenTextBox Name="Position" @bind-Value="form.Position" MaxLength="200" />
+            </ChildContent>
+            <Helper>
+                <RadzenRequiredValidator Component="Position" Text="Podaj stanowisko." />
+            </Helper>
+        </RadzenFormField>
+
+        <RadzenFormField Text="Komórka organizacyjna" Variant="Variant.Outlined" class="rz-w-100">
+            <ChildContent>
+                <RadzenTextBox Name="Department" @bind-Value="form.Department" MaxLength="200" />
+            </ChildContent>
+            <Helper>
+                <RadzenRequiredValidator Component="Department" Text="Podaj komórkę organizacyjną." />
+            </Helper>
+        </RadzenFormField>
+
+        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.5rem">
+            <RadzenCheckBox TValue="bool" Name="IsSupervisor" @bind-Value="form.IsSupervisor" />
+            <RadzenLabel Component="IsSupervisor" Text="Pełni funkcję przełożonego" />
+        </RadzenStack>
+
+        <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End" Gap="0.5rem">
+            <RadzenButton Text="Anuluj" Variant="Variant.Text" ButtonStyle="ButtonStyle.Base" Disabled="@busy"
+                          Click="@(() => DialogService.Close(null))" />
+            <RadzenButton ButtonType="ButtonType.Submit" Text="Dodaj pracownika" Icon="person_add"
+                          ButtonStyle="ButtonStyle.Primary" IsBusy="@busy" BusyText="Zapisywanie…" />
+        </RadzenStack>
+    </RadzenStack>
+</RadzenTemplateForm>
+
+@code {
+    private readonly EmployeeForm form = new();
+    private bool busy;
+
+    private async Task SaveAsync(EmployeeForm model)
+    {
+        busy = true;
+        var employee = await Organization.AddEmployeeAsync(
+            new NewEmployee(model.FirstName, model.LastName, model.Position, model.Department, model.IsSupervisor));
+        busy = false;
+        DialogService.Close(employee);
+    }
+
+    private sealed class EmployeeForm
+    {
+        public string FirstName { get; set; } = string.Empty;
+        public string LastName { get; set; } = string.Empty;
+        public string Position { get; set; } = string.Empty;
+        public string Department { get; set; } = string.Empty;
+        public bool IsSupervisor { get; set; }
+    }
+}

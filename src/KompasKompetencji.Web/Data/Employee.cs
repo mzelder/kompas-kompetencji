@@ -9,4 +9,14 @@ public class Employee
     public required string LastName { get; set; }
 
     public required string Position { get; set; }
+
+    public required string Department { get; set; }
+
+    public bool IsSupervisor { get; set; }
+
+    public ICollection<EmployeeSupervisor> SupervisorLinks { get; set; } = [];
+
+    public ICollection<EmployeeSupervisor> SubordinateLinks { get; set; } = [];
+
+    public string FullName => $"{FirstName} {LastName}";
 }

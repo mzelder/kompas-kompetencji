@@ -15,6 +15,7 @@ public static class RoleNavigation
         AppRoles.Hr =>
         [
             new("Procesy", [new("Procesy ocen", "/hr", "fact_check")]),
+            new("Organizacja", [new("Pracownicy i przełożeni", "/hr/pracownicy", "account_tree")]),
         ],
         AppRoles.Admin =>
         [

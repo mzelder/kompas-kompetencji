@@ -1,0 +1,300 @@
+@page "/hr/pracownicy"
+@inject OrganizationService Organization
+@inject DialogService DialogService
+@inject NotificationService NotificationService
+
+<PageTitle>Pracownicy i przełożeni – Kompas kompetencji</PageTitle>
+
+<div class="fill-page">
+    <PageHeader Title="Pracownicy i przełożeni"
+                Subtitle="Wybierz pracownika, aby zobaczyć tylko jego przełożonych. Kliknij go ponownie, aby odznaczyć." />
+
+    @if (loadError is not null)
+    {
+        <RadzenAlert AlertStyle="AlertStyle.Danger" Variant="Variant.Flat" Shade="Shade.Lighter" AllowClose="false" class="rz-mb-4">
+            Nie udało się wczytać danych: @loadError
+        </RadzenAlert>
+    }
+
+    <RadzenRow Gap="1.5rem" class="fill-row">
+        <RadzenColumn Size="12" SizeMD="6" class="fill-column">
+            <RadzenCard Variant="Variant.Outlined" class="fill-card">
+                <RadzenStack Gap="1rem" class="fill-stack">
+                    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween">
+                        <RadzenStack Gap="0" class="card-heading">
+                            <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H2" class="rz-m-0">Pracownicy</RadzenText>
+                            <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300 rz-text-truncate">
+                                @CountCaption(filteredEmployees.Count, chart.Employees.Count, "Wszyscy pracownicy")
+                            </RadzenText>
+                        </RadzenStack>
+                        <RadzenButton Icon="add" ButtonStyle="ButtonStyle.Primary" Size="ButtonSize.Small" class="no-shrink"
+                                      title="Dodaj pracownika" aria-label="Dodaj pracownika" Click="@AddEmployeeAsync" />
+                    </RadzenStack>
+
+                    <SearchBox Value="@employeeSearch" ValueChanged="@OnEmployeeSearchChanged"
+                               Placeholder="Szukaj: nazwisko, stanowisko, komórka" />
+
+                    <RadzenDataGrid TItem="Employee" Data="@filteredEmployees" @bind-Value="employeeSelection" IsLoading="@loading"
+                                    SelectionMode="DataGridSelectionMode.Single" RowClick="@OnEmployeeRowClick" RowSelect="@OnEmployeeSelect" RowDeselect="@OnEmployeeDeselect"
+                                    AllowSorting="true"
+                                    EmptyText="@(string.IsNullOrWhiteSpace(employeeSearch) ? "Brak pracowników." : "Nikt nie pasuje do wyszukiwania.")"
+                                    class="person-grid fill-grid">
+                        <Columns>
+                            <RadzenDataGridColumn Property="@nameof(Employee.FullName)" Title="Imię i nazwisko">
+                                <Template Context="employee">
+                                    <PersonName Person="@employee" />
+                                </Template>
+                            </RadzenDataGridColumn>
+                            <RadzenDataGridColumn Property="@nameof(Employee.Position)" Title="Stanowisko" />
+                        </Columns>
+                    </RadzenDataGrid>
+                </RadzenStack>
+            </RadzenCard>
+        </RadzenColumn>
+
+        <RadzenColumn Size="12" SizeMD="6" class="fill-column">
+            <RadzenCard Variant="Variant.Outlined" class="fill-card">
+                <RadzenStack Gap="1rem" class="fill-stack">
+                    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween">
+                        <RadzenStack Gap="0" class="card-heading">
+                            <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H2" class="rz-m-0">Przełożeni</RadzenText>
+                            <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300 rz-text-truncate">
+                                @(selectedEmployee is null
+                                    ? CountCaption(filteredSupervisors.Count, visibleSupervisors.Count, "Wszyscy przełożeni")
+                                    : $"Przełożeni pracownika: {selectedEmployee.FullName}")
+                            </RadzenText>
+                        </RadzenStack>
+                        <RadzenButton Text="Dodaj przełożonego" Icon="person_add" ButtonStyle="ButtonStyle.Primary" Size="ButtonSize.Small" class="no-shrink"
+                                      Disabled="@(selectedEmployee is null)"
+                                      title="@(selectedEmployee is null ? "Najpierw wybierz pracownika" : null)"
+                                      Click="@AssignSupervisorAsync" />
+                    </RadzenStack>
+
+                    <SearchBox Value="@supervisorSearch" ValueChanged="@OnSupervisorSearchChanged"
+                               Placeholder="Szukaj: nazwisko, stanowisko, komórka" />
+
+                    <RadzenDataGrid TItem="Employee" Data="@filteredSupervisors" @bind-Value="supervisorSelection" IsLoading="@loading"
+                                    SelectionMode="DataGridSelectionMode.Single" RowClick="@OnSupervisorRowClick" RowSelect="@OnSupervisorSelect" RowDeselect="@OnSupervisorDeselect"
+                                    AllowSorting="true"
+                                    EmptyText="@SupervisorsEmptyText"
+                                    class="person-grid fill-grid">
+                        <Columns>
+                            <RadzenDataGridColumn Property="@nameof(Employee.FullName)" Title="Imię i nazwisko">
+                                <Template Context="supervisor">
+                                    <PersonName Person="@supervisor" ShowSupervisorIcon="false" />
+                                </Template>
+                            </RadzenDataGridColumn>
+                            <RadzenDataGridColumn Property="@nameof(Employee.Position)" Title="Stanowisko" />
+                            <RadzenDataGridColumn Title="" Width="64px" Sortable="false" TextAlign="TextAlign.Center"
+                                                  Visible="@(selectedEmployee is not null)">
+                                <Template Context="supervisor">
+                                    <span @onclick:stopPropagation="true">
+                                        <RadzenButton Icon="link_off" Variant="Variant.Text" ButtonStyle="ButtonStyle.Danger" Size="ButtonSize.Small"
+                                                      title="Usuń przypisanie" aria-label="Usuń przypisanie"
+                                                      Click="@(() => RemoveSupervisorAsync(supervisor))" />
+                                    </span>
+                                </Template>
+                            </RadzenDataGridColumn>
+                        </Columns>
+                    </RadzenDataGrid>
+                </RadzenStack>
+            </RadzenCard>
+        </RadzenColumn>
+    </RadzenRow>
+
+    <RadzenCard Variant="Variant.Outlined" class="details-card rz-mt-6">
+        @if (FocusedPerson is null)
+        {
+            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.75rem">
+                <RadzenIcon Icon="info" />
+                <RadzenText TextStyle="TextStyle.Body1" class="rz-m-0 rz-color-base-300">
+                    Zaznacz pracownika albo przełożonego, aby zobaczyć szczegóły.
+                </RadzenText>
+            </RadzenStack>
+        }
+        else
+        {
+            <PersonDetails Person="@FocusedPerson" Chart="@chart" />
+        }
+    </RadzenCard>
+</div>
+
+@code {
+    private OrganizationChart chart = OrganizationChart.Empty;
+    private bool loading = true;
+    private string? loadError;
+
+    private Employee? selectedEmployee;
+    private Employee? selectedSupervisor;
+    private bool employeeClickedWhileSelected;
+    private bool supervisorClickedWhileSelected;
+    private IList<Employee> employeeSelection = [];
+    private IList<Employee> supervisorSelection = [];
+
+    private string? employeeSearch;
+    private string? supervisorSearch;
+    private IReadOnlyList<Employee> filteredEmployees = [];
+    private IReadOnlyList<Employee> visibleSupervisors = [];
+    private IReadOnlyList<Employee> filteredSupervisors = [];
+
+    private Employee? FocusedPerson => selectedSupervisor ?? selectedEmployee;
+
+    private string SupervisorsEmptyText =>
+        !string.IsNullOrWhiteSpace(supervisorSearch) && visibleSupervisors.Count > 0 ? "Nikt nie pasuje do wyszukiwania."
+        : selectedEmployee is null ? "Brak przełożonych."
+        : "Ten pracownik nie ma jeszcze przypisanego przełożonego.";
+
+    private static string CountCaption(int shown, int total, string allLabel) =>
+        shown == total ? $"{allLabel}: {total}" : $"Wyniki wyszukiwania: {shown} z {total}";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await ReloadAsync();
+    }
+
+    private async Task ReloadAsync()
+    {
+        loading = true;
+        try
+        {
+            chart = await Organization.GetChartAsync();
+            loadError = null;
+        }
+        catch (Exception ex)
+        {
+            chart = OrganizationChart.Empty;
+            loadError = ex.Message;
+        }
+        loading = false;
+
+        selectedEmployee = selectedEmployee is null ? null : chart.Find(selectedEmployee.Id);
+        selectedSupervisor = selectedSupervisor is null ? null : chart.Find(selectedSupervisor.Id);
+        filteredEmployees = EmployeeSearch.Filter(chart.Employees, employeeSearch);
+        UpdateSelection();
+    }
+
+    private void OnEmployeeSearchChanged(string value)
+    {
+        employeeSearch = value;
+        filteredEmployees = EmployeeSearch.Filter(chart.Employees, employeeSearch);
+    }
+
+    private void OnSupervisorSearchChanged(string value)
+    {
+        supervisorSearch = value;
+        filteredSupervisors = EmployeeSearch.Filter(visibleSupervisors, supervisorSearch);
+    }
+
+    private void OnEmployeeRowClick(DataGridRowMouseEventArgs<Employee> args)
+    {
+        employeeClickedWhileSelected = args.Data is not null && args.Data.Id == selectedEmployee?.Id;
+    }
+
+    private void OnEmployeeSelect(Employee employee)
+    {
+        selectedEmployee = employeeClickedWhileSelected ? null : employee;
+        employeeClickedWhileSelected = false;
+        selectedSupervisor = null;
+        UpdateSelection();
+    }
+
+    private void OnEmployeeDeselect(Employee employee)
+    {
+        selectedEmployee = null;
+        selectedSupervisor = null;
+        UpdateSelection();
+    }
+
+    private void OnSupervisorRowClick(DataGridRowMouseEventArgs<Employee> args)
+    {
+        supervisorClickedWhileSelected = args.Data is not null && args.Data.Id == selectedSupervisor?.Id;
+    }
+
+    private void OnSupervisorSelect(Employee supervisor)
+    {
+        selectedSupervisor = supervisorClickedWhileSelected ? null : supervisor;
+        supervisorClickedWhileSelected = false;
+        UpdateSelection();
+    }
+
+    private void OnSupervisorDeselect(Employee supervisor)
+    {
+        selectedSupervisor = null;
+        UpdateSelection();
+    }
+
+    private void UpdateSelection()
+    {
+        visibleSupervisors = selectedEmployee is null ? chart.Supervisors : chart.SupervisorsOf(selectedEmployee.Id);
+        filteredSupervisors = EmployeeSearch.Filter(visibleSupervisors, supervisorSearch);
+        if (selectedSupervisor is not null && !visibleSupervisors.Any(s => s.Id == selectedSupervisor.Id))
+        {
+            selectedSupervisor = null;
+        }
+
+        employeeSelection = selectedEmployee is null ? [] : [selectedEmployee];
+        supervisorSelection = selectedSupervisor is null ? [] : [selectedSupervisor];
+    }
+
+    private async Task AddEmployeeAsync()
+    {
+        var result = await DialogService.OpenAsync<AddEmployeeDialog>("Nowy pracownik",
+            options: new DialogOptions { Width = "560px" });
+        if (result is not Employee created)
+        {
+            return;
+        }
+
+        selectedEmployee = created;
+        selectedSupervisor = null;
+        employeeSearch = null;
+        await ReloadAsync();
+        NotificationService.Notify(NotificationSeverity.Success, "Dodano pracownika", created.FullName);
+    }
+
+    private async Task AssignSupervisorAsync()
+    {
+        if (selectedEmployee is null)
+        {
+            return;
+        }
+
+        var employee = selectedEmployee;
+        var result = await DialogService.OpenAsync<AssignSupervisorDialog>("Dodaj przełożonego",
+            new Dictionary<string, object?>
+            {
+                [nameof(AssignSupervisorDialog.Employee)] = employee,
+                [nameof(AssignSupervisorDialog.Candidates)] = chart.AssignableSupervisorsFor(employee.Id),
+            },
+            new DialogOptions { Width = "520px" });
+        if (result is not true)
+        {
+            return;
+        }
+
+        await ReloadAsync();
+        NotificationService.Notify(NotificationSeverity.Success, "Przypisano przełożonego", employee.FullName);
+    }
+
+    private async Task RemoveSupervisorAsync(Employee supervisor)
+    {
+        if (selectedEmployee is null)
+        {
+            return;
+        }
+
+        var employee = selectedEmployee;
+        var confirmed = await DialogService.Confirm(
+            $"Czy usunąć {supervisor.FullName} z przełożonych pracownika {employee.FullName}?",
+            "Usuń przypisanie",
+            new ConfirmOptions { OkButtonText = "Usuń", CancelButtonText = "Anuluj" });
+        if (confirmed != true)
+        {
+            return;
+        }
+
+        await Organization.RemoveSupervisorAsync(employee.Id, supervisor.Id);
+        await ReloadAsync();
+        NotificationService.Notify(NotificationSeverity.Info, "Usunięto przypisanie", $"{supervisor.FullName} – {employee.FullName}");
+    }
+}

@@ -1,0 +1,62 @@
+@inject DialogService DialogService
+@inject OrganizationService Organization
+
+<RadzenStack Gap="1rem">
+    <RadzenText TextStyle="TextStyle.Body1" class="rz-m-0">
+        Pracownik: <strong>@Employee.FullName</strong>
+    </RadzenText>
+
+    <RadzenListBox TValue="IEnumerable<int>" @bind-Value="selectedIds" Data="@Candidates"
+                   ValueProperty="@nameof(Data.Employee.Id)" TextProperty="@nameof(Data.Employee.FullName)"
+                   Multiple="true" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                   EmptyText="Brak przełożonych, których można przypisać." class="rz-w-100 assign-list">
+        <Template Context="item">
+            <RadzenStack Gap="0">
+                <RadzenText TextStyle="TextStyle.Body2" class="rz-m-0">@(((Data.Employee)item).FullName)</RadzenText>
+                <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">
+                    @(((Data.Employee)item).Position) · @(((Data.Employee)item).Department)
+                </RadzenText>
+            </RadzenStack>
+        </Template>
+    </RadzenListBox>
+
+    @if (errorMessage is not null)
+    {
+        <RadzenAlert AlertStyle="AlertStyle.Danger" Variant="Variant.Flat" Shade="Shade.Lighter" AllowClose="false">
+            @errorMessage
+        </RadzenAlert>
+    }
+
+    <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End" Gap="0.5rem">
+        <RadzenButton Text="Anuluj" Variant="Variant.Text" ButtonStyle="ButtonStyle.Base" Disabled="@busy"
+                      Click="@(() => DialogService.Close(false))" />
+        <RadzenButton Text="Dodaj" Icon="person_add" ButtonStyle="ButtonStyle.Primary"
+                      Disabled="@(!selectedIds.Any())" IsBusy="@busy" BusyText="Zapisywanie…"
+                      Click="@AssignAsync" />
+    </RadzenStack>
+</RadzenStack>
+
+@code {
+    [Parameter, EditorRequired] public Data.Employee Employee { get; set; } = default!;
+
+    [Parameter, EditorRequired] public IReadOnlyList<Data.Employee> Candidates { get; set; } = [];
+
+    private IEnumerable<int> selectedIds = [];
+    private bool busy;
+    private string? errorMessage;
+
+    private async Task AssignAsync()
+    {
+        errorMessage = null;
+        busy = true;
+        var result = await Organization.AssignSupervisorsAsync(Employee.Id, selectedIds.ToList());
+        busy = false;
+
+        if (!result.Succeeded)
+        {
+            errorMessage = result.Error;
+            return;
+        }
+        DialogService.Close(true);
+    }
+}

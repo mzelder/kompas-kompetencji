@@ -76,3 +76,73 @@ h1:focus {
     .blazor-error-boundary::after {
         content: "Wystąpił błąd.";
     }
+
+.person-grid .rz-data-row {
+    cursor: pointer;
+}
+
+.assign-list {
+    height: 20rem;
+}
+
+.app-content:has(> .fill-page) {
+    box-sizing: border-box;
+    height: 100%;
+}
+
+.fill-page {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;
+}
+
+.fill-row {
+    flex: 1 1 0;
+    min-height: 0;
+}
+
+.fill-column {
+    height: 100%;
+    min-height: 0;
+}
+
+.fill-card {
+    box-sizing: border-box;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+.fill-stack {
+    flex: 1 1 0;
+    min-height: 0;
+}
+
+.fill-grid {
+    flex: 1 1 0;
+    min-height: 0;
+}
+
+.details-card {
+    flex: none;
+    box-sizing: border-box;
+    height: 6.5rem;
+    overflow-y: auto;
+}
+
+.card-heading {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.no-shrink {
+    flex: none;
+    white-space: nowrap;
+}
+
+.detail-item-fill {
+    flex: 1 1 0;
+    min-width: 4rem;
+}

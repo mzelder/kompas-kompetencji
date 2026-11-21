@@ -16,7 +16,7 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
     // If you encounter a merge conflict in the line below, it means you need to
     // discard one of the migration branches and recreate its migrations on top of
     // the other branch. See https://aka.ms/efcore-docs-migrations-conflicts for more info.
-    public override string LastMigrationId => "20261121122435_AddUsers";
+    public override string LastMigrationId => "20261121135935_AddOrganizationStructure";
 
     protected override void BuildModel(ModelBuilder modelBuilder)
     {
@@ -38,6 +38,9 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
                 b.Property<DateTime>("CreatedAt")
                     .HasColumnType("datetime2");
 
+                b.Property<int?>("EmployeeId")
+                    .HasColumnType("int");
+
                 b.Property<string>("Login")
                     .IsRequired()
                     .HasMaxLength(50)
@@ -55,6 +58,10 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
 
                 b.HasKey("Id");
 
+                b.HasIndex("EmployeeId")
+                    .IsUnique()
+                    .HasFilter("[EmployeeId] IS NOT NULL");
+
                 b.HasIndex("Login")
                     .IsUnique();
 
@@ -69,10 +76,18 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
 
                 SqlServerPropertyBuilderExtensions.UseIdentityColumn(id);
 
+                b.Property<string>("Department")
+                    .IsRequired()
+                    .HasMaxLength(200)
+                    .HasColumnType("nvarchar(200)");
+
                 b.Property<string>("FirstName")
                     .IsRequired()
                     .HasMaxLength(100)
                     .HasColumnType("nvarchar(100)");
+
+                b.Property<bool>("IsSupervisor")
+                    .HasColumnType("bit");
 
                 b.Property<string>("LastName")
                     .IsRequired()
@@ -92,24 +107,171 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
                     new
                     {
                         Id = 1,
+                        Department = "Wydział Analiz Danych",
                         FirstName = "Anna",
+                        IsSupervisor = false,
                         LastName = "Kowalska",
                         Position = "Starszy specjalista"
                     },
                     new
                     {
                         Id = 2,
+                        Department = "Wydział Analiz Danych",
                         FirstName = "Jan",
+                        IsSupervisor = false,
                         LastName = "Nowak",
                         Position = "Specjalista"
                     },
                     new
                     {
                         Id = 3,
+                        Department = "Wydział Analiz Danych",
                         FirstName = "Ewa",
+                        IsSupervisor = true,
                         LastName = "Wiśniewska",
                         Position = "Naczelnik wydziału"
+                    },
+                    new
+                    {
+                        Id = 4,
+                        Department = "Departament Danych i Usług Cyfrowych",
+                        FirstName = "Tomasz",
+                        IsSupervisor = true,
+                        LastName = "Zieliński",
+                        Position = "Dyrektor departamentu"
+                    },
+                    new
+                    {
+                        Id = 5,
+                        Department = "Wydział Usług Cyfrowych",
+                        FirstName = "Marek",
+                        IsSupervisor = true,
+                        LastName = "Lewandowski",
+                        Position = "Naczelnik wydziału"
+                    },
+                    new
+                    {
+                        Id = 6,
+                        Department = "Wydział Usług Cyfrowych",
+                        FirstName = "Magdalena",
+                        IsSupervisor = true,
+                        LastName = "Dąbrowska",
+                        Position = "Zastępca naczelnika wydziału"
+                    },
+                    new
+                    {
+                        Id = 7,
+                        Department = "Wydział Usług Cyfrowych",
+                        FirstName = "Katarzyna",
+                        IsSupervisor = false,
+                        LastName = "Wójcik",
+                        Position = "Główny specjalista"
+                    },
+                    new
+                    {
+                        Id = 8,
+                        Department = "Wydział Usług Cyfrowych",
+                        FirstName = "Piotr",
+                        IsSupervisor = false,
+                        LastName = "Kamiński",
+                        Position = "Starszy referent"
                     });
+            });
+
+        modelBuilder.Entity("KompasKompetencji.Web.Data.EmployeeSupervisor", b =>
+            {
+                b.Property<int>("EmployeeId")
+                    .HasColumnType("int");
+
+                b.Property<int>("SupervisorId")
+                    .HasColumnType("int");
+
+                b.HasKey("EmployeeId", "SupervisorId");
+
+                b.HasIndex("SupervisorId");
+
+                b.ToTable("EmployeeSupervisors", t =>
+                    {
+                        t.HasCheckConstraint("CK_EmployeeSupervisors_NotSelf", "[EmployeeId] <> [SupervisorId]");
+                    });
+
+                b.HasData(
+                    new
+                    {
+                        EmployeeId = 1,
+                        SupervisorId = 3
+                    },
+                    new
+                    {
+                        EmployeeId = 2,
+                        SupervisorId = 3
+                    },
+                    new
+                    {
+                        EmployeeId = 3,
+                        SupervisorId = 4
+                    },
+                    new
+                    {
+                        EmployeeId = 5,
+                        SupervisorId = 4
+                    },
+                    new
+                    {
+                        EmployeeId = 6,
+                        SupervisorId = 5
+                    },
+                    new
+                    {
+                        EmployeeId = 7,
+                        SupervisorId = 5
+                    },
+                    new
+                    {
+                        EmployeeId = 8,
+                        SupervisorId = 6
+                    },
+                    new
+                    {
+                        EmployeeId = 8,
+                        SupervisorId = 5
+                    });
+            });
+
+        modelBuilder.Entity("KompasKompetencji.Web.Data.AppUser", b =>
+            {
+                b.HasOne("KompasKompetencji.Web.Data.Employee", "Employee")
+                    .WithMany()
+                    .HasForeignKey("EmployeeId")
+                    .OnDelete(DeleteBehavior.SetNull);
+
+                b.Navigation("Employee");
+            });
+
+        modelBuilder.Entity("KompasKompetencji.Web.Data.EmployeeSupervisor", b =>
+            {
+                b.HasOne("KompasKompetencji.Web.Data.Employee", "Employee")
+                    .WithMany("SupervisorLinks")
+                    .HasForeignKey("EmployeeId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
+
+                b.HasOne("KompasKompetencji.Web.Data.Employee", "Supervisor")
+                    .WithMany("SubordinateLinks")
+                    .HasForeignKey("SupervisorId")
+                    .OnDelete(DeleteBehavior.NoAction)
+                    .IsRequired();
+
+                b.Navigation("Employee");
+
+                b.Navigation("Supervisor");
+            });
+
+        modelBuilder.Entity("KompasKompetencji.Web.Data.Employee", b =>
+            {
+                b.Navigation("SubordinateLinks");
+
+                b.Navigation("SupervisorLinks");
             });
 #pragma warning restore 612, 618
     }

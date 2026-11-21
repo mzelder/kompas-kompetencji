@@ -1,0 +1,16 @@
+<RadzenFormField Text="@Placeholder" Variant="Variant.Outlined" class="rz-w-100">
+    <Start>
+        <RadzenIcon Icon="search" />
+    </Start>
+    <ChildContent>
+        <RadzenTextBox Value="@Value" ValueChanged="@ValueChanged" Immediate="true" aria-label="@Placeholder" />
+    </ChildContent>
+</RadzenFormField>
+
+@code {
+    [Parameter] public string? Value { get; set; }
+
+    [Parameter] public EventCallback<string> ValueChanged { get; set; }
+
+    [Parameter] public string Placeholder { get; set; } = "Szukaj";
+}

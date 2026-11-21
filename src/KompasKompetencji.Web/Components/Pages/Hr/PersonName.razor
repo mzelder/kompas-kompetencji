@@ -1,0 +1,16 @@
+<RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.5rem">
+    <RadzenStack Gap="0">
+        <RadzenText TextStyle="TextStyle.Body2" class="rz-m-0">@Person.FullName</RadzenText>
+        <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">@Person.Department</RadzenText>
+    </RadzenStack>
+    @if (ShowSupervisorIcon && Person.IsSupervisor)
+    {
+        <RadzenIcon Icon="supervisor_account" IconColor="@Colors.Info" title="Przełożony" aria-label="Przełożony" />
+    }
+</RadzenStack>
+
+@code {
+    [Parameter, EditorRequired] public Employee Person { get; set; } = default!;
+
+    [Parameter] public bool ShowSupervisorIcon { get; set; } = true;
+}

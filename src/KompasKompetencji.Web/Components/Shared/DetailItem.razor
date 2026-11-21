@@ -1,0 +1,12 @@
+<RadzenStack Gap="0" class="@(Fill ? "detail-item-fill" : "no-shrink")" title="@Value">
+    <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300 rz-text-truncate">@Label</RadzenText>
+    <RadzenText TextStyle="TextStyle.Body1" class="rz-m-0 rz-text-truncate">@Value</RadzenText>
+</RadzenStack>
+
+@code {
+    [Parameter, EditorRequired] public string Label { get; set; } = string.Empty;
+
+    [Parameter, EditorRequired] public string Value { get; set; } = string.Empty;
+
+    [Parameter] public bool Fill { get; set; }
+}

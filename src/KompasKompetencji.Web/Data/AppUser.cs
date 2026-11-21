@@ -11,4 +11,8 @@ public class AppUser
     public required string Role { get; set; }
 
     public DateTime CreatedAt { get; set; }
+
+    public int? EmployeeId { get; set; }
+
+    public Employee? Employee { get; set; }
 }

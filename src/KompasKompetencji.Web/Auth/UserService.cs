@@ -116,6 +116,21 @@ public sealed partial class UserService(
             {
                 await RegisterAsync(account.Login, account.Password, account.Role, ct);
             }
+
+            if (account.EmployeeId is int employeeId)
+            {
+                await LinkEmployeeAsync(account.Login, employeeId, ct);
+            }
         }
+    }
+
+    private async Task LinkEmployeeAsync(string login, int employeeId, CancellationToken ct)
+    {
+        var normalized = NormalizeLogin(login);
+        await using var db = await dbFactory.CreateDbContextAsync(ct);
+        await db.Users
+            .Where(u => u.Login == normalized && u.EmployeeId == null)
+            .Where(u => !db.Users.Any(other => other.EmployeeId == employeeId))
+            .ExecuteUpdateAsync(s => s.SetProperty(u => u.EmployeeId, employeeId), ct);
     }
 }

@@ -32,13 +32,20 @@
 | Formularz | `RadzenTemplateForm` + `RadzenFormField Variant="Variant.Outlined"`, walidatory Radzen w `<Helper>` | `Login.razor` |
 | Komunikaty na stronie | `RadzenAlert Variant="Variant.Flat" Shade="Shade.Lighter" AllowClose="false"` | `Login.razor` |
 | Komunikaty po akcji | `NotificationService.Notify(...)` | |
-| Tabele | `RadzenDataGrid` z `AllowSorting`, `AllowFiltering`, `FilterMode.Simple`, `IsLoading`, `EmptyText` | `Przelozony/Dashboard.razor`, `Hr/Dashboard.razor`, `Admin/Users.razor` |
+| Tabele | `RadzenDataGrid` z `AllowSorting`, `IsLoading`, `EmptyText`. Bez wiersza filtrów (`AllowFiltering`), bo zajmuje miejsce: zamiast niego jedno pole `<SearchBox>` nad tabelą | `Przelozony/Dashboard.razor`, `Hr/Dashboard.razor`, `Admin/Users.razor` |
+| Lista z zaznaczaniem (klik zaznacza, ponowny klik odznacza) i panel szczegółów | `RadzenDataGrid` z `SelectionMode.Single`, `@bind-Value`, `RowSelect` + `RowClick` (Radzen sam nie odznacza po drugim kliknięciu; `RowClick` przychodzi przed `RowSelect`); szczegóły w osobnej `RadzenCard` pod listami | `Hr/Employees.razor` |
+| Układ kolumn | `RadzenRow` + `RadzenColumn Size="12" SizeMD="6"` | `Hr/Employees.razor` |
+| Wyszukiwanie w liście | `<SearchBox Value ValueChanged Placeholder>` nad tabelą; filtrowanie w kodzie bez rozróżniania wielkości liter i polskich znaków (`Organization/EmployeeSearch.cs`); podpis z liczbą wyników „Wyniki wyszukiwania: X z Y” | `Shared/SearchBox.razor`, `Hr/Employees.razor` |
+| Widok na jeden ekran (bez przewijania strony) | Korzeń strony `<div class="fill-page">`; wiersz z listami `RadzenRow class="fill-row"`, kolumny `fill-column`, karty `fill-card`, stos `fill-stack`, tabela `fill-grid` (przewija się w środku, nagłówek zostaje). Panel na dole `details-card` ma stałą wysokość, więc listy nie skaczą przy zaznaczaniu | `Hr/Employees.razor`, `wwwroot/app.css` |
+| Pary etykieta–wartość w jednym rzędzie | `<DetailItem Label Value />`; długie wartości (listy nazwisk) z `Fill="true"` skracają się wielokropkiem, pełna treść w podpowiedzi | `Shared/DetailItem.razor`, `Hr/PersonDetails.razor` |
+| Nagłówek karty z akcją | Tytuł i podpis w `RadzenStack class="card-heading"` (podpis `rz-text-truncate`), przycisk z `class="no-shrink"`, żeby się nie łamał | `Hr/Employees.razor` |
 | Statusy, etykiety | `RadzenBadge Variant="Variant.Flat" Shade="Shade.Lighter"` | |
 | Przyciski | `RadzenButton`: główna akcja `ButtonStyle.Primary`, poboczna `ButtonStyle.Secondary` lub `ButtonStyle.Base`, mniej ważna `Variant.Text`; przy operacjach async `IsBusy` + `BusyText` | `Login.razor` |
 | Kroki procesu (kreator oceny) | `RadzenSteps` | do zastosowania w ścieżce oceny |
-| Okna dialogowe | `DialogService` | |
+| Okna dialogowe | `DialogService.OpenAsync<Komponent>(tytuł, parametry, new DialogOptions { Width = ... })`; komponent dialogu zamyka się `DialogService.Close(wynik)`; przyciski na dole po prawej: „Anuluj” (`Variant.Text`, `ButtonStyle.Base`) i akcja główna; potwierdzenia przez `DialogService.Confirm` | `Hr/AddEmployeeDialog.razor`, `Hr/AssignSupervisorDialog.razor` |
+| Wybór wielu pozycji z listy | `RadzenListBox` z `Multiple`, `AllowFiltering`, `Template` (nazwa + podpis) | `Hr/AssignSupervisorDialog.razor` |
 | Ikony | Material Symbols przez `RadzenIcon Icon="..."`; ikony ról z `AppRoles.Icon(...)`; większy rozmiar klasą `icon-md` (1.75rem, przy tytule karty) / `icon-lg` (2.5rem) / `icon-xl` (3rem) | `Login.razor` |
-| Awatar użytkownika | `<UserAvatar Login="..." />` (inicjały w kółku) | `Components/Shared/UserAvatar.razor` |
+| Awatar osoby | `<UserAvatar Name="..." />` (inicjały w kółku: „Anna Kowalska” → AK, login → dwie pierwsze litery) | `Components/Shared/UserAvatar.razor` |
 
 ## Teksty
 
