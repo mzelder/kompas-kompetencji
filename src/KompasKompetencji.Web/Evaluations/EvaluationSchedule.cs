@@ -23,6 +23,8 @@ public sealed record EvaluationTask(
 {
     public bool IsInConversationWindow => Urgency != EvaluationUrgency.Planned;
 
+    public DateOnly ConversationWindowOpensOn => DueDate.AddDays(-EvaluationSchedule.DueSoonDays);
+
     public bool CanScheduleConversation => IsInConversationWindow && IsSheetConfirmed;
 
     public bool NeedsSheet => IsInConversationWindow && !IsSheetConfirmed;
@@ -51,7 +53,7 @@ public static class EvaluationSchedule
         var open = OpenEvaluation(list);
         var lastCompleted = list.Where(v => v.Status == EvaluationStatus.Completed).MaxBy(v => v.DueDate);
         var dueDate = open?.DueDate ?? NextDueDate(employee.EmployedSince, lastCompleted?.DueDate);
-        var started = open is not null && open.Status != EvaluationStatus.NotStarted;
+        var started = open is not null && open.Status >= EvaluationStatus.InProgress;
 
         var urgency =
             dueDate < today ? EvaluationUrgency.Overdue

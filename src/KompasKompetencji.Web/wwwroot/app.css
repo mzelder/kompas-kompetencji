@@ -291,3 +291,13 @@ h1:focus {
 .align-self-start {
     align-self: flex-start;
 }
+
+.note-text {
+    white-space: pre-line;
+}
+
+.notes-list {
+    max-height: 22rem;
+    overflow-y: auto;
+    padding-right: 0.25rem;
+}

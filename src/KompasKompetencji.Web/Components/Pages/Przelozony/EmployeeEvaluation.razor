@@ -25,10 +25,7 @@ else if (view is null)
 }
 else
 {
-    <PageHeader Title="@view.Employee.FullName" Subtitle="@($"{view.Employee.Position} · {view.Employee.Department}")">
-        <StatTile Icon="event" IconColor="@Colors.Primary" Label="Termin oceny" Compact="true"
-                  Value="@($"{EvaluationText.Date(view.Task.DueDate)} ({EvaluationText.RelativeToToday(view.Task.DueDate, today)})")" />
-    </PageHeader>
+    <PageHeader Title="@view.Employee.FullName" Subtitle="@($"{view.Employee.Position} · {view.Employee.Department}")" />
 
     <RadzenSteps @bind-SelectedIndex="selectedIndex" ShowStepsButtons="false">
         <Steps>
@@ -42,6 +39,11 @@ else
                     {
                         <JobDescriptionStage @key="@view" View="@view" SupervisorId="@supervisorId"
                                              ReadOnly="@(view.CurrentStage > stage)" OnConfirmed="@LoadAsync" />
+                    }
+                    else if (stage == EvaluationStage.Assessment)
+                    {
+                        <AssessmentStage @key="@view" View="@view" SupervisorId="@supervisorId"
+                                         ReadOnly="@(view.CurrentStage > stage)" OnChanged="@LoadAsync" />
                     }
                     else
                     {

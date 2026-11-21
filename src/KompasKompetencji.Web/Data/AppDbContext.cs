@@ -12,6 +12,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
 
     public DbSet<JobDescription> JobDescriptions => Set<JobDescription>();
 
+    public DbSet<EvaluationNote> EvaluationNotes => Set<EvaluationNote>();
+
     public DbSet<AppUser> Users => Set<AppUser>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -51,7 +53,9 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
                 new Employee { Id = 10, FirstName = "Agnieszka", LastName = "Woźniak", Position = "Starszy specjalista", Department = "Wydział Analiz Danych", EmployedSince = new DateOnly(2020, 6, 1) },
                 new Employee { Id = 11, FirstName = "Paweł", LastName = "Kozłowski", Position = "Specjalista", Department = "Wydział Analiz Danych", EmployedSince = new DateOnly(2026, 7, 1) },
                 new Employee { Id = 12, FirstName = "Karolina", LastName = "Mazur", Position = "Specjalista", Department = "Wydział Analiz Danych", EmployedSince = new DateOnly(2021, 12, 20) },
-                new Employee { Id = 13, FirstName = "Łukasz", LastName = "Grabowski", Position = "Specjalista", Department = "Wydział Analiz Danych", EmployedSince = new DateOnly(2020, 12, 10) });
+                new Employee { Id = 13, FirstName = "Łukasz", LastName = "Grabowski", Position = "Specjalista", Department = "Wydział Analiz Danych", EmployedSince = new DateOnly(2020, 12, 10) },
+                new Employee { Id = 14, FirstName = "Natalia", LastName = "Krawczyk", Position = "Główny specjalista", Department = "Wydział Analiz Danych", EmployedSince = new DateOnly(2023, 4, 3) },
+                new Employee { Id = 15, FirstName = "Bartosz", LastName = "Wróbel", Position = "Starszy specjalista", Department = "Wydział Analiz Danych", EmployedSince = new DateOnly(2022, 1, 17) });
         });
 
         modelBuilder.Entity<EmployeeSupervisor>(l =>
@@ -81,7 +85,9 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
                 new EmployeeSupervisor { EmployeeId = 10, SupervisorId = 3 },
                 new EmployeeSupervisor { EmployeeId = 11, SupervisorId = 3 },
                 new EmployeeSupervisor { EmployeeId = 12, SupervisorId = 3 },
-                new EmployeeSupervisor { EmployeeId = 13, SupervisorId = 3 });
+                new EmployeeSupervisor { EmployeeId = 13, SupervisorId = 3 },
+                new EmployeeSupervisor { EmployeeId = 14, SupervisorId = 3 },
+                new EmployeeSupervisor { EmployeeId = 15, SupervisorId = 3 });
         });
 
         modelBuilder.Entity<JobDescription>(j =>
@@ -166,6 +172,28 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
                         "Przygotowywanie projektów odpowiedzi na pisma",
                         "Aktualizacja danych publikowanych w serwisie urzędu"),
                     RequiredCompetencies = Lines("Myślenie analityczne", "Rzetelność", "Komunikacja pisemna"),
+                },
+                new JobDescription
+                {
+                    EmployeeId = 14,
+                    Purpose = "Projektowanie i utrzymanie zestawów wskaźników wydziału oraz zapewnienie spójności metod analizy danych.",
+                    Tasks = Lines(
+                        "Projektowanie wskaźników i metod pomiaru dla zadań departamentu",
+                        "Przygotowywanie analiz porównawczych na potrzeby kierownictwa",
+                        "Opracowywanie standardów opisu i weryfikacji źródeł danych",
+                        "Koordynowanie prac analitycznych realizowanych przez kilka osób wydziału"),
+                    RequiredCompetencies = Lines("Myślenie analityczne", "Orientacja na cele", "Współpraca", "Komunikacja pisemna"),
+                },
+                new JobDescription
+                {
+                    EmployeeId = 15,
+                    Purpose = "Przygotowywanie analiz statystycznych i prognoz na potrzeby planowania zadań departamentu.",
+                    Tasks = Lines(
+                        "Przygotowywanie prognoz i analiz trendów na podstawie danych wydziału",
+                        "Opracowywanie zestawień do planów i sprawozdań departamentu",
+                        "Weryfikacja poprawności obliczeń w raportach przygotowywanych przez wydział",
+                        "Udzielanie wyjaśnień dotyczących metod analizy innym komórkom"),
+                    RequiredCompetencies = Lines("Myślenie analityczne", "Rzetelność", "Komunikacja", "Orientacja na cele"),
                 });
         });
 
@@ -240,6 +268,67 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
                     Id = 8, EmployeeId = 13, EvaluatorId = 3, Sheet = EvaluationSheet.C, Status = EvaluationStatus.NotStarted, SheetConfirmedAt = new DateTime(2025, 12, 12, 9, 0, 0),
                     PeriodStart = new DateOnly(2025, 12, 10), PeriodEnd = new DateOnly(2026, 12, 9), DueDate = new DateOnly(2026, 12, 10),
                     ConversationAt = new DateTime(2026, 11, 14, 10, 0, 0), ConversationStatus = ConversationStatus.Scheduled,
+                },
+                new Evaluation
+                {
+                    Id = 9, EmployeeId = 14, EvaluatorId = 3, Sheet = EvaluationSheet.C, Status = EvaluationStatus.Completed, SheetConfirmedAt = new DateTime(2025, 4, 8, 9, 0, 0),
+                    CriteriaConfirmedAt = new DateTime(2025, 4, 22, 10, 0, 0),
+                    PeriodStart = new DateOnly(2025, 4, 3), PeriodEnd = new DateOnly(2026, 4, 2), DueDate = new DateOnly(2026, 4, 3),
+                    ConversationAt = new DateTime(2026, 3, 25, 10, 0, 0), ConversationStatus = ConversationStatus.Held,
+                    StartedAt = new DateTime(2026, 3, 2, 9, 0, 0), CompletedAt = new DateTime(2026, 3, 30, 12, 0, 0),
+                },
+                new Evaluation
+                {
+                    Id = 10, EmployeeId = 14, EvaluatorId = 3, Sheet = EvaluationSheet.C, Status = EvaluationStatus.CriteriaSet, SheetConfirmedAt = new DateTime(2026, 4, 7, 9, 0, 0),
+                    CriteriaConfirmedAt = new DateTime(2026, 4, 21, 10, 0, 0),
+                    PeriodStart = new DateOnly(2026, 4, 3), PeriodEnd = new DateOnly(2027, 4, 2), DueDate = new DateOnly(2027, 4, 3),
+                },
+                new Evaluation
+                {
+                    Id = 11, EmployeeId = 15, EvaluatorId = 3, Sheet = EvaluationSheet.C, Status = EvaluationStatus.Completed, SheetConfirmedAt = new DateTime(2025, 1, 21, 9, 0, 0),
+                    CriteriaConfirmedAt = new DateTime(2025, 2, 4, 10, 0, 0),
+                    PeriodStart = new DateOnly(2025, 1, 17), PeriodEnd = new DateOnly(2026, 1, 16), DueDate = new DateOnly(2026, 1, 17),
+                    ConversationAt = new DateTime(2026, 1, 12, 11, 0, 0), ConversationStatus = ConversationStatus.Held,
+                    StartedAt = new DateTime(2025, 12, 1, 9, 0, 0), CompletedAt = new DateTime(2026, 1, 14, 12, 0, 0),
+                },
+                new Evaluation
+                {
+                    Id = 12, EmployeeId = 15, EvaluatorId = 3, Sheet = EvaluationSheet.C, Status = EvaluationStatus.CriteriaSet, SheetConfirmedAt = new DateTime(2026, 1, 20, 9, 0, 0),
+                    CriteriaConfirmedAt = new DateTime(2026, 2, 3, 10, 0, 0),
+                    PeriodStart = new DateOnly(2026, 1, 17), PeriodEnd = new DateOnly(2027, 1, 16), DueDate = new DateOnly(2027, 1, 17),
+                });
+        });
+
+        modelBuilder.Entity<EvaluationNote>(n =>
+        {
+            n.ToTable("EvaluationNotes");
+            n.Property(p => p.Text).HasMaxLength(EvaluationNote.MaxTextLength);
+            n.HasIndex(p => new { p.EvaluationId, p.CreatedAt });
+            n.HasOne(p => p.Evaluation)
+                .WithMany()
+                .HasForeignKey(p => p.EvaluationId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            n.HasData(
+                new EvaluationNote
+                {
+                    Id = 1, EvaluationId = 10, CreatedAt = new DateTime(2026, 5, 14, 15, 20, 0),
+                    Text = "Przygotowała zestaw wskaźników do sprawozdania kwartalnego tydzień przed terminem. Kierownictwo departamentu przyjęło go bez poprawek.",
+                },
+                new EvaluationNote
+                {
+                    Id = 2, EvaluationId = 10, CreatedAt = new DateTime(2026, 9, 8, 11, 0, 0),
+                    Text = "Z własnej inicjatywy poprowadziła dla wydziału warsztat z weryfikacji źródeł danych. Uczestnicy ocenili go jako przydatny.",
+                },
+                new EvaluationNote
+                {
+                    Id = 3, EvaluationId = 12, CreatedAt = new DateTime(2026, 3, 10, 9, 45, 0),
+                    Text = "Prognoza zatrudnienia na 2027 r. wymagała dwóch poprawek metodologicznych. Po wskazówkach przygotował poprawioną wersję w terminie.",
+                },
+                new EvaluationNote
+                {
+                    Id = 4, EvaluationId = 12, CreatedAt = new DateTime(2026, 10, 2, 14, 10, 0),
+                    Text = "Samodzielnie wykrył błąd w obliczeniach raportu rocznego przed jego wysłaniem do dyrektora i zaproponował dodatkowy krok kontroli.",
                 });
         });
     }

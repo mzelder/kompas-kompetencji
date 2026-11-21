@@ -16,6 +16,20 @@ public partial class ConversationDialog
 
     [Parameter, EditorRequired] public DateOnly Today { get; set; }
 
+    public static async Task<bool> OpenAsync(DialogService dialogService, EvaluationTask task, int supervisorId, DateOnly today)
+    {
+        var saved = await dialogService.OpenAsync<ConversationDialog>(
+            task.ConversationAt is null ? "Wyznacz termin rozmowy" : "Rozmowa okresowa",
+            new Dictionary<string, object?>
+            {
+                [nameof(Task)] = task,
+                [nameof(SupervisorId)] = supervisorId,
+                [nameof(Today)] = today,
+            },
+            new DialogOptions { Width = "520px" });
+        return saved is true;
+    }
+
     private DateTime conversationAt;
     private ConversationStatus status;
     private DateTime? latestAllowed;

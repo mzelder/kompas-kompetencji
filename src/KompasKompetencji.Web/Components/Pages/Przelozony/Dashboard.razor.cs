@@ -51,16 +51,7 @@ public partial class Dashboard
 
     private async Task EditConversationAsync(EvaluationTask task)
     {
-        var saved = await DialogService.OpenAsync<ConversationDialog>(
-            task.ConversationAt is null ? "Wyznacz termin rozmowy" : "Rozmowa okresowa",
-            new Dictionary<string, object?>
-            {
-                [nameof(ConversationDialog.Task)] = task,
-                [nameof(ConversationDialog.SupervisorId)] = supervisorId,
-                [nameof(ConversationDialog.Today)] = today,
-            },
-            new DialogOptions { Width = "520px" });
-        if (saved is true)
+        if (await ConversationDialog.OpenAsync(DialogService, task, supervisorId, today))
         {
             await LoadOverviewAsync();
             NotificationService.Notify(NotificationSeverity.Success, "Zapisano termin rozmowy", task.Employee.FullName);

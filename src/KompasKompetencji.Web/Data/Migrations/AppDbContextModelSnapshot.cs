@@ -16,7 +16,7 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
     // If you encounter a merge conflict in the line below, it means you need to
     // discard one of the migration branches and recreate its migrations on top of
     // the other branch. See https://aka.ms/efcore-docs-migrations-conflicts for more info.
-    public override string LastMigrationId => "20261121203358_AddJobDescriptionsAndSheetConfirmation";
+    public override string LastMigrationId => "20261121212147_AddEvaluationNotes";
 
     protected override void BuildModel(ModelBuilder modelBuilder)
     {
@@ -236,6 +236,26 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
                         IsSupervisor = false,
                         LastName = "Grabowski",
                         Position = "Specjalista"
+                    },
+                    new
+                    {
+                        Id = 14,
+                        Department = "Wydział Analiz Danych",
+                        EmployedSince = new DateOnly(2023, 4, 3),
+                        FirstName = "Natalia",
+                        IsSupervisor = false,
+                        LastName = "Krawczyk",
+                        Position = "Główny specjalista"
+                    },
+                    new
+                    {
+                        Id = 15,
+                        Department = "Wydział Analiz Danych",
+                        EmployedSince = new DateOnly(2022, 1, 17),
+                        FirstName = "Bartosz",
+                        IsSupervisor = false,
+                        LastName = "Wróbel",
+                        Position = "Starszy specjalista"
                     });
             });
 
@@ -321,6 +341,16 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
                     {
                         EmployeeId = 13,
                         SupervisorId = 3
+                    },
+                    new
+                    {
+                        EmployeeId = 14,
+                        SupervisorId = 3
+                    },
+                    new
+                    {
+                        EmployeeId = 15,
+                        SupervisorId = 3
                     });
             });
 
@@ -341,6 +371,9 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
                 b.Property<string>("ConversationStatus")
                     .HasMaxLength(30)
                     .HasColumnType("nvarchar(30)");
+
+                b.Property<DateTime?>("CriteriaConfirmedAt")
+                    .HasColumnType("datetime2");
 
                 b.Property<DateOnly>("DueDate")
                     .HasColumnType("date");
@@ -505,6 +538,122 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
                         Sheet = "C",
                         SheetConfirmedAt = new DateTime(2025, 12, 12, 9, 0, 0, 0, DateTimeKind.Unspecified),
                         Status = "NotStarted"
+                    },
+                    new
+                    {
+                        Id = 9,
+                        CompletedAt = new DateTime(2026, 3, 30, 12, 0, 0, 0, DateTimeKind.Unspecified),
+                        ConversationAt = new DateTime(2026, 3, 25, 10, 0, 0, 0, DateTimeKind.Unspecified),
+                        ConversationStatus = "Held",
+                        CriteriaConfirmedAt = new DateTime(2025, 4, 22, 10, 0, 0, 0, DateTimeKind.Unspecified),
+                        DueDate = new DateOnly(2026, 4, 3),
+                        EmployeeId = 14,
+                        EvaluatorId = 3,
+                        PeriodEnd = new DateOnly(2026, 4, 2),
+                        PeriodStart = new DateOnly(2025, 4, 3),
+                        Sheet = "C",
+                        SheetConfirmedAt = new DateTime(2025, 4, 8, 9, 0, 0, 0, DateTimeKind.Unspecified),
+                        StartedAt = new DateTime(2026, 3, 2, 9, 0, 0, 0, DateTimeKind.Unspecified),
+                        Status = "Completed"
+                    },
+                    new
+                    {
+                        Id = 10,
+                        CriteriaConfirmedAt = new DateTime(2026, 4, 21, 10, 0, 0, 0, DateTimeKind.Unspecified),
+                        DueDate = new DateOnly(2027, 4, 3),
+                        EmployeeId = 14,
+                        EvaluatorId = 3,
+                        PeriodEnd = new DateOnly(2027, 4, 2),
+                        PeriodStart = new DateOnly(2026, 4, 3),
+                        Sheet = "C",
+                        SheetConfirmedAt = new DateTime(2026, 4, 7, 9, 0, 0, 0, DateTimeKind.Unspecified),
+                        Status = "CriteriaSet"
+                    },
+                    new
+                    {
+                        Id = 11,
+                        CompletedAt = new DateTime(2026, 1, 14, 12, 0, 0, 0, DateTimeKind.Unspecified),
+                        ConversationAt = new DateTime(2026, 1, 12, 11, 0, 0, 0, DateTimeKind.Unspecified),
+                        ConversationStatus = "Held",
+                        CriteriaConfirmedAt = new DateTime(2025, 2, 4, 10, 0, 0, 0, DateTimeKind.Unspecified),
+                        DueDate = new DateOnly(2026, 1, 17),
+                        EmployeeId = 15,
+                        EvaluatorId = 3,
+                        PeriodEnd = new DateOnly(2026, 1, 16),
+                        PeriodStart = new DateOnly(2025, 1, 17),
+                        Sheet = "C",
+                        SheetConfirmedAt = new DateTime(2025, 1, 21, 9, 0, 0, 0, DateTimeKind.Unspecified),
+                        StartedAt = new DateTime(2025, 12, 1, 9, 0, 0, 0, DateTimeKind.Unspecified),
+                        Status = "Completed"
+                    },
+                    new
+                    {
+                        Id = 12,
+                        CriteriaConfirmedAt = new DateTime(2026, 2, 3, 10, 0, 0, 0, DateTimeKind.Unspecified),
+                        DueDate = new DateOnly(2027, 1, 17),
+                        EmployeeId = 15,
+                        EvaluatorId = 3,
+                        PeriodEnd = new DateOnly(2027, 1, 16),
+                        PeriodStart = new DateOnly(2026, 1, 17),
+                        Sheet = "C",
+                        SheetConfirmedAt = new DateTime(2026, 1, 20, 9, 0, 0, 0, DateTimeKind.Unspecified),
+                        Status = "CriteriaSet"
+                    });
+            });
+
+        modelBuilder.Entity("KompasKompetencji.Web.Data.EvaluationNote", b =>
+            {
+                var id = b.Property<int>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("int");
+
+                SqlServerPropertyBuilderExtensions.UseIdentityColumn(id);
+
+                b.Property<DateTime>("CreatedAt")
+                    .HasColumnType("datetime2");
+
+                b.Property<int>("EvaluationId")
+                    .HasColumnType("int");
+
+                b.Property<string>("Text")
+                    .IsRequired()
+                    .HasMaxLength(2000)
+                    .HasColumnType("nvarchar(2000)");
+
+                b.HasKey("Id");
+
+                b.HasIndex("EvaluationId", "CreatedAt");
+
+                b.ToTable("EvaluationNotes");
+
+                b.HasData(
+                    new
+                    {
+                        Id = 1,
+                        CreatedAt = new DateTime(2026, 5, 14, 15, 20, 0, 0, DateTimeKind.Unspecified),
+                        EvaluationId = 10,
+                        Text = "Przygotowała zestaw wskaźników do sprawozdania kwartalnego tydzień przed terminem. Kierownictwo departamentu przyjęło go bez poprawek."
+                    },
+                    new
+                    {
+                        Id = 2,
+                        CreatedAt = new DateTime(2026, 9, 8, 11, 0, 0, 0, DateTimeKind.Unspecified),
+                        EvaluationId = 10,
+                        Text = "Z własnej inicjatywy poprowadziła dla wydziału warsztat z weryfikacji źródeł danych. Uczestnicy ocenili go jako przydatny."
+                    },
+                    new
+                    {
+                        Id = 3,
+                        CreatedAt = new DateTime(2026, 3, 10, 9, 45, 0, 0, DateTimeKind.Unspecified),
+                        EvaluationId = 12,
+                        Text = "Prognoza zatrudnienia na 2027 r. wymagała dwóch poprawek metodologicznych. Po wskazówkach przygotował poprawioną wersję w terminie."
+                    },
+                    new
+                    {
+                        Id = 4,
+                        CreatedAt = new DateTime(2026, 10, 2, 14, 10, 0, 0, DateTimeKind.Unspecified),
+                        EvaluationId = 12,
+                        Text = "Samodzielnie wykrył błąd w obliczeniach raportu rocznego przed jego wysłaniem do dyrektora i zaproponował dodatkowy krok kontroli."
                     });
             });
 
@@ -578,6 +727,20 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
                         Purpose = "Realizacja zadań związanych z analizą danych i przygotowywaniem informacji dla kierownictwa.",
                         RequiredCompetencies = "Myślenie analityczne\nRzetelność\nKomunikacja pisemna",
                         Tasks = "Przygotowywanie cyklicznych raportów z danych wydziału\nAnaliza danych ankietowych i statystycznych\nPrzygotowywanie projektów odpowiedzi na pisma\nAktualizacja danych publikowanych w serwisie urzędu"
+                    },
+                    new
+                    {
+                        EmployeeId = 14,
+                        Purpose = "Projektowanie i utrzymanie zestawów wskaźników wydziału oraz zapewnienie spójności metod analizy danych.",
+                        RequiredCompetencies = "Myślenie analityczne\nOrientacja na cele\nWspółpraca\nKomunikacja pisemna",
+                        Tasks = "Projektowanie wskaźników i metod pomiaru dla zadań departamentu\nPrzygotowywanie analiz porównawczych na potrzeby kierownictwa\nOpracowywanie standardów opisu i weryfikacji źródeł danych\nKoordynowanie prac analitycznych realizowanych przez kilka osób wydziału"
+                    },
+                    new
+                    {
+                        EmployeeId = 15,
+                        Purpose = "Przygotowywanie analiz statystycznych i prognoz na potrzeby planowania zadań departamentu.",
+                        RequiredCompetencies = "Myślenie analityczne\nRzetelność\nKomunikacja\nOrientacja na cele",
+                        Tasks = "Przygotowywanie prognoz i analiz trendów na podstawie danych wydziału\nOpracowywanie zestawień do planów i sprawozdań departamentu\nWeryfikacja poprawności obliczeń w raportach przygotowywanych przez wydział\nUdzielanie wyjaśnień dotyczących metod analizy innym komórkom"
                     });
             });
 
@@ -627,6 +790,17 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
                 b.Navigation("Employee");
 
                 b.Navigation("Evaluator");
+            });
+
+        modelBuilder.Entity("KompasKompetencji.Web.Data.EvaluationNote", b =>
+            {
+                b.HasOne("KompasKompetencji.Web.Data.Evaluation", "Evaluation")
+                    .WithMany()
+                    .HasForeignKey("EvaluationId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
+
+                b.Navigation("Evaluation");
             });
 
         modelBuilder.Entity("KompasKompetencji.Web.Data.JobDescription", b =>

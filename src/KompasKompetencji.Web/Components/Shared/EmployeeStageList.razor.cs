@@ -23,6 +23,8 @@ public partial class EmployeeStageList
 
     [Parameter] public EventCallback<Employee> OnEmployeeClick { get; set; }
 
+    [Parameter] public RenderFragment<Employee>? StageDetails { get; set; }
+
     private string CountCaption => filteredEmployees.Count == Employees.Count
         ? $"{CountLabel}: {Employees.Count}"
         : $"Wyniki wyszukiwania: {filteredEmployees.Count} z {Employees.Count}";
