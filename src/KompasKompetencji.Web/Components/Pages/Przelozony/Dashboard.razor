@@ -4,10 +4,10 @@
 @inject DialogService DialogService
 @inject NotificationService NotificationService
 
-<PageTitle>Pulpit – Kompas kompetencji</PageTitle>
+<PageTitle>Kalendarz rozmów – Kompas kompetencji</PageTitle>
 
 <div class="fill-page">
-    <PageHeader Title="Pulpit" Compact="true">
+    <PageHeader Title="Kalendarz rozmów" Compact="true">
         @if (overview is not null)
         {
             var overdue = overview.WithUrgency(EvaluationUrgency.Overdue).Count;
@@ -37,12 +37,9 @@
             <RadzenColumn Size="12" SizeLG="7" class="fill-column">
                 <RadzenCard Variant="Variant.Outlined" class="fill-card">
                     <RadzenStack Gap="1rem" class="fill-stack">
-                        <RadzenStack Gap="0">
-                            <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H2" class="rz-m-0">Kalendarz rozmów</RadzenText>
-                            <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">
-                                Kliknij rozmowę, aby zmienić termin albo oznaczyć ją jako odbytą. Pomarańczowa ramka: termin minął.
-                            </RadzenText>
-                        </RadzenStack>
+                        <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">
+                            Kliknij rozmowę, aby zmienić termin albo oznaczyć ją jako odbytą. Pomarańczowa ramka: termin minął.
+                        </RadzenText>
 
                         <RadzenScheduler TItem="EvaluationConversation" Data="@overview.Conversations"
                                          StartProperty="@nameof(EvaluationConversation.Start)" EndProperty="@nameof(EvaluationConversation.End)"

@@ -81,7 +81,7 @@ W Development **przy każdym uruchomieniu baza jest usuwana i tworzona od nowa**
 - `Routes.razor` używa `AuthorizeRouteView`: niezalogowany → `/login?returnUrl=...`, zła rola → „Brak dostępu”. `/` przekierowuje do panelu roli.
 - Layouty: `MainLayout` (RadzenLayout z nagłówkiem i menu) dla zalogowanych, `AuthLayout` (bez menu) dla logowania.
 - Wspólne komponenty: `Components/Shared/`.
-- Zakładki przełożonego: Pulpit (`/przelozony`, strona startowa), Moi pracownicy (`/przelozony/pracownicy`), Oceny (`/przelozony/oceny`), Model kompetencji (`/przelozony/model-kompetencji`), Zasady i materiały (`/przelozony/zasady`). Oceny, Model kompetencji i Zasady są na razie puste.
+- Zakładki przełożonego: Kalendarz rozmów (`/przelozony`, strona startowa; w kodzie `Przelozony/Dashboard.razor`), Moi pracownicy (`/przelozony/pracownicy`), Oceny (`/przelozony/oceny`), Model kompetencji (`/przelozony/model-kompetencji`), Zasady i materiały (`/przelozony/zasady`). Oceny, Model kompetencji i Zasady są na razie puste.
 - Pozycja menu, której adres jest prefiksem innych (`/przelozony`, `/hr`), ma `NavLinkMatch.All`, inaczej podświetla się razem z podstronami.
 
 ### Dane

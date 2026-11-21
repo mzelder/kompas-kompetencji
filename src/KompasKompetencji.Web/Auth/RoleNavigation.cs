@@ -14,7 +14,7 @@ public static class RoleNavigation
         [
             new("Oceny",
             [
-                new("Pulpit", "/przelozony", "dashboard", NavLinkMatch.All),
+                new("Kalendarz rozmów", "/przelozony", "calendar_month", NavLinkMatch.All),
                 new("Moi pracownicy", "/przelozony/pracownicy", "groups"),
                 new("Oceny", "/przelozony/oceny", "assignment"),
             ]),
