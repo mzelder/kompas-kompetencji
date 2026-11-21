@@ -14,6 +14,8 @@ public class Employee
 
     public bool IsSupervisor { get; set; }
 
+    public DateOnly EmployedSince { get; set; }
+
     public ICollection<EmployeeSupervisor> SupervisorLinks { get; set; } = [];
 
     public ICollection<EmployeeSupervisor> SubordinateLinks { get; set; } = [];

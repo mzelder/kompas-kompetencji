@@ -2,6 +2,7 @@ using KompasKompetencji.Web.Auth;
 using KompasKompetencji.Web.Assistant;
 using KompasKompetencji.Web.Components;
 using KompasKompetencji.Web.Data;
+using KompasKompetencji.Web.Evaluations;
 using Microsoft.Extensions.AI;
 using KompasKompetencji.Web.Organization;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -36,6 +37,7 @@ builder.Services.AddSingleton<LoginTicketStore>();
 builder.Services.AddSingleton<IPasswordHasher<AppUser>, PasswordHasher<AppUser>>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<OrganizationService>();
+builder.Services.AddScoped<EvaluationService>();
 
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
@@ -65,6 +67,10 @@ if (!app.Environment.IsDevelopment())
 }
 app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true);
 app.UseHttpsRedirection();
+app.UseRequestLocalization(new RequestLocalizationOptions()
+    .SetDefaultCulture("pl-PL")
+    .AddSupportedCultures("pl-PL")
+    .AddSupportedUICultures("pl-PL"));
 
 app.UseAuthentication();
 app.UseAuthorization();

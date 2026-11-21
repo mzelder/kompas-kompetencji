@@ -1,8 +1,14 @@
-<RadzenStack Gap="0.25rem" class="rz-mb-6">
-    <RadzenText TextStyle="TextStyle.H4" TagName="TagName.H1" class="rz-m-0">@Title</RadzenText>
-    @if (!string.IsNullOrEmpty(Subtitle))
+<RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween" Gap="1rem" class="@(Compact ? "rz-mb-3" : "rz-mb-6")">
+    <RadzenStack Gap="0.25rem" class="min-w-0">
+        <RadzenText TextStyle="TextStyle.H4" TagName="TagName.H1" class="rz-m-0">@Title</RadzenText>
+        @if (!string.IsNullOrEmpty(Subtitle))
+        {
+            <RadzenText TextStyle="TextStyle.Body1" class="rz-m-0 rz-color-base-300">@Subtitle</RadzenText>
+        }
+    </RadzenStack>
+    @if (ChildContent is not null)
     {
-        <RadzenText TextStyle="TextStyle.Body1" class="rz-m-0 rz-color-base-300">@Subtitle</RadzenText>
+        <div class="no-shrink">@ChildContent</div>
     }
 </RadzenStack>
 
@@ -10,4 +16,8 @@
     [Parameter, EditorRequired] public string Title { get; set; } = string.Empty;
 
     [Parameter] public string? Subtitle { get; set; }
+
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    [Parameter] public bool Compact { get; set; }
 }

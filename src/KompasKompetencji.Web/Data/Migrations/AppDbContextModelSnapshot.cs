@@ -16,7 +16,7 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
     // If you encounter a merge conflict in the line below, it means you need to
     // discard one of the migration branches and recreate its migrations on top of
     // the other branch. See https://aka.ms/efcore-docs-migrations-conflicts for more info.
-    public override string LastMigrationId => "20261121135935_AddOrganizationStructure";
+    public override string LastMigrationId => "20261121161153_AddEvaluations";
 
     protected override void BuildModel(ModelBuilder modelBuilder)
     {
@@ -81,6 +81,9 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
                     .HasMaxLength(200)
                     .HasColumnType("nvarchar(200)");
 
+                b.Property<DateOnly>("EmployedSince")
+                    .HasColumnType("date");
+
                 b.Property<string>("FirstName")
                     .IsRequired()
                     .HasMaxLength(100)
@@ -108,6 +111,7 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
                     {
                         Id = 1,
                         Department = "Wydział Analiz Danych",
+                        EmployedSince = new DateOnly(2019, 12, 15),
                         FirstName = "Anna",
                         IsSupervisor = false,
                         LastName = "Kowalska",
@@ -117,6 +121,7 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
                     {
                         Id = 2,
                         Department = "Wydział Analiz Danych",
+                        EmployedSince = new DateOnly(2022, 11, 2),
                         FirstName = "Jan",
                         IsSupervisor = false,
                         LastName = "Nowak",
@@ -126,6 +131,7 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
                     {
                         Id = 3,
                         Department = "Wydział Analiz Danych",
+                        EmployedSince = new DateOnly(2015, 4, 1),
                         FirstName = "Ewa",
                         IsSupervisor = true,
                         LastName = "Wiśniewska",
@@ -135,6 +141,7 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
                     {
                         Id = 4,
                         Department = "Departament Danych i Usług Cyfrowych",
+                        EmployedSince = new DateOnly(2012, 9, 1),
                         FirstName = "Tomasz",
                         IsSupervisor = true,
                         LastName = "Zieliński",
@@ -144,6 +151,7 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
                     {
                         Id = 5,
                         Department = "Wydział Usług Cyfrowych",
+                        EmployedSince = new DateOnly(2016, 2, 15),
                         FirstName = "Marek",
                         IsSupervisor = true,
                         LastName = "Lewandowski",
@@ -153,6 +161,7 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
                     {
                         Id = 6,
                         Department = "Wydział Usług Cyfrowych",
+                        EmployedSince = new DateOnly(2018, 5, 1),
                         FirstName = "Magdalena",
                         IsSupervisor = true,
                         LastName = "Dąbrowska",
@@ -162,6 +171,7 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
                     {
                         Id = 7,
                         Department = "Wydział Usług Cyfrowych",
+                        EmployedSince = new DateOnly(2021, 9, 1),
                         FirstName = "Katarzyna",
                         IsSupervisor = false,
                         LastName = "Wójcik",
@@ -171,10 +181,51 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
                     {
                         Id = 8,
                         Department = "Wydział Usług Cyfrowych",
+                        EmployedSince = new DateOnly(2024, 3, 1),
                         FirstName = "Piotr",
                         IsSupervisor = false,
                         LastName = "Kamiński",
                         Position = "Starszy referent"
+                    },
+                    new
+                    {
+                        Id = 9,
+                        Department = "Wydział Analiz Danych",
+                        EmployedSince = new DateOnly(2018, 1, 10),
+                        FirstName = "Michał",
+                        IsSupervisor = false,
+                        LastName = "Szymański",
+                        Position = "Referent"
+                    },
+                    new
+                    {
+                        Id = 10,
+                        Department = "Wydział Analiz Danych",
+                        EmployedSince = new DateOnly(2020, 6, 1),
+                        FirstName = "Agnieszka",
+                        IsSupervisor = false,
+                        LastName = "Woźniak",
+                        Position = "Starszy specjalista"
+                    },
+                    new
+                    {
+                        Id = 11,
+                        Department = "Wydział Analiz Danych",
+                        EmployedSince = new DateOnly(2026, 7, 1),
+                        FirstName = "Paweł",
+                        IsSupervisor = false,
+                        LastName = "Kozłowski",
+                        Position = "Specjalista"
+                    },
+                    new
+                    {
+                        Id = 12,
+                        Department = "Wydział Analiz Danych",
+                        EmployedSince = new DateOnly(2021, 12, 20),
+                        FirstName = "Karolina",
+                        IsSupervisor = false,
+                        LastName = "Mazur",
+                        Position = "Specjalista"
                     });
             });
 
@@ -235,6 +286,175 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
                     {
                         EmployeeId = 8,
                         SupervisorId = 5
+                    },
+                    new
+                    {
+                        EmployeeId = 9,
+                        SupervisorId = 3
+                    },
+                    new
+                    {
+                        EmployeeId = 10,
+                        SupervisorId = 3
+                    },
+                    new
+                    {
+                        EmployeeId = 11,
+                        SupervisorId = 3
+                    },
+                    new
+                    {
+                        EmployeeId = 12,
+                        SupervisorId = 3
+                    });
+            });
+
+        modelBuilder.Entity("KompasKompetencji.Web.Data.Evaluation", b =>
+            {
+                var id = b.Property<int>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("int");
+
+                SqlServerPropertyBuilderExtensions.UseIdentityColumn(id);
+
+                b.Property<DateTime?>("CompletedAt")
+                    .HasColumnType("datetime2");
+
+                b.Property<DateTime?>("ConversationAt")
+                    .HasColumnType("datetime2");
+
+                b.Property<DateOnly>("DueDate")
+                    .HasColumnType("date");
+
+                b.Property<int>("EmployeeId")
+                    .HasColumnType("int");
+
+                b.Property<int>("EvaluatorId")
+                    .HasColumnType("int");
+
+                b.Property<DateOnly>("PeriodEnd")
+                    .HasColumnType("date");
+
+                b.Property<DateOnly>("PeriodStart")
+                    .HasColumnType("date");
+
+                b.Property<string>("Sheet")
+                    .IsRequired()
+                    .HasMaxLength(1)
+                    .HasColumnType("nvarchar(1)");
+
+                b.Property<DateTime?>("StartedAt")
+                    .HasColumnType("datetime2");
+
+                b.Property<string>("Status")
+                    .IsRequired()
+                    .HasMaxLength(30)
+                    .HasColumnType("nvarchar(30)");
+
+                b.HasKey("Id");
+
+                b.HasIndex("EvaluatorId");
+
+                b.HasIndex("EmployeeId", "DueDate");
+
+                b.ToTable("Evaluations");
+
+                b.HasData(
+                    new
+                    {
+                        Id = 1,
+                        CompletedAt = new DateTime(2025, 12, 10, 14, 0, 0, 0, DateTimeKind.Unspecified),
+                        ConversationAt = new DateTime(2025, 12, 8, 10, 0, 0, 0, DateTimeKind.Unspecified),
+                        DueDate = new DateOnly(2025, 12, 15),
+                        EmployeeId = 1,
+                        EvaluatorId = 3,
+                        PeriodEnd = new DateOnly(2025, 12, 14),
+                        PeriodStart = new DateOnly(2024, 12, 15),
+                        Sheet = "C",
+                        StartedAt = new DateTime(2025, 11, 20, 9, 0, 0, 0, DateTimeKind.Unspecified),
+                        Status = "Completed"
+                    },
+                    new
+                    {
+                        Id = 2,
+                        ConversationAt = new DateTime(2026, 11, 27, 10, 0, 0, 0, DateTimeKind.Unspecified),
+                        DueDate = new DateOnly(2026, 12, 15),
+                        EmployeeId = 1,
+                        EvaluatorId = 3,
+                        PeriodEnd = new DateOnly(2026, 12, 14),
+                        PeriodStart = new DateOnly(2025, 12, 15),
+                        Sheet = "C",
+                        StartedAt = new DateTime(2026, 11, 12, 10, 30, 0, 0, DateTimeKind.Unspecified),
+                        Status = "InProgress"
+                    },
+                    new
+                    {
+                        Id = 3,
+                        CompletedAt = new DateTime(2025, 10, 28, 12, 0, 0, 0, DateTimeKind.Unspecified),
+                        ConversationAt = new DateTime(2025, 10, 27, 11, 0, 0, 0, DateTimeKind.Unspecified),
+                        DueDate = new DateOnly(2025, 11, 2),
+                        EmployeeId = 2,
+                        EvaluatorId = 3,
+                        PeriodEnd = new DateOnly(2025, 11, 1),
+                        PeriodStart = new DateOnly(2024, 11, 2),
+                        Sheet = "C",
+                        StartedAt = new DateTime(2025, 10, 6, 9, 0, 0, 0, DateTimeKind.Unspecified),
+                        Status = "Completed"
+                    },
+                    new
+                    {
+                        Id = 4,
+                        CompletedAt = new DateTime(2026, 1, 8, 11, 0, 0, 0, DateTimeKind.Unspecified),
+                        ConversationAt = new DateTime(2026, 1, 7, 9, 30, 0, 0, DateTimeKind.Unspecified),
+                        DueDate = new DateOnly(2026, 1, 10),
+                        EmployeeId = 9,
+                        EvaluatorId = 3,
+                        PeriodEnd = new DateOnly(2026, 1, 9),
+                        PeriodStart = new DateOnly(2025, 1, 10),
+                        Sheet = "C",
+                        StartedAt = new DateTime(2025, 12, 15, 9, 0, 0, 0, DateTimeKind.Unspecified),
+                        Status = "Completed"
+                    },
+                    new
+                    {
+                        Id = 5,
+                        CompletedAt = new DateTime(2026, 5, 27, 13, 0, 0, 0, DateTimeKind.Unspecified),
+                        ConversationAt = new DateTime(2026, 5, 26, 13, 0, 0, 0, DateTimeKind.Unspecified),
+                        DueDate = new DateOnly(2026, 6, 1),
+                        EmployeeId = 10,
+                        EvaluatorId = 3,
+                        PeriodEnd = new DateOnly(2026, 5, 31),
+                        PeriodStart = new DateOnly(2025, 6, 1),
+                        Sheet = "C",
+                        StartedAt = new DateTime(2026, 5, 4, 9, 0, 0, 0, DateTimeKind.Unspecified),
+                        Status = "Completed"
+                    },
+                    new
+                    {
+                        Id = 6,
+                        ConversationAt = new DateTime(2026, 12, 18, 9, 0, 0, 0, DateTimeKind.Unspecified),
+                        DueDate = new DateOnly(2027, 1, 10),
+                        EmployeeId = 9,
+                        EvaluatorId = 3,
+                        PeriodEnd = new DateOnly(2027, 1, 9),
+                        PeriodStart = new DateOnly(2026, 1, 10),
+                        Sheet = "C",
+                        StartedAt = new DateTime(2026, 11, 16, 14, 0, 0, 0, DateTimeKind.Unspecified),
+                        Status = "CriteriaSet"
+                    },
+                    new
+                    {
+                        Id = 7,
+                        CompletedAt = new DateTime(2025, 12, 18, 10, 0, 0, 0, DateTimeKind.Unspecified),
+                        ConversationAt = new DateTime(2025, 12, 17, 12, 0, 0, 0, DateTimeKind.Unspecified),
+                        DueDate = new DateOnly(2025, 12, 20),
+                        EmployeeId = 12,
+                        EvaluatorId = 3,
+                        PeriodEnd = new DateOnly(2025, 12, 19),
+                        PeriodStart = new DateOnly(2024, 12, 20),
+                        Sheet = "C",
+                        StartedAt = new DateTime(2025, 11, 24, 9, 0, 0, 0, DateTimeKind.Unspecified),
+                        Status = "Completed"
                     });
             });
 
@@ -265,6 +485,25 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
                 b.Navigation("Employee");
 
                 b.Navigation("Supervisor");
+            });
+
+        modelBuilder.Entity("KompasKompetencji.Web.Data.Evaluation", b =>
+            {
+                b.HasOne("KompasKompetencji.Web.Data.Employee", "Employee")
+                    .WithMany()
+                    .HasForeignKey("EmployeeId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
+
+                b.HasOne("KompasKompetencji.Web.Data.Employee", "Evaluator")
+                    .WithMany()
+                    .HasForeignKey("EvaluatorId")
+                    .OnDelete(DeleteBehavior.NoAction)
+                    .IsRequired();
+
+                b.Navigation("Employee");
+
+                b.Navigation("Evaluator");
             });
 
         modelBuilder.Entity("KompasKompetencji.Web.Data.Employee", b =>

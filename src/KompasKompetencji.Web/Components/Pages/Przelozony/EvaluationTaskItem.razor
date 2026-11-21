@@ -1,0 +1,63 @@
+<RadzenCard Variant="Variant.Filled" class="rz-p-3">
+    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween" Gap="1rem">
+        <RadzenStack Gap="0.25rem" class="card-heading">
+            <RadzenText TextStyle="TextStyle.Body2" class="rz-m-0 rz-text-truncate">@Task.Employee.FullName</RadzenText>
+            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.5rem" class="min-w-0">
+                @if (BadgeText is not null)
+                {
+                    <RadzenBadge BadgeStyle="@BadgeStyle" Variant="Variant.Flat" Shade="Shade.Lighter" IsPill="true" Text="@BadgeText" class="no-shrink" />
+                }
+                <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300 rz-text-truncate min-w-0" title="@Details">@Details</RadzenText>
+            </RadzenStack>
+        </RadzenStack>
+
+        <RadzenStack Gap="0" AlignItems="AlignItems.End" class="no-shrink">
+            <RadzenText TextStyle="TextStyle.Body2" class="rz-m-0">@EvaluationText.Date(Task.DueDate)</RadzenText>
+            <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">@EvaluationText.RelativeToToday(Task.DueDate, Today)</RadzenText>
+        </RadzenStack>
+    </RadzenStack>
+</RadzenCard>
+
+@code {
+    [Parameter, EditorRequired] public EvaluationTask Task { get; set; } = default!;
+
+    [Parameter, EditorRequired] public DateOnly Today { get; set; }
+
+    private string? BadgeText => Task.Urgency switch
+    {
+        EvaluationUrgency.Overdue => "Po terminie",
+        EvaluationUrgency.InProgress => EvaluationText.Status(Task.OpenStatus),
+        EvaluationUrgency.DueSoon => "Do rozpoczęcia",
+        _ => null,
+    };
+
+    private BadgeStyle BadgeStyle => Task.Urgency switch
+    {
+        EvaluationUrgency.Overdue => BadgeStyle.Danger,
+        EvaluationUrgency.InProgress => BadgeStyle.Info,
+        _ => BadgeStyle.Warning,
+    };
+
+    private string Details
+    {
+        get
+        {
+            var parts = new List<string>();
+            if (Task.Urgency == EvaluationUrgency.Overdue)
+            {
+                parts.Add(EvaluationText.Status(Task.OpenStatus));
+            }
+            parts.Add(Task.Employee.Department);
+            parts.Add(EvaluationText.Sheet(Task.Sheet));
+            if (Task.IsFirstEvaluation)
+            {
+                parts.Add("pierwsza ocena");
+            }
+            if (Task.ConversationAt is DateTime conversationAt)
+            {
+                parts.Add($"rozmowa {EvaluationText.Date(conversationAt)}");
+            }
+            return string.Join(" · ", parts);
+        }
+    }
+}

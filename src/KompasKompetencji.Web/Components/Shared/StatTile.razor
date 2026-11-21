@@ -1,0 +1,21 @@
+<RadzenCard Variant="Variant.Outlined" class="@(Compact ? "rz-h-100 rz-pt-1 rz-pb-1 rz-ps-4 rz-pe-4" : "rz-h-100 rz-p-4")">
+    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween" Gap="1rem">
+        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.5rem" class="min-w-0">
+            <RadzenIcon Icon="@Icon" IconColor="@IconColor" class="no-shrink" />
+            <RadzenText TextStyle="TextStyle.Body2" class="rz-m-0 rz-color-base-300 rz-text-truncate" title="@Label">@Label</RadzenText>
+        </RadzenStack>
+        <RadzenText TextStyle="@(Compact ? TextStyle.H6 : TextStyle.H4)" TagName="TagName.P" class="rz-m-0 stat-value no-shrink">@Value</RadzenText>
+    </RadzenStack>
+</RadzenCard>
+
+@code {
+    [Parameter, EditorRequired] public string Icon { get; set; } = string.Empty;
+
+    [Parameter] public string? IconColor { get; set; }
+
+    [Parameter, EditorRequired] public string Label { get; set; } = string.Empty;
+
+    [Parameter, EditorRequired] public int Value { get; set; }
+
+    [Parameter] public bool Compact { get; set; }
+}

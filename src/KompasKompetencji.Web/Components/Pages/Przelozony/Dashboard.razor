@@ -1,45 +1,157 @@
 @page "/przelozony"
-@using KompasKompetencji.Web.Data
-@using Microsoft.EntityFrameworkCore
-@inject IDbContextFactory<AppDbContext> DbFactory
+@inject UserService Users
+@inject EvaluationService EvaluationService
+@inject DialogService DialogService
 
-<PageTitle>Moi pracownicy – Kompas kompetencji</PageTitle>
+<PageTitle>Pulpit – Kompas kompetencji</PageTitle>
 
-<PageHeader Title="Moi pracownicy"
-            Subtitle="Twoi podwładni objęci oceną okresową." />
+<div class="fill-page">
+    <PageHeader Title="Pulpit" Compact="true">
+        @if (overview is not null)
+        {
+            var overdue = overview.WithUrgency(EvaluationUrgency.Overdue).Count;
+            <StatTile Icon="@(overdue == 0 ? "check_circle" : "error")" IconColor="@(overdue == 0 ? Colors.Success : Colors.Danger)"
+                      Label="Po terminie" Value="@overdue" Compact="true" />
+        }
+    </PageHeader>
 
-@if (error is not null)
-{
-    <RadzenAlert AlertStyle="AlertStyle.Danger" Variant="Variant.Flat" Shade="Shade.Lighter" AllowClose="false">
-        Brak połączenia z bazą: @error
-    </RadzenAlert>
-}
-else
-{
-    <RadzenDataGrid Data="@employees" TItem="Employee" IsLoading="@(employees is null)"
-                    AllowSorting="true" AllowFiltering="true" FilterMode="FilterMode.Simple">
-        <Columns>
-            <RadzenDataGridColumn Property="@nameof(Employee.FirstName)" Title="Imię" />
-            <RadzenDataGridColumn Property="@nameof(Employee.LastName)" Title="Nazwisko" />
-            <RadzenDataGridColumn Property="@nameof(Employee.Position)" Title="Stanowisko" />
-        </Columns>
-    </RadzenDataGrid>
-}
+    @if (loadError is not null)
+    {
+        <RadzenAlert AlertStyle="AlertStyle.Danger" Variant="Variant.Flat" Shade="Shade.Lighter" AllowClose="false">
+            Nie udało się wczytać danych: @loadError
+        </RadzenAlert>
+    }
+    else if (accountNotLinked)
+    {
+        <StatusMessage Icon="link_off" IconColor="@Colors.Warning" Title="Konto nie jest powiązane z pracownikiem"
+                       Text="Poproś HR o powiązanie Twojego konta z kartą pracownika, aby zobaczyć swój zespół." />
+    }
+    else if (overview is null)
+    {
+        <RadzenProgressBarCircular ShowValue="false" Mode="ProgressBarMode.Indeterminate" />
+    }
+    else
+    {
+        <RadzenRow Gap="1.5rem" class="fill-row">
+            <RadzenColumn Size="12" SizeLG="7" class="fill-column">
+                <RadzenCard Variant="Variant.Outlined" class="fill-card">
+                    <RadzenStack Gap="1rem" class="fill-stack">
+                        <RadzenStack Gap="0">
+                            <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H2" class="rz-m-0">Kalendarz rozmów</RadzenText>
+                            <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">
+                                Rozmowy okresowe z Twoimi pracownikami. Kliknij rozmowę, aby zobaczyć szczegóły.
+                            </RadzenText>
+                        </RadzenStack>
+
+                        <RadzenScheduler TItem="EvaluationConversation" Data="@overview.Conversations"
+                                         StartProperty="@nameof(EvaluationConversation.Start)" EndProperty="@nameof(EvaluationConversation.End)"
+                                         TextProperty="@nameof(EvaluationConversation.Title)"
+                                         SelectedIndex="0" TodayText="Dziś" PrevText="Poprzedni" NextText="Następny"
+                                         AppointmentRender="@OnConversationRender" AppointmentSelect="@OnConversationSelect"
+                                         SlotRender="@OnSlotRender"
+                                         Style="height: auto;" class="conversation-calendar fill-grid">
+                            <Template Context="conversation">
+                                <strong>@conversation.Start.ToString("HH:mm")</strong> @conversation.Employee.FullName
+                            </Template>
+                            <ChildContent>
+                                <RadzenMonthView Text="Miesiąc" MoreText="+ {0} więcej" />
+                                <RadzenWeekView Text="Tydzień" StartTime="@TimeSpan.FromHours(8)" EndTime="@TimeSpan.FromHours(17)" TimeFormat="HH:mm" />
+                            </ChildContent>
+                        </RadzenScheduler>
+                    </RadzenStack>
+                </RadzenCard>
+            </RadzenColumn>
+
+            <RadzenColumn Size="12" SizeLG="5" class="fill-column">
+                <RadzenCard Variant="Variant.Outlined" class="fill-card">
+                    <RadzenStack Gap="1rem" class="fill-stack">
+                        <RadzenStack Gap="0">
+                            <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H2" class="rz-m-0">Do zrobienia</RadzenText>
+                            <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">
+                                Najpierw oceny po terminie i w toku, dalej kolejne terminy.
+                            </RadzenText>
+                        </RadzenStack>
+
+                        <RadzenStack Gap="0.75rem" class="scroll-list">
+                            @if (overview.Tasks.Count == 0)
+                            {
+                                <RadzenText TextStyle="TextStyle.Body1" class="rz-m-0 rz-color-base-300">Nie masz jeszcze podwładnych.</RadzenText>
+                            }
+                            @foreach (var task in overview.Tasks)
+                            {
+                                <EvaluationTaskItem Task="@task" Today="@today" />
+                            }
+                        </RadzenStack>
+                    </RadzenStack>
+                </RadzenCard>
+            </RadzenColumn>
+        </RadzenRow>
+    }
+</div>
 
 @code {
-    private List<Employee>? employees;
-    private string? error;
+    [CascadingParameter] private Task<AuthenticationState> AuthState { get; set; } = default!;
+
+    private readonly DateOnly today = DateOnly.FromDateTime(DateTime.Today);
+    private SupervisorOverview? overview;
+    private bool accountNotLinked;
+    private string? loadError;
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
-            await using var db = await DbFactory.CreateDbContextAsync();
-            employees = await db.Employees.AsNoTracking().OrderBy(e => e.LastName).ToListAsync();
+            var userId = (await AuthState).User.GetUserId();
+            var user = userId is null ? null : await Users.GetByIdAsync(userId.Value);
+            if (user?.EmployeeId is not int supervisorId)
+            {
+                accountNotLinked = true;
+                return;
+            }
+
+            overview = await EvaluationService.GetSupervisorOverviewAsync(supervisorId, today);
         }
         catch (Exception ex)
         {
-            error = ex.Message;
+            loadError = ex.Message;
         }
+    }
+
+    private void OnSlotRender(SchedulerSlotRenderEventArgs args)
+    {
+        if (DateOnly.FromDateTime(args.Start) == today)
+        {
+            args.Attributes["data-today"] = "true";
+        }
+
+        if (args.View is RadzenMonthView)
+        {
+            var shownMonth = args.View.StartDate + (args.View.EndDate - args.View.StartDate) / 2;
+            if (args.Start.Month != shownMonth.Month || args.Start.Year != shownMonth.Year)
+            {
+                args.Attributes["data-other-month"] = "true";
+            }
+        }
+    }
+
+    private void OnConversationRender(SchedulerAppointmentRenderEventArgs<EvaluationConversation> args)
+    {
+        if (args.Data?.Status == EvaluationStatus.Completed)
+        {
+            args.Attributes["style"] = "background-color: var(--rz-base-600); color: var(--rz-text-color);";
+        }
+    }
+
+    private async Task OnConversationSelect(SchedulerAppointmentSelectEventArgs<EvaluationConversation> args)
+    {
+        if (args.Data is not EvaluationConversation conversation)
+        {
+            return;
+        }
+
+        await DialogService.Alert(
+            $"{EvaluationText.Date(conversation.Start)} – {conversation.End:HH:mm}. Ocena: {EvaluationText.Status(conversation.Status).ToLowerInvariant()}.",
+            $"Rozmowa okresowa: {conversation.Employee.FullName}",
+            new AlertOptions { OkButtonText = "Zamknij" });
     }
 }
