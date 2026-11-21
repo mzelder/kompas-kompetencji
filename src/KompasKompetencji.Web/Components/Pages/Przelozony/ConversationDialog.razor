@@ -1,0 +1,113 @@
+@inject DialogService DialogService
+@inject EvaluationService EvaluationService
+
+<RadzenStack Gap="1.25rem">
+    <RadzenStack Orientation="Orientation.Horizontal" Gap="2rem" Wrap="FlexWrap.Wrap">
+        <DetailItem Label="Pracownik" Value="@Task.Employee.FullName" />
+        <DetailItem Label="Termin oceny" Value="@($"{EvaluationText.Date(Task.DueDate)} ({EvaluationText.RelativeToToday(Task.DueDate, Today)})")" />
+    </RadzenStack>
+
+    @if (overdue)
+    {
+        <RadzenAlert AlertStyle="AlertStyle.Warning" Variant="Variant.Flat" Shade="Shade.Lighter" AllowClose="false" class="rz-m-0">
+            Termin oceny minął @EvaluationText.Date(Task.DueDate). Wyznacz rozmowę jak najszybciej.
+        </RadzenAlert>
+    }
+
+    <RadzenFormField Text="Data i godzina rozmowy" Variant="Variant.Outlined" class="rz-w-100">
+        <ChildContent>
+            <RadzenDatePicker TValue="DateTime" Name="ConversationAt" Value="@conversationAt" ValueChanged="@OnDateChanged"
+                              ShowTime="true" HourFormat="24" MinutesStep="15" DateFormat="dd.MM.yyyy HH:mm"
+                              Min="@DateTime.Today" Max="@latestAllowed" />
+        </ChildContent>
+        <Helper>
+            <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">
+                @(overdue ? "Wybierz najbliższy możliwy termin." : $"Najpóźniej w dniu oceny: {EvaluationText.Date(Task.DueDate)}.")
+            </RadzenText>
+        </Helper>
+    </RadzenFormField>
+
+    <RadzenStack Gap="0.5rem">
+        <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">Status rozmowy</RadzenText>
+        <RadzenRadioButtonList TValue="ConversationStatus" @bind-Value="status" Orientation="Orientation.Vertical" Gap="0.5rem">
+            <Items>
+                <RadzenRadioButtonListItem TValue="ConversationStatus" Value="ConversationStatus.Scheduled"
+                                           Text="@EvaluationText.Conversation(ConversationStatus.Scheduled)" />
+                <RadzenRadioButtonListItem TValue="ConversationStatus" Value="ConversationStatus.AcceptedByEmployee"
+                                           Text="@EvaluationText.Conversation(ConversationStatus.AcceptedByEmployee)" Disabled="@dateChanged" />
+                <RadzenRadioButtonListItem TValue="ConversationStatus" Value="ConversationStatus.Held"
+                                           Text="@EvaluationText.Conversation(ConversationStatus.Held)" Disabled="@(dateChanged || conversationAt > DateTime.Now)" />
+            </Items>
+        </RadzenRadioButtonList>
+        @if (dateChanged)
+        {
+            <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">
+                @(Task.ConversationAt is null
+                    ? "Nowa rozmowa ma status „Zaplanowana”, dopóki pracownik nie zaakceptuje terminu."
+                    : "Po zmianie terminu pracownik musi go ponownie zaakceptować, dlatego status wraca do „Zaplanowana”.")
+            </RadzenText>
+        }
+    </RadzenStack>
+
+    @if (errorMessage is not null)
+    {
+        <RadzenAlert AlertStyle="AlertStyle.Danger" Variant="Variant.Flat" Shade="Shade.Lighter" AllowClose="false" class="rz-m-0">
+            @errorMessage
+        </RadzenAlert>
+    }
+
+    <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End" Gap="0.5rem">
+        <RadzenButton Text="Anuluj" Variant="Variant.Text" ButtonStyle="ButtonStyle.Base" Disabled="@busy"
+                      Click="@(() => DialogService.Close(false))" />
+        <RadzenButton Text="Zapisz" Icon="event_available" ButtonStyle="ButtonStyle.Primary"
+                      IsBusy="@busy" BusyText="Zapisywanie…" Click="@SaveAsync" />
+    </RadzenStack>
+</RadzenStack>
+
+@code {
+    [Parameter, EditorRequired] public EvaluationTask Task { get; set; } = default!;
+
+    [Parameter, EditorRequired] public int SupervisorId { get; set; }
+
+    [Parameter, EditorRequired] public DateOnly Today { get; set; }
+
+    private DateTime conversationAt;
+    private ConversationStatus status;
+    private DateTime? latestAllowed;
+    private bool overdue;
+    private bool busy;
+    private string? errorMessage;
+
+    private bool dateChanged => Task.ConversationAt != conversationAt;
+
+    protected override void OnInitialized()
+    {
+        var now = DateTime.Now;
+        overdue = ConversationRules.IsOverdue(Task.DueDate, now);
+        latestAllowed = ConversationRules.LatestAllowed(Task.DueDate, now);
+        conversationAt = Task.ConversationAt ?? ConversationRules.Suggest(Task.DueDate, now);
+        status = Task.ConversationStatus ?? ConversationStatus.Scheduled;
+    }
+
+    private void OnDateChanged(DateTime value)
+    {
+        conversationAt = value;
+        errorMessage = null;
+        status = dateChanged ? ConversationStatus.Scheduled : Task.ConversationStatus ?? ConversationStatus.Scheduled;
+    }
+
+    private async Task SaveAsync()
+    {
+        errorMessage = null;
+        busy = true;
+        var result = await EvaluationService.SaveConversationAsync(SupervisorId, Task.Employee.Id, conversationAt, status, DateTime.Now);
+        busy = false;
+
+        if (!result.Succeeded)
+        {
+            errorMessage = result.Error;
+            return;
+        }
+        DialogService.Close(true);
+    }
+}

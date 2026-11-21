@@ -17,7 +17,13 @@ public sealed record EvaluationTask(
     EvaluationStatus? OpenStatus,
     EvaluationSheet Sheet,
     EvaluationUrgency Urgency,
-    DateTime? ConversationAt);
+    DateTime? ConversationAt,
+    ConversationStatus? ConversationStatus)
+{
+    public bool CanScheduleConversation => Urgency != EvaluationUrgency.Planned;
+
+    public bool NeedsConversation => CanScheduleConversation && ConversationAt is null;
+}
 
 public static class EvaluationSchedule
 {
@@ -29,16 +35,20 @@ public static class EvaluationSchedule
     public static EvaluationSheet SheetFor(Employee employee) =>
         employee.IsSupervisor ? EvaluationSheet.B : EvaluationSheet.C;
 
+    public static Evaluation? OpenEvaluation(IEnumerable<Evaluation> evaluations) =>
+        evaluations.Where(v => v.Status != EvaluationStatus.Completed).MaxBy(v => v.DueDate);
+
     public static EvaluationTask Describe(Employee employee, IEnumerable<Evaluation> evaluations, DateOnly today)
     {
         var list = evaluations.ToList();
-        var open = list.Where(v => v.Status != EvaluationStatus.Completed).MaxBy(v => v.DueDate);
+        var open = OpenEvaluation(list);
         var lastCompleted = list.Where(v => v.Status == EvaluationStatus.Completed).MaxBy(v => v.DueDate);
         var dueDate = open?.DueDate ?? NextDueDate(employee.EmployedSince, lastCompleted?.DueDate);
+        var started = open is not null && open.Status != EvaluationStatus.NotStarted;
 
         var urgency =
             dueDate < today ? EvaluationUrgency.Overdue
-            : open is not null ? EvaluationUrgency.InProgress
+            : started ? EvaluationUrgency.InProgress
             : dueDate <= today.AddDays(DueSoonDays) ? EvaluationUrgency.DueSoon
             : EvaluationUrgency.Planned;
 
@@ -49,6 +59,7 @@ public static class EvaluationSchedule
             OpenStatus: open?.Status,
             Sheet: open?.Sheet ?? SheetFor(employee),
             urgency,
-            ConversationAt: open?.ConversationAt);
+            ConversationAt: open?.ConversationAt,
+            ConversationStatus: open?.ConversationStatus);
     }
 }

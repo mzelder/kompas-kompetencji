@@ -2,6 +2,7 @@
 @inject UserService Users
 @inject EvaluationService EvaluationService
 @inject DialogService DialogService
+@inject NotificationService NotificationService
 
 <PageTitle>Pulpit – Kompas kompetencji</PageTitle>
 
@@ -39,7 +40,7 @@
                         <RadzenStack Gap="0">
                             <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H2" class="rz-m-0">Kalendarz rozmów</RadzenText>
                             <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">
-                                Rozmowy okresowe z Twoimi pracownikami. Kliknij rozmowę, aby zobaczyć szczegóły.
+                                Kliknij rozmowę, aby zmienić termin lub status. Przerywana ramka: termin czeka na akceptację pracownika.
                             </RadzenText>
                         </RadzenStack>
 
@@ -68,7 +69,7 @@
                         <RadzenStack Gap="0">
                             <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H2" class="rz-m-0">Do zrobienia</RadzenText>
                             <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">
-                                Najpierw oceny po terminie i w toku, dalej kolejne terminy.
+                                Najpierw rozmowy do wyznaczenia, dalej oceny w toku i kolejne terminy.
                             </RadzenText>
                         </RadzenStack>
 
@@ -79,7 +80,7 @@
                             }
                             @foreach (var task in overview.Tasks)
                             {
-                                <EvaluationTaskItem Task="@task" Today="@today" />
+                                <EvaluationTaskItem Task="@task" Today="@today" OnConversation="@EditConversationAsync" />
                             }
                         </RadzenStack>
                     </RadzenStack>
@@ -94,6 +95,7 @@
 
     private readonly DateOnly today = DateOnly.FromDateTime(DateTime.Today);
     private SupervisorOverview? overview;
+    private int supervisorId;
     private bool accountNotLinked;
     private string? loadError;
 
@@ -103,17 +105,41 @@
         {
             var userId = (await AuthState).User.GetUserId();
             var user = userId is null ? null : await Users.GetByIdAsync(userId.Value);
-            if (user?.EmployeeId is not int supervisorId)
+            if (user?.EmployeeId is not int employeeId)
             {
                 accountNotLinked = true;
                 return;
             }
 
-            overview = await EvaluationService.GetSupervisorOverviewAsync(supervisorId, today);
+            supervisorId = employeeId;
+            await LoadOverviewAsync();
         }
         catch (Exception ex)
         {
             loadError = ex.Message;
+        }
+    }
+
+    private async Task LoadOverviewAsync()
+    {
+        overview = await EvaluationService.GetSupervisorOverviewAsync(supervisorId, today);
+    }
+
+    private async Task EditConversationAsync(EvaluationTask task)
+    {
+        var saved = await DialogService.OpenAsync<ConversationDialog>(
+            task.ConversationAt is null ? "Wyznacz termin rozmowy" : "Rozmowa okresowa",
+            new Dictionary<string, object?>
+            {
+                [nameof(ConversationDialog.Task)] = task,
+                [nameof(ConversationDialog.SupervisorId)] = supervisorId,
+                [nameof(ConversationDialog.Today)] = today,
+            },
+            new DialogOptions { Width = "520px" });
+        if (saved is true)
+        {
+            await LoadOverviewAsync();
+            NotificationService.Notify(NotificationSeverity.Success, "Zapisano termin rozmowy", task.Employee.FullName);
         }
     }
 
@@ -136,10 +162,12 @@
 
     private void OnConversationRender(SchedulerAppointmentRenderEventArgs<EvaluationConversation> args)
     {
-        if (args.Data?.Status == EvaluationStatus.Completed)
+        args.Attributes["style"] = args.Data?.Status switch
         {
-            args.Attributes["style"] = "background-color: var(--rz-base-600); color: var(--rz-text-color);";
-        }
+            ConversationStatus.Held => "background-color: var(--rz-base-600); color: var(--rz-text-color);",
+            ConversationStatus.Scheduled => "background-color: transparent; color: var(--rz-primary); outline: 1px dashed var(--rz-primary); outline-offset: -1px;",
+            _ => "",
+        };
     }
 
     private async Task OnConversationSelect(SchedulerAppointmentSelectEventArgs<EvaluationConversation> args)
@@ -149,8 +177,14 @@
             return;
         }
 
+        if (conversation.IsEditable && overview?.TaskFor(conversation.Employee.Id) is EvaluationTask task)
+        {
+            await EditConversationAsync(task);
+            return;
+        }
+
         await DialogService.Alert(
-            $"{EvaluationText.Date(conversation.Start)} – {conversation.End:HH:mm}. Ocena: {EvaluationText.Status(conversation.Status).ToLowerInvariant()}.",
+            $"{EvaluationText.Date(conversation.Start)} – {conversation.End:HH:mm}. Status rozmowy: {EvaluationText.Conversation(conversation.Status).ToLowerInvariant()}.",
             $"Rozmowa okresowa: {conversation.Employee.FullName}",
             new AlertOptions { OkButtonText = "Zamknij" });
     }

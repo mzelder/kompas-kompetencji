@@ -1,20 +1,55 @@
 <RadzenCard Variant="Variant.Filled" class="rz-p-3">
-    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween" Gap="1rem">
-        <RadzenStack Gap="0.25rem" class="card-heading">
-            <RadzenText TextStyle="TextStyle.Body2" class="rz-m-0 rz-text-truncate">@Task.Employee.FullName</RadzenText>
-            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.5rem" class="min-w-0">
-                @if (BadgeText is not null)
-                {
-                    <RadzenBadge BadgeStyle="@BadgeStyle" Variant="Variant.Flat" Shade="Shade.Lighter" IsPill="true" Text="@BadgeText" class="no-shrink" />
-                }
-                <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300 rz-text-truncate min-w-0" title="@Details">@Details</RadzenText>
+    <RadzenStack Gap="0.75rem">
+        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween" Gap="1rem">
+            <RadzenStack Gap="0.25rem" class="card-heading">
+                <RadzenText TextStyle="TextStyle.Body2" class="rz-m-0 rz-text-truncate">@Task.Employee.FullName</RadzenText>
+                <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.5rem" class="min-w-0">
+                    @if (BadgeText is not null)
+                    {
+                        <RadzenBadge BadgeStyle="@BadgeStyle" Variant="Variant.Flat" Shade="Shade.Lighter" IsPill="true" Text="@BadgeText" class="no-shrink" />
+                    }
+                    <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300 rz-text-truncate min-w-0" title="@Details">@Details</RadzenText>
+                </RadzenStack>
+            </RadzenStack>
+
+            <RadzenStack Gap="0" AlignItems="AlignItems.End" class="no-shrink">
+                <RadzenText TextStyle="TextStyle.Body2" class="rz-m-0">@EvaluationText.Date(Task.DueDate)</RadzenText>
+                <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">@EvaluationText.RelativeToToday(Task.DueDate, Today)</RadzenText>
             </RadzenStack>
         </RadzenStack>
 
-        <RadzenStack Gap="0" AlignItems="AlignItems.End" class="no-shrink">
-            <RadzenText TextStyle="TextStyle.Body2" class="rz-m-0">@EvaluationText.Date(Task.DueDate)</RadzenText>
-            <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">@EvaluationText.RelativeToToday(Task.DueDate, Today)</RadzenText>
-        </RadzenStack>
+        @if (Task.CanScheduleConversation)
+        {
+            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween"
+                         Gap="0.75rem" class="conversation-row">
+                @if (Task.ConversationAt is DateTime conversationAt)
+                {
+                    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Start" Gap="0.5rem" class="min-w-0">
+                        <RadzenIcon Icon="event" class="no-shrink" />
+                        <RadzenStack Gap="0.25rem" AlignItems="AlignItems.Start" class="min-w-0">
+                            <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0">Rozmowa: @EvaluationText.Date(conversationAt)</RadzenText>
+                            <RadzenBadge BadgeStyle="@ConversationBadgeStyle" Variant="Variant.Flat" Shade="Shade.Lighter" IsPill="true"
+                                         Text="@EvaluationText.Conversation(Task.ConversationStatus ?? ConversationStatus.Scheduled)" />
+                        </RadzenStack>
+                    </RadzenStack>
+                    <RadzenButton Text="Zmień" Icon="edit_calendar" Variant="Variant.Text" ButtonStyle="ButtonStyle.Base" Size="ButtonSize.Small"
+                                  class="no-shrink" Click="@(() => OnConversation.InvokeAsync(Task))" />
+                }
+                else
+                {
+                    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.5rem" class="min-w-0">
+                        <RadzenIcon Icon="event_busy" IconColor="@Colors.Warning" class="no-shrink" />
+                        <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0">
+                            @(Task.Urgency == EvaluationUrgency.Overdue
+                                ? "Wyznacz termin rozmowy jak najszybciej"
+                                : $"Wyznacz termin rozmowy, najpóźniej {EvaluationText.Date(Task.DueDate)}")
+                        </RadzenText>
+                    </RadzenStack>
+                    <RadzenButton Text="Wyznacz termin" Icon="edit_calendar" ButtonStyle="ButtonStyle.Primary" Size="ButtonSize.Small"
+                                  class="no-shrink" Click="@(() => OnConversation.InvokeAsync(Task))" />
+                }
+            </RadzenStack>
+        }
     </RadzenStack>
 </RadzenCard>
 
@@ -22,6 +57,8 @@
     [Parameter, EditorRequired] public EvaluationTask Task { get; set; } = default!;
 
     [Parameter, EditorRequired] public DateOnly Today { get; set; }
+
+    [Parameter] public EventCallback<EvaluationTask> OnConversation { get; set; }
 
     private string? BadgeText => Task.Urgency switch
     {
@@ -35,6 +72,13 @@
     {
         EvaluationUrgency.Overdue => BadgeStyle.Danger,
         EvaluationUrgency.InProgress => BadgeStyle.Info,
+        _ => BadgeStyle.Warning,
+    };
+
+    private BadgeStyle ConversationBadgeStyle => Task.ConversationStatus switch
+    {
+        ConversationStatus.AcceptedByEmployee => BadgeStyle.Success,
+        ConversationStatus.Held => BadgeStyle.Light,
         _ => BadgeStyle.Warning,
     };
 
@@ -52,10 +96,6 @@
             if (Task.IsFirstEvaluation)
             {
                 parts.Add("pierwsza ocena");
-            }
-            if (Task.ConversationAt is DateTime conversationAt)
-            {
-                parts.Add($"rozmowa {EvaluationText.Date(conversationAt)}");
             }
             return string.Join(" · ", parts);
         }

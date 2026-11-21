@@ -244,3 +244,8 @@ h1:focus {
 .conversation-calendar .rz-week-view .rz-slot[data-today] {
     background-color: var(--rz-primary-lighter);
 }
+
+.conversation-row {
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--rz-base-700);
+}

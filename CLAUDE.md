@@ -20,9 +20,9 @@ Prototyp aplikacji wspierającej przełożonego w ocenie pracownika służby cyw
 Ten proces jest nadrzędny przy budowie kolejnych funkcji. Gdy obecny kod się z nim nie zgadza, kierujemy się procesem.
 
 1. **HR wpisuje termin oceny ręcznie.** Po zatrudnieniu pracownika HR wprowadza datę, kiedy ma się odbyć ocena okresowa. Termin nie jest wyliczany automatycznie; cykl roczny (pierwsza po roku pracy, potem co rok) może jedynie podpowiadać datę w formularzu HR.
-2. **Na miesiąc lub dwa przed terminem przełożony dowiaduje się, że ma przeprowadzić rozmowę.** Przełożony musi mieć na **pulpicie jasną informację**, z którym pracownikiem ma odbyć rozmowę i że powinien wyznaczyć jej termin.
+2. **Na miesiąc lub dwa przed terminem przełożony dowiaduje się, że ma przeprowadzić rozmowę.** HR kontaktuje się z przełożonym bezpośrednio, poza aplikacją; w aplikacji **nie ma przycisku ani akcji HR „przekaż przełożonemu”**. Pracownik pojawia się na **pulpicie przełożonego** sam, gdy do terminu oceny zostaje mniej niż ok. 2 miesiące, z jasną informacją, z kim przełożony ma odbyć rozmowę i że powinien wyznaczyć jej termin.
 3. **Przełożony wyznacza termin rozmowy.** Termin oceny zna z kalendarza i dopasowuje do niego rozmowę: **rozmowa odbywa się najpóźniej w dniu oceny** (walidacja: data rozmowy ≤ termin oceny). Przełożony może później **zmienić termin rozmowy** (z tą samą walidacją).
-4. **Rozmowa ma status wybierany przez przełożonego**, np. termin zaproponowany, **pracownik zaakceptował termin**, rozmowa odbyta. Dokładna lista statusów do potwierdzenia; minimum to „zaakceptowany przez pracownika” i „odbyta”.
+4. **Rozmowa ma status wybierany przez przełożonego**, dokładnie trzy statusy w tej kolejności: **Zaplanowana** (przełożony wyznaczył termin) → **Zaakceptowana przez pracownika** → **Odbyta**. Zmiana terminu rozmowy wraca status do „Zaplanowana”.
 5. **Ocenę sporządza przełożony z pomocą asystenta AI.** AI tylko wspiera, decyzja o poziomie zawsze należy do przełożonego (zob. Konwencje).
 6. **Po ocenie informacja trafia do HR**: że rozmowa się odbyła i ocena została sporządzona.
 7. **Bez powiadomień.** Ani HR, ani przełożony nie dostają powiadomień, maili ani przypomnień w aplikacji. Cała komunikacja odbywa się przez **kalendarze**: HR i przełożeni widzą w swoich kalendarzach terminy ocen, terminy rozmów i ich statusy oraz informację o sporządzonej ocenie.
@@ -34,7 +34,6 @@ Wynikające z tego zasady dla aplikacji:
 
 Różnice względem obecnej implementacji (do dostosowania przy kolejnych zmianach):
 - Termin oceny jest dziś liczony automatycznie z `EmployedSince` w `EvaluationSchedule`; ma być wpisywany przez HR (np. pole na ocenie lub osobny rekord tworzony przez HR), a wyliczenie roczne zostaje tylko jako podpowiedź.
-- `Evaluation` ma tylko `ConversationAt`; brakuje statusu rozmowy, możliwości wyznaczenia i zmiany terminu przez przełożonego oraz walidacji „rozmowa ≤ termin oceny”.
 - HR nie ma jeszcze kalendarza z terminami ocen, rozmowami i sporządzonymi ocenami.
 - Kalendarz przełożonego pokazuje dziś tylko rozmowy; powinien pokazywać też terminy ocen.
 
@@ -88,7 +87,8 @@ W Development migracje i konta testowe tworzą się same przy starcie (`Program.
   - `AppUser.EmployeeId` (opcjonalne, unikalne): konto w systemie powiązane z osobą. Konto testowe `przelozony` jest powiązane z Ewą Wiśniewską.
 - Logika struktury: `Organization/OrganizationService.cs` (odczyt i zmiany) i `Organization/OrganizationChart.cs` (migawka w pamięci: przełożeni i podwładni danej osoby, lista przełożonych możliwych do przypisania bez tworzenia cyklu).
 - Oceny:
-  - `Evaluation`: ocena okresowa pracownika (oceniający, arkusz B/C, okres, termin, data i godzina rozmowy okresowej `ConversationAt`, status: `CriteriaSet` → `InProgress` → `ReadyForConversation` → `Completed`). Rekord powstaje przy rozpoczęciu oceny. „Nierozpoczęta” nie jest zapisywana, wynika z terminu.
+  - `Evaluation`: ocena okresowa pracownika (oceniający, arkusz B/C, okres, termin oceny `DueDate`, status oceny: `NotStarted` → `CriteriaSet` → `InProgress` → `ReadyForConversation` → `Completed`) oraz rozmowa: `ConversationAt` i `ConversationStatus` (`Scheduled` → `AcceptedByEmployee` → `Held`). Rekord powstaje najpóźniej przy wyznaczeniu rozmowy (wtedy ze statusem `NotStarted`); bez rekordu ocena jest „nierozpoczęta”, a termin wynika z harmonogramu.
+  - Wyznaczanie i zmiana rozmowy: `EvaluationService.SaveConversationAsync` (sprawdza, że pracownik jest w zespole przełożonego, i zakłada ocenę `NotStarted`, jeśli jej nie ma). Zasady w `Evaluations/ConversationRules.cs`: rozmowa najpóźniej w dniu oceny (po terminie oceny: jak najszybciej, bez górnej granicy), nowa lub zmieniona data nie w przeszłości, „Odbyta” dopiero po terminie rozmowy, zmiana daty cofa status do „Zaplanowana”. Rozmowę można wyznaczyć tylko dla oceny w oknie 2 miesięcy, w toku lub po terminie (`EvaluationTask.CanScheduleConversation`).
   - Przypomnień i powiadomień w aplikacji nie ma i nie dodajemy ich (zob. „Proces oceny okresowej”). Informacje przekazują kalendarze.
   - Terminy liczy obecnie `Evaluations/EvaluationSchedule.cs` według cyklu rocznego (do zmiany: termin ma wpisywać HR, zob. proces): pierwsza ocena rok po `EmployedSince`, kolejna rok po terminie ostatniej zakończonej. Tam też podział na: po terminie, w toku, do rozpoczęcia (w ciągu 60 dni), zaplanowane. Arkusz domyślny: B dla przełożonych, C dla pozostałych.
   - Dane pulpitu (zadania i rozmowy do kalendarza): `Evaluations/EvaluationService.cs`. Teksty statusów i daty po polsku: `Evaluations/EvaluationText.cs`.

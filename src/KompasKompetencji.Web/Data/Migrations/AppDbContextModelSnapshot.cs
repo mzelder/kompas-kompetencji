@@ -16,7 +16,7 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
     // If you encounter a merge conflict in the line below, it means you need to
     // discard one of the migration branches and recreate its migrations on top of
     // the other branch. See https://aka.ms/efcore-docs-migrations-conflicts for more info.
-    public override string LastMigrationId => "20261121161153_AddEvaluations";
+    public override string LastMigrationId => "20261121182425_AddConversationStatus";
 
     protected override void BuildModel(ModelBuilder modelBuilder)
     {
@@ -323,6 +323,10 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
                 b.Property<DateTime?>("ConversationAt")
                     .HasColumnType("datetime2");
 
+                b.Property<string>("ConversationStatus")
+                    .HasMaxLength(30)
+                    .HasColumnType("nvarchar(30)");
+
                 b.Property<DateOnly>("DueDate")
                     .HasColumnType("date");
 
@@ -365,6 +369,7 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
                         Id = 1,
                         CompletedAt = new DateTime(2025, 12, 10, 14, 0, 0, 0, DateTimeKind.Unspecified),
                         ConversationAt = new DateTime(2025, 12, 8, 10, 0, 0, 0, DateTimeKind.Unspecified),
+                        ConversationStatus = "Held",
                         DueDate = new DateOnly(2025, 12, 15),
                         EmployeeId = 1,
                         EvaluatorId = 3,
@@ -378,6 +383,7 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
                     {
                         Id = 2,
                         ConversationAt = new DateTime(2026, 11, 27, 10, 0, 0, 0, DateTimeKind.Unspecified),
+                        ConversationStatus = "AcceptedByEmployee",
                         DueDate = new DateOnly(2026, 12, 15),
                         EmployeeId = 1,
                         EvaluatorId = 3,
@@ -392,6 +398,7 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
                         Id = 3,
                         CompletedAt = new DateTime(2025, 10, 28, 12, 0, 0, 0, DateTimeKind.Unspecified),
                         ConversationAt = new DateTime(2025, 10, 27, 11, 0, 0, 0, DateTimeKind.Unspecified),
+                        ConversationStatus = "Held",
                         DueDate = new DateOnly(2025, 11, 2),
                         EmployeeId = 2,
                         EvaluatorId = 3,
@@ -406,6 +413,7 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
                         Id = 4,
                         CompletedAt = new DateTime(2026, 1, 8, 11, 0, 0, 0, DateTimeKind.Unspecified),
                         ConversationAt = new DateTime(2026, 1, 7, 9, 30, 0, 0, DateTimeKind.Unspecified),
+                        ConversationStatus = "Held",
                         DueDate = new DateOnly(2026, 1, 10),
                         EmployeeId = 9,
                         EvaluatorId = 3,
@@ -420,6 +428,7 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
                         Id = 5,
                         CompletedAt = new DateTime(2026, 5, 27, 13, 0, 0, 0, DateTimeKind.Unspecified),
                         ConversationAt = new DateTime(2026, 5, 26, 13, 0, 0, 0, DateTimeKind.Unspecified),
+                        ConversationStatus = "Held",
                         DueDate = new DateOnly(2026, 6, 1),
                         EmployeeId = 10,
                         EvaluatorId = 3,
@@ -433,6 +442,7 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
                     {
                         Id = 6,
                         ConversationAt = new DateTime(2026, 12, 18, 9, 0, 0, 0, DateTimeKind.Unspecified),
+                        ConversationStatus = "Scheduled",
                         DueDate = new DateOnly(2027, 1, 10),
                         EmployeeId = 9,
                         EvaluatorId = 3,
@@ -447,6 +457,7 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
                         Id = 7,
                         CompletedAt = new DateTime(2025, 12, 18, 10, 0, 0, 0, DateTimeKind.Unspecified),
                         ConversationAt = new DateTime(2025, 12, 17, 12, 0, 0, 0, DateTimeKind.Unspecified),
+                        ConversationStatus = "Held",
                         DueDate = new DateOnly(2025, 12, 20),
                         EmployeeId = 12,
                         EvaluatorId = 3,

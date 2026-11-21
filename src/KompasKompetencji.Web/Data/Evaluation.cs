@@ -2,6 +2,7 @@ namespace KompasKompetencji.Web.Data;
 
 public enum EvaluationStatus
 {
+    NotStarted,
     CriteriaSet,
     InProgress,
     ReadyForConversation,
@@ -12,6 +13,13 @@ public enum EvaluationSheet
 {
     B,
     C,
+}
+
+public enum ConversationStatus
+{
+    Scheduled,
+    AcceptedByEmployee,
+    Held,
 }
 
 public class Evaluation
@@ -37,6 +45,8 @@ public class Evaluation
     public DateOnly DueDate { get; set; }
 
     public DateTime? ConversationAt { get; set; }
+
+    public ConversationStatus? ConversationStatus { get; set; }
 
     public DateTime? StartedAt { get; set; }
 

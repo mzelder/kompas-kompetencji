@@ -9,12 +9,20 @@ public static class EvaluationText
 
     public static string Status(EvaluationStatus? status) => status switch
     {
-        null => "Nierozpoczęta",
+        null or EvaluationStatus.NotStarted => "Nierozpoczęta",
         EvaluationStatus.CriteriaSet => "Kryteria ustalone",
         EvaluationStatus.InProgress => "Ocena w toku",
         EvaluationStatus.ReadyForConversation => "Gotowa do rozmowy",
         EvaluationStatus.Completed => "Zakończona",
         _ => status.ToString()!,
+    };
+
+    public static string Conversation(ConversationStatus status) => status switch
+    {
+        ConversationStatus.Scheduled => "Zaplanowana",
+        ConversationStatus.AcceptedByEmployee => "Zaakceptowana przez pracownika",
+        ConversationStatus.Held => "Odbyta",
+        _ => status.ToString(),
     };
 
     public static string Sheet(EvaluationSheet sheet) => $"Arkusz {sheet}";
