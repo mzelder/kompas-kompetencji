@@ -1,4 +1,5 @@
 using KompasKompetencji.Web.Auth;
+using KompasKompetencji.Web.Assistant;
 using KompasKompetencji.Web.Components;
 using KompasKompetencji.Web.Data;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -37,6 +38,10 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
 builder.Services.AddRadzenComponents();
+
+// AI assistant: per-circuit chat state + answer provider (mock until RAG + LLM is wired in).
+builder.Services.AddScoped<AssistantSession>();
+builder.Services.AddScoped<IAssistantService, MockAssistantService>();
 
 var app = builder.Build();
 
