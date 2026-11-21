@@ -57,21 +57,18 @@
         </AuthorizeView>
     </RadzenSidebar>
 
-    <RadzenSidebar Position="SidebarPosition.Right" Responsive="false" @bind-Expanded="assistantExpanded"
-                   class="assistant-sidebar">
-        <AuthorizeView>
-            <Authorized>
-                <AssistantChat />
-            </Authorized>
-        </AuthorizeView>
-    </RadzenSidebar>
-
     <RadzenBody>
         <div class="app-content">
             @Body
         </div>
     </RadzenBody>
 </RadzenLayout>
+
+<AuthorizeView>
+    <Authorized>
+        <AssistantChat />
+    </Authorized>
+</AuthorizeView>
 
 <RadzenComponents />
 
