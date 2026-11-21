@@ -181,7 +181,7 @@ public sealed class EvaluationService(IDbContextFactory<AppDbContext> dbFactory)
         var open = await FindAssessmentEvaluationAsync(db, supervisorId, employeeId, ct);
         if (open is null)
         {
-            return OperationResult.Fail("Notatki dodaje się na etapie oceniania pracownika z Twojego zespołu.");
+            return OperationResult.Fail("Notatki dodaje się na etapie oceny pracownika z Twojego zespołu.");
         }
 
         db.EvaluationNotes.Add(new EvaluationNote { EvaluationId = open.Id, CreatedAt = now, Text = trimmed });

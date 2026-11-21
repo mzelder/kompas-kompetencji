@@ -41,9 +41,7 @@ public static class EvaluationText
     {
         EvaluationStage.JobDescriptionReview => "Opis stanowiska",
         EvaluationStage.StartingConversation => "Rozmowa rozpoczynająca",
-        EvaluationStage.Assessment => "Ocenianie",
-        EvaluationStage.AssessmentConversation => "Rozmowa oceniająca",
-        EvaluationStage.WrittenEvaluation => "Ocena na piśmie",
+        EvaluationStage.Assessment => "Ocena pracownika",
         EvaluationStage.Completion => "Zakończenie",
         _ => stage.ToString(),
     };
@@ -51,11 +49,9 @@ public static class EvaluationText
     public static string StageNumber(EvaluationStage stage) => stage switch
     {
         EvaluationStage.JobDescriptionReview => "0",
-        EvaluationStage.StartingConversation => "I",
-        EvaluationStage.Assessment => "II",
-        EvaluationStage.AssessmentConversation => "III",
-        EvaluationStage.WrittenEvaluation => "IV",
-        EvaluationStage.Completion => "V",
+        EvaluationStage.StartingConversation => "1",
+        EvaluationStage.Assessment => "2",
+        EvaluationStage.Completion => "3",
         _ => string.Empty,
     };
 
@@ -63,9 +59,7 @@ public static class EvaluationText
     {
         EvaluationStage.JobDescriptionReview => "Przejrzyj opis stanowiska pracownika i zatwierdź arkusz oceny.",
         EvaluationStage.StartingConversation => "W ciągu 30 dni od początku cyklu przeprowadź z pracownikiem rozmowę rozpoczynającą: ustalcie 5 kryteriów obowiązkowych, do 3 dodatkowych, oczekiwania i cele.",
-        EvaluationStage.Assessment => "Przez cały okres oceny obserwuj realizację kryteriów i zapisuj notatki.",
-        EvaluationStage.AssessmentConversation => "Około 2 miesiące przed terminem oceny wyznacz rozmowę oceniającą, najpóźniej w dniu oceny.",
-        EvaluationStage.WrittenEvaluation => "Uzupełnij część II arkusza: poziomy kryteriów, uzasadnienie i wnioski do IPRZ.",
+        EvaluationStage.Assessment => "Przez cały okres oceny zapisuj notatki. Około 2 miesiące przed terminem oceny przeprowadź rozmowę oceniającą, najpóźniej w dniu oceny, i uzupełnij część II arkusza: poziomy kryteriów, uzasadnienie i wnioski do IPRZ.",
         EvaluationStage.Completion => "Zapoznaj pracownika z oceną i zamknij cykl. Od tego dnia zaczyna się nowy cykl oceny.",
         _ => string.Empty,
     };
