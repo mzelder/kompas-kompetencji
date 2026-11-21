@@ -39,9 +39,8 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddRadzenComponents();
 
-// AI assistant: per-circuit chat state + answer provider (mock until RAG + LLM is wired in).
-builder.Services.AddScoped<AssistantSession>();
-builder.Services.AddScoped<IAssistantService, MockAssistantService>();
+builder.Services.AddChatClient(new MockChatClient());
+builder.Services.AddAIChatService();
 
 var app = builder.Build();
 

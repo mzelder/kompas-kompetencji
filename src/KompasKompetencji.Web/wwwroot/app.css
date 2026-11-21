@@ -85,3 +85,24 @@ h1:focus {
     border-radius: var(--rz-border-radius);
     background: var(--rz-base-50);
 }
+
+.assistant-sidebar {
+    --rz-sidebar-width: 420px;
+    border-left: 1px solid var(--rz-base-300);
+}
+
+.assistant-chat {
+    height: 100%;
+    border: 0;
+    border-radius: 0;
+}
+
+.assistant-suggestion {
+    justify-content: flex-start;
+    height: auto;
+    padding-block: 0.5rem;
+    white-space: normal;
+    text-align: left;
+    text-transform: none;
+    letter-spacing: normal;
+}
