@@ -94,17 +94,17 @@ Jeden panel czatu dostępny z każdego ekranu, z dwoma trybami zgodnymi z grafik
 - Przycisk **„Wyślij przypomnienie”**. W MVP jest to powiadomienie w aplikacji plus log „wysłanego” maila, bez prawdziwej wysyłki.
 - Proponowane statusy oceny okresowej: *Nierozpoczęta → Kryteria ustalone (Część I) → Ocena w toku → Gotowa do rozmowy → Zakończona*.
 
-## 7. Proponowany stack
+## 7. Wybrany stack
 
 | Warstwa | Wybór | Uzasadnienie |
 |---|---|---|
-| Frontend | React + TypeScript (Vite) + biblioteka komponentów | Szybki kreator i formularze |
-| Backend | **Python + FastAPI** | Automatyczna dokumentacja **OpenAPI** (wymóg „udokumentowanego API”), najlepszy ekosystem do RAG |
-| Baza danych | PostgreSQL + **pgvector** | Dane procesu i wektory w jednym miejscu |
-| AI | Darmowy LLM + lokalny model embeddingów (wielojęzyczny) | Zgodność z regulaminem, dane nie wychodzą poza serwer |
-| PDF | HTML → PDF po stronie serwera (np. WeasyPrint) | Wierne odwzorowanie arkusza |
-| Auth | W MVP: JWT + role (przełożony, HR). Docelowo: OIDC/SSO (np. Keycloak) | Wymóg ról i uprawnień, prosta droga do wdrożenia |
-| Uruchomienie | Docker Compose | Łatwe odpalenie przez jury i dalszy rozwój |
+| Frontend | **Blazor** (.NET 11) + **Radzen.Blazor** | Gotowe komponenty do kreatora i formularzy, jeden język i jeden projekt z backendem |
+| Backend | **ASP.NET Core** (.NET 11) + Minimal API z dokumentacją **OpenAPI** | Wymóg „udokumentowanego API”, gotowość na integracje z EZD/QNT |
+| Baza danych | **SQL Server** + **EF Core** (migracje) | Dane procesu. Embeddingi bazy wiedzy w zwykłej tabeli lub pliku JSON, podobieństwo liczone w pamięci (mały korpus, baza wektorowa niepotrzebna) |
+| AI | Darmowy LLM przez API zgodne z OpenAI (`Microsoft.Extensions.AI`), dostawca w konfiguracji | Zgodność z regulaminem, zmiana dostawcy bez zmian w kodzie (docelowo model lokalny) |
+| PDF | Generowanie po stronie serwera w .NET | Wierne odwzorowanie arkusza |
+| Auth | W MVP: ASP.NET Core Identity + role (przełożony, HR). Docelowo: OIDC/SSO | Wymóg ról i uprawnień, prosta droga do wdrożenia |
+| Uruchomienie | Docker Compose (aplikacja + SQL Server) | Łatwe odpalenie przez jury i dalszy rozwój |
 
 Model kompetencji z `Model_kompetencji.xlsx` (14 kompetencji, 49 wskaźników, 5 poziomów) jest importowany skryptem do JSON/bazy. Dzięki temu nowa wersja modelu nie wymaga zmian w kodzie.
 

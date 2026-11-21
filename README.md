@@ -104,6 +104,21 @@ Na stronie startowej powinien być zielony komunikat **„Połączono z SQL Serv
 
 Otwórz `KompasKompetencji.slnx`, ustaw `KompasKompetencji.Web` jako projekt startowy i naciśnij **F5**. Baza powstanie automatycznie (krok 4 nadal obowiązuje, jeśli używasz Dockera).
 
+## Asystent AI (Claude API)
+
+Bez klucza asystent odpowiada gotowymi odpowiedziami przykładowymi. Żeby podłączyć prawdziwy model:
+
+1. Utwórz klucz API w Claude Console: https://platform.claude.com (Settings → API keys). Doładowanie kredytów: Settings → Billing.
+2. Zapisz go w user-secrets (nie trafia do repozytorium):
+
+   ```powershell
+   dotnet user-secrets set "Assistant:ApiKey" "<klucz>" --project src/KompasKompetencji.Web
+   ```
+
+3. Uruchom aplikację ponownie.
+
+Model jest w `appsettings.json` (`Assistant:Model`, domyślnie `claude-haiku-5-5`). Połączenie idzie przez oficjalny pakiet `Anthropic` i jego `IChatClient`. W Development logi `Microsoft.Extensions.AI` (poziom `Trace` w `appsettings.Development.json`) pokazują każde zapytanie do modelu i odpowiedź.
+
 ## Praca z bazą danych (migracje)
 
 Po zmianie encji lub `AppDbContext` dodaj migrację:

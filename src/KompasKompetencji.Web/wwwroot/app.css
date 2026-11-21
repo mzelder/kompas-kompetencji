@@ -77,6 +77,51 @@ h1:focus {
         content: "Wystąpił błąd.";
     }
 
+.rz-button.assistant-bubble {
+    position: fixed;
+    right: 1.5rem;
+    bottom: 1.5rem;
+    z-index: 1000;
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 50%;
+}
+
+.assistant-window {
+    position: fixed;
+    right: 1.5rem;
+    bottom: 6rem;
+    z-index: 1000;
+    display: none;
+    width: 400px;
+    max-width: calc(100vw - 3rem);
+    height: 600px;
+    max-height: calc(100vh - 10.5rem);
+}
+
+    .assistant-window.is-open {
+        display: block;
+    }
+
+.assistant-card {
+    height: 100%;
+    overflow: hidden;
+}
+
+.assistant-chat {
+    height: 100%;
+    border: 0;
+    border-radius: 0;
+}
+
+.assistant-suggestion {
+    justify-content: flex-start;
+    height: auto;
+    padding-block: 0.5rem;
+    white-space: normal;
+    text-align: left;
+}
+
 .person-grid .rz-data-row {
     cursor: pointer;
 }

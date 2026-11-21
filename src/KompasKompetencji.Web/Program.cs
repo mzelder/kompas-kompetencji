@@ -1,6 +1,8 @@
 using KompasKompetencji.Web.Auth;
+using KompasKompetencji.Web.Assistant;
 using KompasKompetencji.Web.Components;
 using KompasKompetencji.Web.Data;
+using Microsoft.Extensions.AI;
 using KompasKompetencji.Web.Organization;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
@@ -39,6 +41,9 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
 builder.Services.AddRadzenComponents();
+
+builder.Services.AddChatClient(AssistantClientFactory.Create).UseLogging();
+builder.Services.AddAIChatService();
 
 var app = builder.Build();
 
