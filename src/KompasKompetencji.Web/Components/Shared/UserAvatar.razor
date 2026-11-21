@@ -1,0 +1,7 @@
+<span class="avatar" title="@Login">@Initials</span>
+
+@code {
+    [Parameter, EditorRequired] public string? Login { get; set; }
+
+    private string Initials => string.IsNullOrEmpty(Login) ? "?" : Login[..Math.Min(2, Login.Length)];
+}
