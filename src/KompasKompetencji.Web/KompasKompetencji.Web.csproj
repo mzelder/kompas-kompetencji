@@ -19,4 +19,8 @@
     <PackageReference Include="Radzen.Blazor" Version="13.2.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Include="..\..\knowledge-base\knowledge-base.json" Link="Assistant\knowledge-base.json" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+  </ItemGroup>
+
 </Project>

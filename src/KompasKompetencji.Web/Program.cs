@@ -1,5 +1,7 @@
 using KompasKompetencji.Web.Auth;
 using KompasKompetencji.Web.Assistant;
+using KompasKompetencji.Web.Assistant.KnowledgeBase;
+using KompasKompetencji.Web.Assistant.Privacy;
 using KompasKompetencji.Web.Components;
 using KompasKompetencji.Web.Data;
 using KompasKompetencji.Web.Evaluations;
@@ -44,10 +46,19 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddRadzenComponents();
 
-builder.Services.AddChatClient(AssistantClientFactory.Create).UseLogging();
+builder.Services.AddSingleton(_ => KnowledgeBaseStore.Load(KnowledgeBaseStore.DefaultPath));
+builder.Services.AddSingleton<Bm25Retriever>();
+builder.Services.AddSingleton<EmployeeNameSource>();
+builder.Services.AddChatClient(AssistantClientFactory.Create)
+    .Use((inner, services) => new KnowledgeBaseChatClient(inner, services.GetRequiredService<Bm25Retriever>()))
+    .Use((inner, services) => new PseudonymizingChatClient(inner, services.GetRequiredService<EmployeeNameSource>().GetAsync))
+    .UseLogging();
+builder.Services.AddSingleton<ILocalizer, PolishRadzenLocalizer>();
 builder.Services.AddAIChatService();
 
 var app = builder.Build();
+
+app.Services.GetRequiredService<Bm25Retriever>();
 
 if (app.Environment.IsDevelopment())
 {
