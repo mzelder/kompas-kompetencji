@@ -2,7 +2,7 @@
 
 Placeholder aplikacji do oceny kompetencji pracowników służby cywilnej.
 
-**Stack:** Blazor Web App (Interactive Server), .NET 11, Entity Framework Core 11, SQL Server, [Radzen Blazor](https://blazor.radzen.com) (komponenty UI, motyw `material`).
+**Stack:** Blazor Web App (Interactive Server), .NET 11, Entity Framework Core 11, SQL Server, [Radzen Blazor](https://blazor.radzen.com) (komponenty UI, motyw `standard-dark`).
 
 Zakres funkcjonalny MVP opisuje [mvp.md](mvp.md).
 

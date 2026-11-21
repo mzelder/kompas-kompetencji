@@ -14,10 +14,10 @@
     <RadzenCard Variant="Variant.Outlined" class="login-card">
         <RadzenStack Gap="1.25rem">
             <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.75rem">
-                <RadzenIcon Icon="explore" IconColor="@Colors.Primary" Style="font-size: 2.5rem;" />
+                <RadzenIcon Icon="explore" IconColor="@Colors.Primary" class="icon-lg" />
                 <RadzenStack Gap="0">
                     <RadzenText TextStyle="TextStyle.H5" TagName="TagName.H1" class="rz-m-0">Kompas kompetencji</RadzenText>
-                    <RadzenText TextStyle="TextStyle.Body2" class="rz-m-0 rz-color-base-600">Wsparcie przełożonego w ocenie pracownika</RadzenText>
+                    <RadzenText TextStyle="TextStyle.Body2" class="rz-m-0 rz-color-base-300">Wsparcie przełożonego w ocenie pracownika</RadzenText>
                 </RadzenStack>
             </RadzenStack>
 
@@ -106,7 +106,7 @@
 
     @if (Environment.IsDevelopment())
     {
-        <RadzenCard Variant="Variant.Outlined" class="login-card test-accounts-card">
+        <RadzenCard Variant="Variant.Outlined" class="login-card">
             <RadzenStack Gap="1rem">
                 <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.5rem">
                     <RadzenIcon Icon="bug_report" IconColor="@Colors.Warning" />
@@ -115,21 +115,23 @@
 
                 @foreach (var account in TestAccounts.All)
                 {
-                    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center"
-                                 JustifyContent="JustifyContent.SpaceBetween" class="test-account-row">
-                        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.75rem">
-                            <RadzenIcon Icon="@AppRoles.Icon(account.Role)" />
-                            <RadzenStack Gap="0">
-                                <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-m-0">@AppRoles.DisplayName(account.Role)</RadzenText>
-                                <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0">
-                                    <code>@account.Login</code> / <code>@account.Password</code>
-                                </RadzenText>
+                    <RadzenCard Variant="Variant.Filled" class="rz-p-3">
+                        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center"
+                                     JustifyContent="JustifyContent.SpaceBetween">
+                            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.75rem">
+                                <RadzenIcon Icon="@AppRoles.Icon(account.Role)" />
+                                <RadzenStack Gap="0">
+                                    <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-m-0">@AppRoles.DisplayName(account.Role)</RadzenText>
+                                    <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0">
+                                        <code>@account.Login</code> / <code>@account.Password</code>
+                                    </RadzenText>
+                                </RadzenStack>
                             </RadzenStack>
+                            <RadzenButton Text="Zaloguj" Icon="bolt" Size="ButtonSize.Small" Variant="Variant.Flat"
+                                          ButtonStyle="ButtonStyle.Secondary" Disabled="@busy"
+                                          Click="@(() => SignInAsTestAccountAsync(account))" />
                         </RadzenStack>
-                        <RadzenButton Text="Zaloguj" Icon="bolt" Size="ButtonSize.Small" Variant="Variant.Flat"
-                                      ButtonStyle="ButtonStyle.Secondary" Disabled="@busy"
-                                      Click="@(() => SignInAsTestAccountAsync(account))" />
-                    </RadzenStack>
+                    </RadzenCard>
                 }
             </RadzenStack>
         </RadzenCard>

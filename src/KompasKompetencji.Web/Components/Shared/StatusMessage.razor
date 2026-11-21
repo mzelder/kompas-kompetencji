@@ -1,0 +1,18 @@
+<RadzenStack AlignItems="AlignItems.Center" Gap="1rem" class="rz-p-12">
+    <RadzenIcon Icon="@Icon" IconColor="@IconColor" class="icon-xl" />
+    <RadzenText TextStyle="TextStyle.H5" TagName="TagName.H1" class="rz-m-0">@Title</RadzenText>
+    <RadzenText TextStyle="TextStyle.Body1" class="rz-m-0 rz-color-base-300">@Text</RadzenText>
+    @ChildContent
+</RadzenStack>
+
+@code {
+    [Parameter, EditorRequired] public string Icon { get; set; } = string.Empty;
+
+    [Parameter] public string IconColor { get; set; } = Colors.Primary;
+
+    [Parameter, EditorRequired] public string Title { get; set; } = string.Empty;
+
+    [Parameter] public string? Text { get; set; }
+
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+}

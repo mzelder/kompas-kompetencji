@@ -1,4 +1,5 @@
 ﻿@inherits LayoutComponentBase
+@inject NavigationManager Navigation
 
 <RadzenLayout>
     <RadzenHeader>
@@ -7,26 +8,19 @@
             <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.25rem">
                 <RadzenSidebarToggle Click="@(() => sidebarExpanded = !sidebarExpanded)" />
                 <RadzenIcon Icon="explore" IconColor="@Colors.Primary" />
-                <RadzenText TextStyle="TextStyle.H6" class="rz-m-0 rz-ms-2">Kompas kompetencji</RadzenText>
+                <RadzenText TextStyle="TextStyle.Subtitle1" class="rz-m-0 rz-ms-2">Kompas kompetencji</RadzenText>
             </RadzenStack>
 
             <AuthorizeView>
                 <Authorized>
-                    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.75rem">
-                        <RadzenButton Text="Asystent" Icon="forum" Size="ButtonSize.Small"
-                                      Variant="Variant.Outlined" ButtonStyle="ButtonStyle.Base"
-                                      aria-pressed="@(assistantExpanded ? "true" : "false")"
-                                      Click="@(() => assistantExpanded = !assistantExpanded)" />
-                        <RadzenIcon Icon="@AppRoles.Icon(context.User.GetRole())" />
-                        <RadzenText TextStyle="TextStyle.Body1" class="rz-m-0">@context.User.Identity?.Name</RadzenText>
-                        <RadzenBadge BadgeStyle="BadgeStyle.Primary" Variant="Variant.Flat" Shade="Shade.Lighter"
-                                     Text="@AppRoles.DisplayName(context.User.GetRole())" />
-                        <form method="post" action="@AuthEndpoints.LogoutPath">
-                            <AntiforgeryToken />
-                            <RadzenButton ButtonType="ButtonType.Submit" Text="Wyloguj" Icon="logout"
-                                          Variant="Variant.Text" ButtonStyle="ButtonStyle.Base" Size="ButtonSize.Small" />
-                        </form>
-                    </RadzenStack>
+                    <RadzenProfileMenu Click="@OnProfileMenuClick">
+                        <Template>
+                            <UserAvatar Login="@context.User.Identity?.Name" />
+                        </Template>
+                        <ChildContent>
+                            <RadzenProfileMenuItem Text="Wyloguj" Value="@LogoutValue" Icon="logout" />
+                        </ChildContent>
+                    </RadzenProfileMenu>
                 </Authorized>
             </AuthorizeView>
         </RadzenStack>
@@ -35,12 +29,30 @@
     <RadzenSidebar @bind-Expanded="sidebarExpanded">
         <AuthorizeView>
             <Authorized>
-                <RadzenPanelMenu>
-                    @foreach (var item in RoleNavigation.For(context.User.GetRole()))
-                    {
-                        <RadzenPanelMenuItem Text="@item.Text" Path="@item.Path" Icon="@item.Icon" />
-                    }
-                </RadzenPanelMenu>
+                <RadzenStack JustifyContent="JustifyContent.SpaceBetween" class="app-sidebar">
+                    <RadzenStack Gap="1rem">
+                        @foreach (var group in RoleNavigation.For(context.User.GetRole()))
+                        {
+                            <RadzenStack Gap="0.25rem">
+                                <RadzenText TextStyle="TextStyle.Overline" class="nav-group-label rz-color-base-300">@group.Title</RadzenText>
+                                <RadzenPanelMenu>
+                                    @foreach (var item in group.Items)
+                                    {
+                                        <RadzenPanelMenuItem Text="@item.Text" Path="@item.Path" Icon="@item.Icon" />
+                                    }
+                                </RadzenPanelMenu>
+                            </RadzenStack>
+                        }
+                    </RadzenStack>
+
+                    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.75rem" class="sidebar-user">
+                        <UserAvatar Login="@context.User.Identity?.Name" />
+                        <RadzenStack Gap="0">
+                            <RadzenText TextStyle="TextStyle.Body2" class="rz-m-0">@context.User.Identity?.Name</RadzenText>
+                            <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">@AppRoles.DisplayName(context.User.GetRole())</RadzenText>
+                        </RadzenStack>
+                    </RadzenStack>
+                </RadzenStack>
             </Authorized>
         </AuthorizeView>
     </RadzenSidebar>
@@ -70,6 +82,15 @@
 </div>
 
 @code {
+    private const string LogoutValue = "logout";
+
     private bool sidebarExpanded = true;
-    private bool assistantExpanded;
+
+    private void OnProfileMenuClick(RadzenProfileMenuItem item)
+    {
+        if (item.Value == LogoutValue)
+        {
+            Navigation.NavigateTo(AuthEndpoints.LogoutPath, forceLoad: true);
+        }
+    }
 }

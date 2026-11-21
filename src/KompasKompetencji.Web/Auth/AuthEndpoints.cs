@@ -33,7 +33,7 @@ public static class AuthEndpoints
             return Results.LocalRedirect(IsLocalUrl(returnUrl) ? returnUrl! : AppRoles.HomePath(user.Role));
         }).AllowAnonymous();
 
-        app.MapPost(LogoutPath, async (HttpContext http) =>
+        app.MapGet(LogoutPath, async (HttpContext http) =>
         {
             await http.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return Results.LocalRedirect(LoginPagePath);
