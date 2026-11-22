@@ -41,7 +41,7 @@
 | Formularz | `RadzenTemplateForm` + `RadzenFormField Variant="Variant.Outlined"`, walidatory Radzen w `<Helper>` | `Login.razor` |
 | Komunikaty na stronie | `RadzenAlert Variant="Variant.Flat" Shade="Shade.Lighter" AllowClose="false"` | `Login.razor` |
 | Komunikaty po akcji | `NotificationService.Notify(...)` | |
-| Tabele | `RadzenDataGrid` z `AllowSorting`, `IsLoading`, `EmptyText`. Bez wiersza filtrów (`AllowFiltering`), bo zajmuje miejsce: zamiast niego jedno pole `<SearchBox>` nad tabelą | `Przelozony/Dashboard.razor`, `Hr/Dashboard.razor`, `Admin/Users.razor` |
+| Tabele | `RadzenDataGrid` z `AllowSorting`, `IsLoading`, `EmptyText`. Bez wiersza filtrów (`AllowFiltering`), bo zajmuje miejsce: zamiast niego jedno pole `<SearchBox>` nad tabelą | `Przelozony/Dashboard.razor`, `Hr/EvaluationStages.razor`, `Admin/Users.razor` |
 | Lista z zaznaczaniem (klik zaznacza, ponowny klik odznacza) i panel szczegółów | `RadzenDataGrid` z `SelectionMode.Single`, `@bind-Value`, `RowSelect` + `RowClick` (Radzen sam nie odznacza po drugim kliknięciu; `RowClick` przychodzi przed `RowSelect`); szczegóły w osobnej `RadzenCard` pod listami | `Hr/Employees.razor` |
 | Układ kolumn | `RadzenRow` + `RadzenColumn Size="12" SizeMD="6"` | `Hr/Employees.razor` |
 | Wyszukiwanie w liście | `<SearchBox Value ValueChanged Placeholder>` nad tabelą; filtrowanie w kodzie bez rozróżniania wielkości liter i polskich znaków (`Organization/EmployeeSearch.cs`); podpis z liczbą wyników „Wyniki wyszukiwania: X z Y” | `Shared/SearchBox.razor`, `Hr/Employees.razor`, `Przelozony/Dashboard.razor` |

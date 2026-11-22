@@ -122,14 +122,6 @@ h1:focus {
     letter-spacing: var(--rz-text-subtitle1-letter-spacing);
 }
 
-.assistant-suggestion {
-    justify-content: flex-start;
-    height: auto;
-    padding-block: 0.5rem;
-    white-space: normal;
-    text-align: left;
-}
-
 .person-grid .rz-data-row {
     cursor: pointer;
 }
