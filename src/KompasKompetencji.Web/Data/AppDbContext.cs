@@ -15,7 +15,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
 
     public DbSet<EvaluationAdditionalCriterion> EvaluationAdditionalCriteria => Set<EvaluationAdditionalCriterion>();
 
-    public DbSet<JobDescription> JobDescriptions => Set<JobDescription>();
+    public DbSet<JobPosition> JobPositions => Set<JobPosition>();
 
     public DbSet<EvaluationNote> EvaluationNotes => Set<EvaluationNote>();
 
@@ -52,25 +52,29 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             e.Property(p => p.LastName).HasMaxLength(100);
             e.Property(p => p.Position).HasMaxLength(200);
             e.Property(p => p.Department).HasMaxLength(200);
+            e.HasOne(p => p.JobPosition)
+                .WithMany(p => p.Employees)
+                .HasForeignKey(p => p.JobPositionId)
+                .OnDelete(DeleteBehavior.SetNull);
 
             e.HasData(
-                new Employee { Id = 1, FirstName = "Anna", LastName = "Kowalska", Position = "Starszy specjalista", Department = "Wydział Analiz Danych", EmployedSince = new DateOnly(2019, 12, 15) },
-                new Employee { Id = 2, FirstName = "Jan", LastName = "Nowak", Position = "Specjalista", Department = "Wydział Analiz Danych", EmployedSince = new DateOnly(2022, 11, 2) },
-                new Employee { Id = 3, FirstName = "Ewa", LastName = "Wiśniewska", Position = "Naczelnik wydziału", Department = "Wydział Analiz Danych", IsSupervisor = true, EmployedSince = new DateOnly(2015, 4, 1) },
+                new Employee { Id = 1, FirstName = "Anna", LastName = "Kowalska", Position = "Starszy specjalista", Department = "Wydział Analiz Danych", JobPositionId = 1, EmployedSince = new DateOnly(2019, 12, 15) },
+                new Employee { Id = 2, FirstName = "Jan", LastName = "Nowak", Position = "Specjalista", Department = "Wydział Analiz Danych", JobPositionId = 2, EmployedSince = new DateOnly(2022, 11, 2) },
+                new Employee { Id = 3, FirstName = "Ewa", LastName = "Wiśniewska", Position = "Naczelnik wydziału", Department = "Wydział Analiz Danych", IsSupervisor = true, JobPositionId = 3, EmployedSince = new DateOnly(2015, 4, 1) },
                 new Employee { Id = 4, FirstName = "Tomasz", LastName = "Zieliński", Position = "Dyrektor departamentu", Department = "Departament Danych i Usług Cyfrowych", IsSupervisor = true, EmployedSince = new DateOnly(2012, 9, 1) },
                 new Employee { Id = 5, FirstName = "Marek", LastName = "Lewandowski", Position = "Naczelnik wydziału", Department = "Wydział Usług Cyfrowych", IsSupervisor = true, EmployedSince = new DateOnly(2016, 2, 15) },
                 new Employee { Id = 6, FirstName = "Magdalena", LastName = "Dąbrowska", Position = "Zastępca naczelnika wydziału", Department = "Wydział Usług Cyfrowych", IsSupervisor = true, EmployedSince = new DateOnly(2018, 5, 1) },
                 new Employee { Id = 7, FirstName = "Katarzyna", LastName = "Wójcik", Position = "Główny specjalista", Department = "Wydział Usług Cyfrowych", EmployedSince = new DateOnly(2021, 9, 1) },
                 new Employee { Id = 8, FirstName = "Piotr", LastName = "Kamiński", Position = "Starszy referent", Department = "Wydział Usług Cyfrowych", EmployedSince = new DateOnly(2024, 3, 1) },
-                new Employee { Id = 9, FirstName = "Michał", LastName = "Szymański", Position = "Referent", Department = "Wydział Analiz Danych", EmployedSince = new DateOnly(2018, 1, 10) },
-                new Employee { Id = 10, FirstName = "Agnieszka", LastName = "Woźniak", Position = "Starszy specjalista", Department = "Wydział Analiz Danych", EmployedSince = new DateOnly(2020, 6, 1) },
-                new Employee { Id = 11, FirstName = "Paweł", LastName = "Kozłowski", Position = "Starszy specjalista", Department = "Wydział Analiz Danych", EmployedSince = new DateOnly(2026, 11, 5) },
-                new Employee { Id = 12, FirstName = "Karolina", LastName = "Mazur", Position = "Specjalista", Department = "Wydział Analiz Danych", EmployedSince = new DateOnly(2021, 12, 20) },
+                new Employee { Id = 9, FirstName = "Michał", LastName = "Szymański", Position = "Referent", Department = "Wydział Analiz Danych", JobPositionId = 4, EmployedSince = new DateOnly(2018, 1, 10) },
+                new Employee { Id = 10, FirstName = "Agnieszka", LastName = "Woźniak", Position = "Starszy specjalista", Department = "Wydział Analiz Danych", JobPositionId = 5, EmployedSince = new DateOnly(2020, 6, 1) },
+                new Employee { Id = 11, FirstName = "Paweł", LastName = "Kozłowski", Position = "Starszy specjalista", Department = "Wydział Analiz Danych", JobPositionId = 6, EmployedSince = new DateOnly(2026, 11, 5) },
+                new Employee { Id = 12, FirstName = "Karolina", LastName = "Mazur", Position = "Specjalista", Department = "Wydział Analiz Danych", JobPositionId = 7, EmployedSince = new DateOnly(2021, 12, 20) },
                 new Employee { Id = 13, FirstName = "Łukasz", LastName = "Grabowski", Position = "Specjalista", Department = "Wydział Analiz Danych", EmployedSince = new DateOnly(2024, 12, 10) },
-                new Employee { Id = 14, FirstName = "Natalia", LastName = "Krawczyk", Position = "Główny specjalista", Department = "Wydział Analiz Danych", EmployedSince = new DateOnly(2023, 4, 3) },
-                new Employee { Id = 15, FirstName = "Bartosz", LastName = "Wróbel", Position = "Starszy specjalista", Department = "Wydział Analiz Danych", EmployedSince = new DateOnly(2022, 1, 17) },
-                new Employee { Id = 16, FirstName = "Monika", LastName = "Sikora", Position = "Specjalista", Department = "Wydział Analiz Danych", EmployedSince = new DateOnly(2019, 11, 28) },
-                new Employee { Id = 17, FirstName = "Joanna", LastName = "Pawlak", Position = "Główny specjalista", Department = "Wydział Analiz Danych", EmployedSince = new DateOnly(2020, 12, 7) });
+                new Employee { Id = 14, FirstName = "Natalia", LastName = "Krawczyk", Position = "Główny specjalista", Department = "Wydział Analiz Danych", JobPositionId = 8, EmployedSince = new DateOnly(2023, 4, 3) },
+                new Employee { Id = 15, FirstName = "Bartosz", LastName = "Wróbel", Position = "Starszy specjalista", Department = "Wydział Analiz Danych", JobPositionId = 9, EmployedSince = new DateOnly(2022, 1, 17) },
+                new Employee { Id = 16, FirstName = "Monika", LastName = "Sikora", Position = "Specjalista", Department = "Wydział Analiz Danych", JobPositionId = 10, EmployedSince = new DateOnly(2019, 11, 28) },
+                new Employee { Id = 17, FirstName = "Joanna", LastName = "Pawlak", Position = "Główny specjalista", Department = "Wydział Analiz Danych", JobPositionId = 11, EmployedSince = new DateOnly(2020, 12, 7) });
         });
 
         modelBuilder.Entity<EmployeeSupervisor>(l =>
@@ -107,151 +111,19 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
                 new EmployeeSupervisor { EmployeeId = 17, SupervisorId = 3 });
         });
 
-        modelBuilder.Entity<JobDescription>(j =>
+        modelBuilder.Entity<JobPosition>(j =>
         {
-            j.ToTable("JobDescriptions");
-            j.HasKey(p => p.EmployeeId);
-            j.Property(p => p.Purpose).HasMaxLength(1000);
-            j.Property(p => p.Tasks).HasMaxLength(4000);
+            j.ToTable("JobPositions");
+            j.Property(p => p.Symbol).HasMaxLength(50);
+            j.HasIndex(p => p.Symbol).IsUnique();
+            j.Property(p => p.Title).HasMaxLength(200);
+            j.Property(p => p.Department).HasMaxLength(200);
+            j.Property(p => p.Unit).HasMaxLength(200);
+            j.Property(p => p.DirectSupervisorTitle).HasMaxLength(200);
+            j.Property(p => p.IndirectSupervisorTitle).HasMaxLength(200);
             j.Property(p => p.RequiredCompetencies).HasMaxLength(1000);
-            j.HasOne(p => p.Employee)
-                .WithOne(p => p.JobDescription)
-                .HasForeignKey<JobDescription>(p => p.EmployeeId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            j.HasData(
-                new JobDescription
-                {
-                    EmployeeId = 1,
-                    Purpose = "Przygotowywanie analiz danych wspierających decyzje kierownictwa departamentu oraz dbanie o jakość danych wykorzystywanych w raportach.",
-                    Tasks = Lines(
-                        "Przygotowywanie analiz i raportów na potrzeby kierownictwa departamentu",
-                        "Opracowywanie wskaźników i metod pomiaru realizacji zadań",
-                        "Weryfikacja jakości i kompletności danych z systemów dziedzinowych",
-                        "Przygotowywanie projektów stanowisk do dokumentów przekazanych do zaopiniowania",
-                        "Wsparcie merytoryczne mniej doświadczonych pracowników wydziału"),
-                    RequiredCompetencies = Lines("Myślenie analityczne", "Orientacja na cele", "Komunikacja pisemna", "Współpraca"),
-                },
-                new JobDescription
-                {
-                    EmployeeId = 2,
-                    Purpose = "Realizacja zadań związanych z gromadzeniem, przetwarzaniem i udostępnianiem danych na potrzeby wydziału.",
-                    Tasks = Lines(
-                        "Gromadzenie i porządkowanie danych z jednostek podległych",
-                        "Przygotowywanie zestawień i wizualizacji danych",
-                        "Udzielanie odpowiedzi na zapytania dotyczące danych publicznych",
-                        "Prowadzenie dokumentacji źródeł danych"),
-                    RequiredCompetencies = Lines("Myślenie analityczne", "Rzetelność", "Komunikacja", "Współpraca"),
-                },
-                new JobDescription
-                {
-                    EmployeeId = 3,
-                    Purpose = "Kierowanie Wydziałem Analiz Danych, zapewnienie terminowej i rzetelnej realizacji zadań wydziału oraz rozwój kompetencji podległych pracowników.",
-                    Tasks = Lines(
-                        "Planowanie, organizowanie i nadzorowanie pracy wydziału",
-                        "Przydzielanie zadań i ocena ich realizacji przez pracowników",
-                        "Przygotowywanie stanowisk i rekomendacji dla dyrektora departamentu",
-                        "Współpraca z innymi komórkami organizacyjnymi i instytucjami",
-                        "Prowadzenie ocen okresowych i planowanie rozwoju zawodowego pracowników"),
-                    RequiredCompetencies = Lines("Zarządzanie zespołem", "Podejmowanie decyzji", "Myślenie strategiczne", "Zarządzanie rozwojem pracowników", "Komunikacja"),
-                    SubordinatesCount = 6,
-                },
-                new JobDescription
-                {
-                    EmployeeId = 9,
-                    Purpose = "Obsługa administracyjna wydziału i wsparcie pracowników w przygotowywaniu zestawień danych.",
-                    Tasks = Lines(
-                        "Prowadzenie rejestru korespondencji wydziału",
-                        "Przygotowywanie prostych zestawień danych według wskazówek",
-                        "Archiwizowanie dokumentacji wydziału",
-                        "Organizacja spotkań i przygotowywanie notatek"),
-                    RequiredCompetencies = Lines("Rzetelność", "Organizacja pracy własnej", "Komunikacja"),
-                },
-                new JobDescription
-                {
-                    EmployeeId = 10,
-                    Purpose = "Przygotowywanie i opiniowanie analiz dotyczących usług cyfrowych oraz koordynacja współpracy z dostawcami danych.",
-                    Tasks = Lines(
-                        "Opracowywanie analiz wpływu planowanych zmian na usługi cyfrowe",
-                        "Opiniowanie projektów dokumentów pod kątem danych i wskaźników",
-                        "Koordynowanie współpracy z instytucjami przekazującymi dane",
-                        "Prowadzenie spotkań roboczych z udziałem innych komórek",
-                        "Przygotowywanie materiałów na posiedzenia zespołów międzyresortowych"),
-                    RequiredCompetencies = Lines("Myślenie analityczne", "Współpraca", "Komunikacja", "Orientacja na cele"),
-                },
-                new JobDescription
-                {
-                    EmployeeId = 11,
-                    Purpose = "Prowadzenie spraw dotyczących reagowania na incydenty i sytuacje kryzysowe w zakresie danych i usług cyfrowych departamentu.",
-                    Tasks = Lines(
-                        "Udział w opracowaniu i aktualizacji planu reagowania na incydenty dotyczące danych i usług cyfrowych",
-                        "Analiza zgłoszonych incydentów i przygotowywanie rekomendacji działań naprawczych",
-                        "Współpraca z zespołami reagowania na incydenty w innych urzędach i instytucjach",
-                        "Udział w przygotowaniu i przeprowadzaniu ćwiczeń z reagowania na sytuacje kryzysowe",
-                        "Prowadzenie kontroli przestrzegania procedur bezpieczeństwa danych w jednostkach podległych"),
-                    RequiredCompetencies = Lines(
-                        "Organizacja pracy i orientacja na osiąganie celów",
-                        "Współpraca",
-                        "Myślenie analityczne",
-                        "Wykorzystywanie wiedzy i doskonalenie zawodowe",
-                        "Radzenie sobie w sytuacjach kryzysowych"),
-                },
-                new JobDescription
-                {
-                    EmployeeId = 12,
-                    Purpose = "Realizacja zadań związanych z analizą danych i przygotowywaniem informacji dla kierownictwa.",
-                    Tasks = Lines(
-                        "Przygotowywanie cyklicznych raportów z danych wydziału",
-                        "Analiza danych ankietowych i statystycznych",
-                        "Przygotowywanie projektów odpowiedzi na pisma",
-                        "Aktualizacja danych publikowanych w serwisie urzędu"),
-                    RequiredCompetencies = Lines("Myślenie analityczne", "Rzetelność", "Komunikacja pisemna"),
-                },
-                new JobDescription
-                {
-                    EmployeeId = 14,
-                    Purpose = "Projektowanie i utrzymanie zestawów wskaźników wydziału oraz zapewnienie spójności metod analizy danych.",
-                    Tasks = Lines(
-                        "Projektowanie wskaźników i metod pomiaru dla zadań departamentu",
-                        "Przygotowywanie analiz porównawczych na potrzeby kierownictwa",
-                        "Opracowywanie standardów opisu i weryfikacji źródeł danych",
-                        "Koordynowanie prac analitycznych realizowanych przez kilka osób wydziału"),
-                    RequiredCompetencies = Lines("Myślenie analityczne", "Orientacja na cele", "Współpraca", "Komunikacja pisemna"),
-                },
-                new JobDescription
-                {
-                    EmployeeId = 15,
-                    Purpose = "Przygotowywanie analiz statystycznych i prognoz na potrzeby planowania zadań departamentu.",
-                    Tasks = Lines(
-                        "Przygotowywanie prognoz i analiz trendów na podstawie danych wydziału",
-                        "Opracowywanie zestawień do planów i sprawozdań departamentu",
-                        "Weryfikacja poprawności obliczeń w raportach przygotowywanych przez wydział",
-                        "Udzielanie wyjaśnień dotyczących metod analizy innym komórkom"),
-                    RequiredCompetencies = Lines("Myślenie analityczne", "Rzetelność", "Komunikacja", "Orientacja na cele"),
-                },
-                new JobDescription
-                {
-                    EmployeeId = 16,
-                    Purpose = "Obsługa wniosków o udostępnienie danych i przygotowywanie zestawień dla podmiotów zewnętrznych.",
-                    Tasks = Lines(
-                        "Rozpatrywanie wniosków o udostępnienie danych wydziału",
-                        "Przygotowywanie zestawień danych dla podmiotów zewnętrznych",
-                        "Prowadzenie rejestru udostępnionych danych",
-                        "Współpraca z działem prawnym przy odpowiedziach na wnioski"),
-                    RequiredCompetencies = Lines("Rzetelność", "Komunikacja pisemna", "Współpraca"),
-                },
-                new JobDescription
-                {
-                    EmployeeId = 17,
-                    Purpose = "Przygotowywanie raportów i analiz danych o wnioskach obsługiwanych przez departament oraz dbanie o jakość danych źródłowych.",
-                    Tasks = Lines(
-                        "Przygotowywanie raportów kwartalnych i rocznych o wnioskach",
-                        "Analiza trendów i przyczyn zmian w liczbie wniosków",
-                        "Weryfikacja zgodności danych z rejestrami źródłowymi",
-                        "Przygotowywanie notatek informacyjnych dla kierownictwa",
-                        "Wsparcie nowych pracowników w pracy z danymi"),
-                    RequiredCompetencies = Lines("Myślenie analityczne", "Rzetelność", "Komunikacja pisemna", "Kreatywność"),
-                });
+            j.Property(p => p.Subordinates).HasConversion<string>().HasMaxLength(20);
+            j.HasData(DemoJobPositions.All);
         });
 
         modelBuilder.Entity<Evaluation>(v =>

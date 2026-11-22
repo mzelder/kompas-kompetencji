@@ -64,6 +64,16 @@ public static class EvaluationText
         ? "Pracownik kieruje zespołem, dlatego podpowiadamy arkusz B."
         : "Pracownik nie kieruje zespołem, dlatego podpowiadamy arkusz C.";
 
+    public static string Subordinates(SubordinatesRange subordinates) => subordinates switch
+    {
+        SubordinatesRange.None => "Brak podległych pracowników",
+        SubordinatesRange.UpTo4 => "Kieruje pracą do 4 pracowników",
+        SubordinatesRange.From5To9 => "Kieruje pracą od 5 do 9 pracowników",
+        SubordinatesRange.Over9 => "Kieruje pracą powyżej 9 pracowników",
+        SubordinatesRange.Managers => "Podlegają mu osoby kierujące pracą innych",
+        _ => subordinates.ToString(),
+    };
+
     public static string Stage(EvaluationStage stage) => stage switch
     {
         EvaluationStage.JobDescriptionReview => "Opis stanowiska",

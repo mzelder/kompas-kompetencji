@@ -63,6 +63,14 @@ public partial class StartingConversationStage
         acquaintedOn = IsReadyToConfirm ? ConversationDay : null;
     }
 
+    private string SuggestionSummary => View.JobPosition switch
+    {
+        null => "Pracownik nie ma opisu stanowiska pracy, więc nie ma podpowiedzi kryteriów.",
+        { } position when View.SuggestedCriteria.Count == 0 =>
+            $"Kompetencje wymagane w OSP {position.Symbol} pokrywają się z kryteriami obowiązkowymi, więc nie ma podpowiedzi kryteriów dodatkowych.",
+        { } position => $"Podpowiedzi pochodzą z kompetencji wymaganych w OSP {position.Symbol}.",
+    };
+
     private bool IsOptionDisabled(Criterion criterion) =>
         additionalCriteria.Count() >= EvaluationCriteria.MaxAdditional && !additionalCriteria.Contains(criterion);
 

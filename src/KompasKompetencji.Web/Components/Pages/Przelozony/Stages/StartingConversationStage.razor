@@ -57,7 +57,7 @@
         @if (!ReadOnly)
         {
             <RadzenColumn Size="12" SizeMD="6">
-                <StartingConversationTopics JobDescription="@View.JobDescription" />
+                <StartingConversationTopics JobPosition="@View.JobPosition" />
             </RadzenColumn>
         }
 
@@ -124,6 +124,7 @@
                             <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">
                                 Możesz wybrać najwyżej @EvaluationCriteria.MaxAdditional kryteria dodatkowe. Nie musisz wybierać żadnego.
                             </RadzenText>
+                            <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">@SuggestionSummary</RadzenText>
                         }
                     </RadzenStack>
 

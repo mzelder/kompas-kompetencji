@@ -16,16 +16,16 @@
 
                         @if (topic.ShowsJobTasks)
                         {
-                            @if (JobDescription is JobDescription jobDescription)
+                            @if (JobPosition is JobPosition jobPosition)
                             {
                                 <RadzenButton Variant="Variant.Text" ButtonStyle="ButtonStyle.Primary" Size="ButtonSize.Small" class="rz-p-0 align-self-start"
                                               Icon="@(tasksExpanded ? "expand_less" : "expand_more")"
-                                              Text="@(tasksExpanded ? "Ukryj zadania z opisu stanowiska" : $"Pokaż zadania z opisu stanowiska ({jobDescription.TaskList.Count})")"
+                                              Text="@(tasksExpanded ? "Ukryj zadania z opisu stanowiska" : $"Pokaż zadania z opisu stanowiska ({jobPosition.TaskList.Count})")"
                                               Click="@(() => tasksExpanded = !tasksExpanded)" />
                                 @if (tasksExpanded)
                                 {
                                     <ul class="rz-m-0 topic-tasks">
-                                        @foreach (var task in jobDescription.TaskList)
+                                        @foreach (var task in jobPosition.TaskList)
                                         {
                                             <li><RadzenText TextStyle="TextStyle.Body2" class="rz-m-0">@task</RadzenText></li>
                                         }

@@ -16,7 +16,7 @@ public partial class StartingConversationTopics
 
     private bool tasksExpanded;
 
-    [Parameter] public JobDescription? JobDescription { get; set; }
+    [Parameter] public JobPosition? JobPosition { get; set; }
 
     private sealed record ConversationTopic(string Icon, string Title, string Description, bool ShowsJobTasks = false);
 }
