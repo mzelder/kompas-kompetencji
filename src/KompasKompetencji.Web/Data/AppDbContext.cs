@@ -383,6 +383,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         {
             n.ToTable("EvaluationNotes");
             n.Property(p => p.Text).HasMaxLength(EvaluationNote.MaxTextLength);
+            n.Property(p => p.Criterion).HasConversion<string>().HasMaxLength(40);
+            n.Property(p => p.Tone).HasConversion<string>().HasMaxLength(20);
             n.HasIndex(p => new { p.EvaluationId, p.CreatedAt });
             n.HasOne(p => p.Evaluation)
                 .WithMany()
@@ -392,33 +394,13 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             n.HasData(
                 new EvaluationNote
                 {
-                    Id = 1, EvaluationId = 11, CreatedAt = new DateTime(2026, 5, 14, 15, 20, 0),
-                    Text = "Przygotowała zestaw wskaźników do sprawozdania kwartalnego tydzień przed terminem. Kierownictwo departamentu przyjęło go bez poprawek.",
-                },
-                new EvaluationNote
-                {
-                    Id = 2, EvaluationId = 11, CreatedAt = new DateTime(2026, 9, 8, 11, 0, 0),
+                    Id = 1, EvaluationId = 11, Criterion = Criterion.KnowledgeAndDevelopment, Tone = NoteTone.Positive, CreatedAt = new DateTime(2026, 9, 8, 11, 0, 0),
                     Text = "Z własnej inicjatywy poprowadziła dla wydziału warsztat z weryfikacji źródeł danych. Uczestnicy ocenili go jako przydatny.",
                 },
                 new EvaluationNote
                 {
-                    Id = 3, EvaluationId = 13, CreatedAt = new DateTime(2026, 3, 10, 9, 45, 0),
-                    Text = "Prognoza zatrudnienia na 2027 r. wymagała dwóch poprawek metodologicznych. Po wskazówkach przygotował poprawioną wersję w terminie.",
-                },
-                new EvaluationNote
-                {
-                    Id = 4, EvaluationId = 13, CreatedAt = new DateTime(2026, 10, 2, 14, 10, 0),
-                    Text = "Samodzielnie wykrył błąd w obliczeniach raportu rocznego przed jego wysłaniem do dyrektora i zaproponował dodatkowy krok kontroli.",
-                },
-                new EvaluationNote
-                {
-                    Id = 5, EvaluationId = 15, CreatedAt = new DateTime(2026, 3, 4, 10, 15, 0),
-                    Text = "Rozpatrzyła wszystkie wnioski z pierwszego kwartału w terminie, w tym dwa wymagające uzgodnień z działem prawnym.",
-                },
-                new EvaluationNote
-                {
-                    Id = 6, EvaluationId = 15, CreatedAt = new DateTime(2026, 8, 21, 13, 40, 0),
-                    Text = "Uporządkowała rejestr udostępnionych danych i zaproponowała wzór odpowiedzi skracający obsługę typowych wniosków.",
+                    Id = 2, EvaluationId = 11, Criterion = Criterion.Reliability, Tone = NoteTone.Negative, CreatedAt = new DateTime(2026, 10, 14, 13, 20, 0),
+                    Text = "Przekazała kierownictwu zestawienie kwartalne z błędnymi sumami w dwóch tabelach. Poprawioną wersję trzeba było rozesłać ponownie.",
                 });
         });
 

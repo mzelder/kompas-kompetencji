@@ -56,6 +56,10 @@ builder.Services.AddChatClient(AssistantClientFactory.Create)
     .Use((inner, services) => new KnowledgeBaseChatClient(inner, services.GetRequiredService<Bm25Retriever>()))
     .Use((inner, services) => new PseudonymizingChatClient(inner, services.GetRequiredService<EmployeeNameSource>().GetAsync))
     .UseLogging();
+builder.Services.AddKeyedChatClient(NoteCriterionClassifier.ClientKey, AssistantClientFactory.Create)
+    .Use((inner, services) => new PseudonymizingChatClient(inner, services.GetRequiredService<EmployeeNameSource>().GetAsync))
+    .UseLogging();
+builder.Services.AddScoped<NoteCriterionClassifier>();
 builder.Services.AddSingleton<ILocalizer, PolishRadzenLocalizer>();
 builder.Services.AddAIChatService();
 

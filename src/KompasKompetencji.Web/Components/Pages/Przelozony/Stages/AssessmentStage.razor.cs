@@ -1,6 +1,7 @@
 using KompasKompetencji.Web.Data;
 using KompasKompetencji.Web.Evaluations;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using Radzen;
 
 namespace KompasKompetencji.Web.Components.Pages.Przelozony.Stages;
@@ -41,11 +42,68 @@ public partial class AssessmentStage
         }
     }
 
+    private sealed record FilterOption(string Value, string Text);
+
+    private const string WithoutCriterion = "none";
+
+    private string? filter;
+    private bool collapsed;
+
+    private void ToggleCollapsed() => collapsed = !collapsed;
+
+    private void OnHeadingKeyDown(KeyboardEventArgs args)
+    {
+        if (args.Key is "Enter" or " ")
+        {
+            ToggleCollapsed();
+        }
+    }
+
+    private static string ClassificationSource(EvaluationNote note) =>
+        note.ClassificationEditedAt is null ? "ocena asystenta AI" : "ustawione ręcznie";
+
+    private static string EditedDescription(EvaluationNote note) => string.Join(". ", new[]
+    {
+        note.TextEditedAt is DateTime textEditedAt ? $"Treść zmieniona {EvaluationText.Date(textEditedAt)}" : null,
+        note.ClassificationEditedAt is DateTime classificationEditedAt
+            ? $"Kryterium lub wydźwięk zmienione ręcznie {EvaluationText.Date(classificationEditedAt)}"
+            : null,
+    }.OfType<string>());
+
+    private static string ToneIcon(NoteTone tone) => tone switch
+    {
+        NoteTone.Positive => "thumb_up",
+        NoteTone.Negative => "thumb_down",
+        _ => "remove",
+    };
+
+    private static string ToneColor(NoteTone tone) => tone switch
+    {
+        NoteTone.Positive => Colors.Success,
+        NoteTone.Negative => Colors.Danger,
+        _ => Colors.Base400,
+    };
+
+    private static string ToneClass(NoteTone tone) => $"note-tone-{tone.ToString().ToLowerInvariant()}";
+
+    private IReadOnlyList<FilterOption> FilterOptions =>
+    [
+        .. View.Criteria.Select(c => new FilterOption(c.ToString(), $"{EvaluationCriteria.Name(c)} ({View.Notes.Count(n => n.Criterion == c)})")),
+        new FilterOption(WithoutCriterion, $"Bez kryterium ({View.Notes.Count(n => n.Criterion is null)})"),
+    ];
+
+    private IReadOnlyList<EvaluationNote> VisibleNotes => filter switch
+    {
+        null => View.Notes,
+        WithoutCriterion => View.Notes.Where(n => n.Criterion is null).ToList(),
+        _ => View.Notes.Where(n => n.Criterion?.ToString() == filter).ToList(),
+    };
+
     private async Task AddAsync()
     {
         errorMessage = null;
         busy = true;
-        var result = await EvaluationService.AddNoteAsync(SupervisorId, View.Employee.Id, text, DateTime.Now);
+        var (result, classification) = await EvaluationService.AddNoteAsync(SupervisorId, View.Employee.Id, text, DateTime.Now);
         busy = false;
 
         if (!result.Succeeded)
@@ -55,7 +113,23 @@ public partial class AssessmentStage
         }
 
         text = string.Empty;
-        NotificationService.Notify(NotificationSeverity.Success, "Dodano notatkę", View.Employee.FullName);
+        var criterionText = classification?.Criterion is Criterion criterion ? EvaluationCriteria.Name(criterion) : "bez kryterium";
+        var toneText = EvaluationText.NoteToneLabel(classification?.Tone ?? NoteTone.Neutral).ToLowerInvariant();
+        NotificationService.Notify(NotificationSeverity.Success, "Dodano notatkę", $"{View.Employee.FullName}: {criterionText}, {toneText}");
+        await OnChanged.InvokeAsync();
+    }
+
+    private async Task EditAsync(EvaluationNote note)
+    {
+        if (await EditNoteDialog.OpenAsync(DialogService, note, View.Criteria, SupervisorId, View.Employee.Id) is not { } edit)
+        {
+            return;
+        }
+
+        var detail = edit.Reclassified is { } classification
+            ? $"Asystent AI ocenił notatkę od nowa: {(classification.Criterion is Criterion criterion ? EvaluationCriteria.Name(criterion) : "bez kryterium")}, {EvaluationText.NoteToneLabel(classification.Tone).ToLowerInvariant()}."
+            : View.Employee.FullName;
+        NotificationService.Notify(NotificationSeverity.Success, "Zapisano zmiany w notatce", detail);
         await OnChanged.InvokeAsync();
     }
 
