@@ -1,5 +1,7 @@
 using KompasKompetencji.Web.Auth;
+using KompasKompetencji.Web.Demo;
 using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.Options;
 using Radzen;
 
 namespace KompasKompetencji.Web.Components.Pages.Account;
@@ -9,7 +11,9 @@ public partial class Login
     [Inject] private UserService Users { get; set; } = default!;
     [Inject] private LoginTicketStore Tickets { get; set; } = default!;
     [Inject] private NavigationManager Navigation { get; set; } = default!;
-    [Inject] private IWebHostEnvironment Environment { get; set; } = default!;
+    [Inject] private IOptions<DemoOptions> Demo { get; set; } = default!;
+
+    private bool ShowTestAccounts => Demo.Value.ShowTestAccounts;
 
     [SupplyParameterFromQuery] public string? ReturnUrl { get; set; }
 
@@ -64,7 +68,7 @@ public partial class Login
 
     private async Task SignInAsTestAccountAsync(TestAccount account)
     {
-        if (!Environment.IsDevelopment())
+        if (!ShowTestAccounts)
         {
             return;
         }

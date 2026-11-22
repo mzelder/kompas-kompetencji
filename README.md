@@ -168,3 +168,26 @@ dotnet ef database drop --project src/KompasKompetencji.Web --force
 | `dotnet ef` nie jest rozpoznawane | Uruchom `dotnet tool restore` w katalogu głównym repozytorium. |
 | Błąd o wersji frameworka `net11.0` | Zainstaluj .NET SDK 11. |
 | Port zajęty | Zmień `applicationUrl` w `src/KompasKompetencji.Web/Properties/launchSettings.json`. |
+
+## Wdrożenie demo na Azure (branch `deploy/azure`)
+
+Układ: App Service (Linux, plan B1, WebSockety włączone) i Azure SQL Database w darmowej ofercie (serverless, auto-pauza po wyczerpaniu limitu).
+
+Aplikacja działa w środowisku `Demo` (`appsettings.Demo.json`):
+- `Demo:ResetDatabaseOnStartup`: przy każdym starcie usuwa wszystkie tabele i wgrywa migracje z danymi demo. Bazy nie usuwa, bo na Azure SQL `EnsureDeleted` skasowałby darmową bazę.
+- `Demo:ShowTestAccounts`: przyciski szybkiego logowania kontami testowymi na stronie logowania.
+
+Te same flagi są włączone w `appsettings.Development.json`.
+
+1. Zainstaluj Azure CLI (`winget install Microsoft.AzureCLI`) i zaloguj się: `az login`.
+2. Raz utwórz zasoby (nazwy aplikacji i serwera SQL muszą być unikalne w całym Azure):
+   ```powershell
+   ./deploy/azure-provision.ps1 -AppName kompas-demo-xyz -SqlServerName kompas-sql-xyz -SqlAdminPassword '<silne hasło>' -AnthropicApiKey '<klucz albo pomiń>'
+   ```
+3. Wdróż (także każdą kolejną wersję):
+   ```powershell
+   ./deploy/azure-deploy.ps1 -AppName kompas-demo-xyz
+   ```
+4. Aplikacja: `https://<AppName>.azurewebsites.net`. Darmowa baza usypia się po godzinie bez ruchu, więc pierwsze wejście po przerwie może trwać do minuty.
+
+Aplikacja jest publikowana jako self-contained (`linux-x64`), więc nie zależy od tego, czy App Service ma już środowisko .NET 11. Bez klucza `Assistant__ApiKey` asystent działa na `MockChatClient`.

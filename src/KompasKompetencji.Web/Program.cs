@@ -4,6 +4,7 @@ using KompasKompetencji.Web.Assistant.KnowledgeBase;
 using KompasKompetencji.Web.Assistant.Privacy;
 using KompasKompetencji.Web.Components;
 using KompasKompetencji.Web.Data;
+using KompasKompetencji.Web.Demo;
 using KompasKompetencji.Web.Evaluations;
 using KompasKompetencji.Web.Evaluations.Pdf;
 using Microsoft.Extensions.AI;
@@ -19,7 +20,11 @@ var connectionString = builder.Configuration.GetConnectionString("Default")
     ?? throw new InvalidOperationException("Connection string 'ConnectionStrings:Default' is missing.");
 
 builder.Services.AddDbContextFactory<AppDbContext>(options =>
-    options.UseSqlServer(connectionString));
+    options.UseSqlServer(connectionString, sql => sql
+        .EnableRetryOnFailure(maxRetryCount: 10, maxRetryDelay: TimeSpan.FromSeconds(15), errorNumbersToAdd: null)
+        .CommandTimeout(120)));
+
+builder.Services.Configure<DemoOptions>(builder.Configuration.GetSection(DemoOptions.SectionName));
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
@@ -67,15 +72,10 @@ var app = builder.Build();
 
 app.Services.GetRequiredService<Bm25Retriever>();
 
-if (app.Environment.IsDevelopment())
+if (app.Configuration.GetSection(DemoOptions.SectionName).Get<DemoOptions>()?.ResetDatabaseOnStartup == true)
 {
     using var scope = app.Services.CreateScope();
-    var factory = scope.ServiceProvider.GetRequiredService<IDbContextFactory<AppDbContext>>();
-    using (var db = factory.CreateDbContext())
-    {
-        db.Database.EnsureDeleted();
-        db.Database.Migrate();
-    }
+    await DemoDatabase.ResetAsync(scope.ServiceProvider.GetRequiredService<IDbContextFactory<AppDbContext>>());
     await scope.ServiceProvider.GetRequiredService<UserService>().EnsureTestAccountsAsync();
 }
 

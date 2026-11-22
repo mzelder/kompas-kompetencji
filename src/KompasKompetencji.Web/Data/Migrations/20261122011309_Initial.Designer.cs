@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace KompasKompetencji.Web.Data.Migrations;
 
 [DbContext(typeof(AppDbContext))]
-[Migration("20261121233824_AddNoteCriterion")]
-partial class _20261121233824_AddNoteCriterion
+[Migration("20261122011309_Initial")]
+partial class _20261122011309_Initial
 {
     /// <inheritdoc />
     protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -101,7 +101,7 @@ partial class _20261121233824_AddNoteCriterion
                     new
                     {
                         Id = 1,
-                        At = new DateTime(2024, 12, 16, 10, 0, 0, 0, DateTimeKind.Unspecified),
+                        At = new DateTime(2022, 12, 16, 10, 0, 0, 0, DateTimeKind.Unspecified),
                         EvaluationId = 1,
                         Status = "Held",
                         Type = "Starting"
@@ -109,7 +109,7 @@ partial class _20261121233824_AddNoteCriterion
                     new
                     {
                         Id = 2,
-                        At = new DateTime(2025, 12, 8, 10, 0, 0, 0, DateTimeKind.Unspecified),
+                        At = new DateTime(2024, 12, 8, 10, 0, 0, 0, DateTimeKind.Unspecified),
                         EvaluationId = 1,
                         Status = "Held",
                         Type = "Assessment"
@@ -117,7 +117,7 @@ partial class _20261121233824_AddNoteCriterion
                     new
                     {
                         Id = 3,
-                        At = new DateTime(2025, 12, 16, 10, 0, 0, 0, DateTimeKind.Unspecified),
+                        At = new DateTime(2024, 12, 16, 10, 0, 0, 0, DateTimeKind.Unspecified),
                         EvaluationId = 2,
                         Status = "Held",
                         Type = "Starting"
@@ -133,7 +133,7 @@ partial class _20261121233824_AddNoteCriterion
                     new
                     {
                         Id = 5,
-                        At = new DateTime(2024, 11, 7, 10, 0, 0, 0, DateTimeKind.Unspecified),
+                        At = new DateTime(2022, 11, 7, 10, 0, 0, 0, DateTimeKind.Unspecified),
                         EvaluationId = 3,
                         Status = "Held",
                         Type = "Starting"
@@ -141,7 +141,7 @@ partial class _20261121233824_AddNoteCriterion
                     new
                     {
                         Id = 6,
-                        At = new DateTime(2025, 10, 27, 11, 0, 0, 0, DateTimeKind.Unspecified),
+                        At = new DateTime(2024, 10, 27, 11, 0, 0, 0, DateTimeKind.Unspecified),
                         EvaluationId = 3,
                         Status = "Held",
                         Type = "Assessment"
@@ -149,7 +149,7 @@ partial class _20261121233824_AddNoteCriterion
                     new
                     {
                         Id = 7,
-                        At = new DateTime(2025, 1, 16, 10, 0, 0, 0, DateTimeKind.Unspecified),
+                        At = new DateTime(2023, 1, 16, 10, 0, 0, 0, DateTimeKind.Unspecified),
                         EvaluationId = 4,
                         Status = "Held",
                         Type = "Starting"
@@ -157,7 +157,7 @@ partial class _20261121233824_AddNoteCriterion
                     new
                     {
                         Id = 8,
-                        At = new DateTime(2026, 1, 7, 9, 30, 0, 0, DateTimeKind.Unspecified),
+                        At = new DateTime(2025, 1, 7, 9, 30, 0, 0, DateTimeKind.Unspecified),
                         EvaluationId = 4,
                         Status = "Held",
                         Type = "Assessment"
@@ -165,7 +165,7 @@ partial class _20261121233824_AddNoteCriterion
                     new
                     {
                         Id = 9,
-                        At = new DateTime(2025, 11, 17, 10, 0, 0, 0, DateTimeKind.Unspecified),
+                        At = new DateTime(2024, 11, 17, 10, 0, 0, 0, DateTimeKind.Unspecified),
                         EvaluationId = 5,
                         Status = "Held",
                         Type = "Starting"
@@ -181,7 +181,7 @@ partial class _20261121233824_AddNoteCriterion
                     new
                     {
                         Id = 11,
-                        At = new DateTime(2026, 1, 15, 10, 0, 0, 0, DateTimeKind.Unspecified),
+                        At = new DateTime(2025, 1, 15, 10, 0, 0, 0, DateTimeKind.Unspecified),
                         EvaluationId = 6,
                         Status = "Held",
                         Type = "Starting"
@@ -197,7 +197,7 @@ partial class _20261121233824_AddNoteCriterion
                     new
                     {
                         Id = 13,
-                        At = new DateTime(2025, 1, 8, 10, 0, 0, 0, DateTimeKind.Unspecified),
+                        At = new DateTime(2023, 1, 8, 10, 0, 0, 0, DateTimeKind.Unspecified),
                         EvaluationId = 7,
                         Status = "Held",
                         Type = "Starting"
@@ -205,7 +205,7 @@ partial class _20261121233824_AddNoteCriterion
                     new
                     {
                         Id = 14,
-                        At = new DateTime(2025, 12, 17, 12, 0, 0, 0, DateTimeKind.Unspecified),
+                        At = new DateTime(2024, 12, 17, 12, 0, 0, 0, DateTimeKind.Unspecified),
                         EvaluationId = 7,
                         Status = "Held",
                         Type = "Assessment"
@@ -213,7 +213,7 @@ partial class _20261121233824_AddNoteCriterion
                     new
                     {
                         Id = 15,
-                        At = new DateTime(2025, 12, 17, 11, 0, 0, 0, DateTimeKind.Unspecified),
+                        At = new DateTime(2024, 12, 17, 11, 0, 0, 0, DateTimeKind.Unspecified),
                         EvaluationId = 8,
                         Status = "Held",
                         Type = "Starting"
@@ -237,7 +237,7 @@ partial class _20261121233824_AddNoteCriterion
                     new
                     {
                         Id = 18,
-                        At = new DateTime(2025, 4, 22, 9, 0, 0, 0, DateTimeKind.Unspecified),
+                        At = new DateTime(2023, 4, 22, 9, 0, 0, 0, DateTimeKind.Unspecified),
                         EvaluationId = 10,
                         Status = "Held",
                         Type = "Starting"
@@ -245,7 +245,7 @@ partial class _20261121233824_AddNoteCriterion
                     new
                     {
                         Id = 19,
-                        At = new DateTime(2026, 3, 25, 10, 0, 0, 0, DateTimeKind.Unspecified),
+                        At = new DateTime(2025, 3, 25, 10, 0, 0, 0, DateTimeKind.Unspecified),
                         EvaluationId = 10,
                         Status = "Held",
                         Type = "Assessment"
@@ -253,7 +253,7 @@ partial class _20261121233824_AddNoteCriterion
                     new
                     {
                         Id = 20,
-                        At = new DateTime(2026, 4, 21, 9, 0, 0, 0, DateTimeKind.Unspecified),
+                        At = new DateTime(2025, 4, 21, 9, 0, 0, 0, DateTimeKind.Unspecified),
                         EvaluationId = 11,
                         Status = "Held",
                         Type = "Starting"
@@ -261,7 +261,7 @@ partial class _20261121233824_AddNoteCriterion
                     new
                     {
                         Id = 21,
-                        At = new DateTime(2025, 2, 4, 9, 0, 0, 0, DateTimeKind.Unspecified),
+                        At = new DateTime(2023, 2, 4, 9, 0, 0, 0, DateTimeKind.Unspecified),
                         EvaluationId = 12,
                         Status = "Held",
                         Type = "Starting"
@@ -269,7 +269,7 @@ partial class _20261121233824_AddNoteCriterion
                     new
                     {
                         Id = 22,
-                        At = new DateTime(2026, 1, 12, 11, 0, 0, 0, DateTimeKind.Unspecified),
+                        At = new DateTime(2025, 1, 12, 11, 0, 0, 0, DateTimeKind.Unspecified),
                         EvaluationId = 12,
                         Status = "Held",
                         Type = "Assessment"
@@ -277,7 +277,7 @@ partial class _20261121233824_AddNoteCriterion
                     new
                     {
                         Id = 23,
-                        At = new DateTime(2026, 2, 3, 9, 0, 0, 0, DateTimeKind.Unspecified),
+                        At = new DateTime(2025, 2, 3, 9, 0, 0, 0, DateTimeKind.Unspecified),
                         EvaluationId = 13,
                         Status = "Held",
                         Type = "Starting"
@@ -285,7 +285,7 @@ partial class _20261121233824_AddNoteCriterion
                     new
                     {
                         Id = 24,
-                        At = new DateTime(2024, 12, 17, 9, 0, 0, 0, DateTimeKind.Unspecified),
+                        At = new DateTime(2022, 12, 17, 9, 0, 0, 0, DateTimeKind.Unspecified),
                         EvaluationId = 14,
                         Status = "Held",
                         Type = "Starting"
@@ -293,7 +293,7 @@ partial class _20261121233824_AddNoteCriterion
                     new
                     {
                         Id = 25,
-                        At = new DateTime(2025, 11, 17, 10, 0, 0, 0, DateTimeKind.Unspecified),
+                        At = new DateTime(2024, 11, 17, 10, 0, 0, 0, DateTimeKind.Unspecified),
                         EvaluationId = 14,
                         Status = "Held",
                         Type = "Assessment"
@@ -301,7 +301,7 @@ partial class _20261121233824_AddNoteCriterion
                     new
                     {
                         Id = 26,
-                        At = new DateTime(2025, 12, 16, 9, 0, 0, 0, DateTimeKind.Unspecified),
+                        At = new DateTime(2024, 12, 16, 9, 0, 0, 0, DateTimeKind.Unspecified),
                         EvaluationId = 15,
                         Status = "Held",
                         Type = "Starting"
@@ -479,7 +479,7 @@ partial class _20261121233824_AddNoteCriterion
                     {
                         Id = 13,
                         Department = "Wydział Analiz Danych",
-                        EmployedSince = new DateOnly(2020, 12, 10),
+                        EmployedSince = new DateOnly(2024, 12, 10),
                         FirstName = "Łukasz",
                         IsSupervisor = false,
                         LastName = "Grabowski",
@@ -651,10 +651,16 @@ partial class _20261121233824_AddNoteCriterion
                 b.Property<DateTime?>("PartIConfirmedAt")
                     .HasColumnType("datetime2");
 
-                b.Property<DateOnly>("PeriodEnd")
+                b.Property<DateOnly?>("PartIIAcquaintedOn")
+                    .HasColumnType("date");
+
+                b.Property<DateOnly?>("PeriodEnd")
                     .HasColumnType("date");
 
                 b.Property<DateOnly>("PeriodStart")
+                    .HasColumnType("date");
+
+                b.Property<DateOnly?>("PreparedOn")
                     .HasColumnType("date");
 
                 b.Property<string>("Sheet")
@@ -688,69 +694,74 @@ partial class _20261121233824_AddNoteCriterion
                     new
                     {
                         Id = 1,
-                        CompletedAt = new DateTime(2025, 12, 10, 14, 0, 0, 0, DateTimeKind.Unspecified),
-                        DueDate = new DateOnly(2025, 12, 15),
-                        EmployeeAcquaintedOn = new DateOnly(2024, 12, 16),
+                        CompletedAt = new DateTime(2024, 12, 10, 14, 0, 0, 0, DateTimeKind.Unspecified),
+                        DueDate = new DateOnly(2024, 12, 15),
+                        EmployeeAcquaintedOn = new DateOnly(2022, 12, 16),
                         EmployeeId = 1,
                         EvaluatorId = 3,
                         Expectations = "Samodzielne przygotowywanie analiz dla kierownictwa w uzgodnionych terminach, z opisem źródeł i ograniczeń danych.",
-                        PartIConfirmedAt = new DateTime(2024, 12, 16, 15, 0, 0, 0, DateTimeKind.Unspecified),
-                        PeriodEnd = new DateOnly(2025, 12, 14),
-                        PeriodStart = new DateOnly(2024, 12, 16),
+                        PartIConfirmedAt = new DateTime(2022, 12, 16, 15, 0, 0, 0, DateTimeKind.Unspecified),
+                        PartIIAcquaintedOn = new DateOnly(2024, 12, 10),
+                        PeriodEnd = new DateOnly(2024, 12, 10),
+                        PeriodStart = new DateOnly(2022, 12, 16),
+                        PreparedOn = new DateOnly(2024, 12, 10),
                         Sheet = "C",
-                        SheetConfirmedAt = new DateTime(2024, 12, 11, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                        StartedAt = new DateTime(2025, 11, 20, 9, 0, 0, 0, DateTimeKind.Unspecified),
+                        SheetConfirmedAt = new DateTime(2022, 12, 11, 9, 0, 0, 0, DateTimeKind.Unspecified),
+                        StartedAt = new DateTime(2024, 11, 20, 9, 0, 0, 0, DateTimeKind.Unspecified),
                         Status = "Completed"
                     },
                     new
                     {
                         Id = 2,
                         DueDate = new DateOnly(2026, 12, 15),
-                        EmployeeAcquaintedOn = new DateOnly(2025, 12, 16),
+                        EmployeeAcquaintedOn = new DateOnly(2024, 12, 16),
                         EmployeeId = 1,
                         EvaluatorId = 3,
                         Expectations = "Analizy dla kierownictwa oddawane w terminie i bez poprawek merytorycznych. Propozycje nowych wskaźników zgłaszane z własnej inicjatywy, co najmniej raz na kwartał.",
                         Goals = "Opracowanie zestawu wskaźników realizacji zadań departamentu do końca II kwartału 2026 r.",
-                        PartIConfirmedAt = new DateTime(2025, 12, 16, 15, 0, 0, 0, DateTimeKind.Unspecified),
-                        PeriodEnd = new DateOnly(2026, 12, 14),
-                        PeriodStart = new DateOnly(2025, 12, 16),
+                        PartIConfirmedAt = new DateTime(2024, 12, 16, 15, 0, 0, 0, DateTimeKind.Unspecified),
+                        PeriodStart = new DateOnly(2024, 12, 16),
                         Sheet = "C",
-                        SheetConfirmedAt = new DateTime(2025, 12, 11, 9, 0, 0, 0, DateTimeKind.Unspecified),
+                        SheetConfirmedAt = new DateTime(2024, 12, 11, 9, 0, 0, 0, DateTimeKind.Unspecified),
                         StartedAt = new DateTime(2026, 11, 12, 10, 30, 0, 0, DateTimeKind.Unspecified),
                         Status = "InProgress"
                     },
                     new
                     {
                         Id = 3,
-                        CompletedAt = new DateTime(2025, 10, 28, 12, 0, 0, 0, DateTimeKind.Unspecified),
-                        DueDate = new DateOnly(2025, 11, 2),
-                        EmployeeAcquaintedOn = new DateOnly(2024, 11, 7),
+                        CompletedAt = new DateTime(2024, 10, 28, 12, 0, 0, 0, DateTimeKind.Unspecified),
+                        DueDate = new DateOnly(2024, 11, 2),
+                        EmployeeAcquaintedOn = new DateOnly(2022, 11, 7),
                         EmployeeId = 2,
                         EvaluatorId = 3,
                         Expectations = "Zestawienia danych przygotowywane według przyjętego wzoru i sprawdzone przed przekazaniem.",
-                        PartIConfirmedAt = new DateTime(2024, 11, 7, 14, 0, 0, 0, DateTimeKind.Unspecified),
-                        PeriodEnd = new DateOnly(2025, 11, 1),
-                        PeriodStart = new DateOnly(2024, 11, 7),
+                        PartIConfirmedAt = new DateTime(2022, 11, 7, 14, 0, 0, 0, DateTimeKind.Unspecified),
+                        PartIIAcquaintedOn = new DateOnly(2024, 10, 28),
+                        PeriodEnd = new DateOnly(2024, 10, 28),
+                        PeriodStart = new DateOnly(2022, 11, 7),
+                        PreparedOn = new DateOnly(2024, 10, 28),
                         Sheet = "C",
-                        SheetConfirmedAt = new DateTime(2024, 11, 5, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                        StartedAt = new DateTime(2025, 10, 6, 9, 0, 0, 0, DateTimeKind.Unspecified),
+                        SheetConfirmedAt = new DateTime(2022, 11, 5, 9, 0, 0, 0, DateTimeKind.Unspecified),
+                        StartedAt = new DateTime(2024, 10, 6, 9, 0, 0, 0, DateTimeKind.Unspecified),
                         Status = "Completed"
                     },
                     new
                     {
                         Id = 4,
-                        CompletedAt = new DateTime(2026, 1, 8, 11, 0, 0, 0, DateTimeKind.Unspecified),
-                        DueDate = new DateOnly(2026, 1, 10),
-                        EmployeeAcquaintedOn = new DateOnly(2025, 1, 16),
+                        CompletedAt = new DateTime(2025, 1, 8, 11, 0, 0, 0, DateTimeKind.Unspecified),
+                        DueDate = new DateOnly(2025, 1, 10),
+                        EmployeeAcquaintedOn = new DateOnly(2023, 1, 16),
                         EmployeeId = 9,
                         EvaluatorId = 3,
                         Expectations = "Korespondencja wydziału rejestrowana na bieżąco, odpowiedzi na proste pytania udzielane w ciągu dwóch dni.",
-                        PartIConfirmedAt = new DateTime(2025, 1, 16, 14, 0, 0, 0, DateTimeKind.Unspecified),
-                        PeriodEnd = new DateOnly(2026, 1, 9),
-                        PeriodStart = new DateOnly(2025, 1, 16),
+                        PartIConfirmedAt = new DateTime(2023, 1, 16, 14, 0, 0, 0, DateTimeKind.Unspecified),
+                        PartIIAcquaintedOn = new DateOnly(2025, 1, 8),
+                        PeriodEnd = new DateOnly(2025, 1, 8),
+                        PeriodStart = new DateOnly(2023, 1, 16),
+                        PreparedOn = new DateOnly(2025, 1, 8),
                         Sheet = "C",
-                        SheetConfirmedAt = new DateTime(2025, 1, 14, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                        StartedAt = new DateTime(2025, 12, 15, 9, 0, 0, 0, DateTimeKind.Unspecified),
+                        SheetConfirmedAt = new DateTime(2023, 1, 14, 9, 0, 0, 0, DateTimeKind.Unspecified),
+                        StartedAt = new DateTime(2024, 12, 15, 9, 0, 0, 0, DateTimeKind.Unspecified),
                         Status = "Completed"
                     },
                     new
@@ -758,15 +769,17 @@ partial class _20261121233824_AddNoteCriterion
                         Id = 5,
                         CompletedAt = new DateTime(2026, 11, 6, 13, 0, 0, 0, DateTimeKind.Unspecified),
                         DueDate = new DateOnly(2026, 11, 10),
-                        EmployeeAcquaintedOn = new DateOnly(2025, 11, 17),
+                        EmployeeAcquaintedOn = new DateOnly(2024, 11, 17),
                         EmployeeId = 10,
                         EvaluatorId = 3,
                         Expectations = "Opinie do projektów dokumentów przygotowywane w terminie, z konkretnymi propozycjami zmian wskaźników.",
-                        PartIConfirmedAt = new DateTime(2025, 11, 17, 14, 0, 0, 0, DateTimeKind.Unspecified),
-                        PeriodEnd = new DateOnly(2026, 11, 9),
-                        PeriodStart = new DateOnly(2025, 11, 17),
+                        PartIConfirmedAt = new DateTime(2024, 11, 17, 14, 0, 0, 0, DateTimeKind.Unspecified),
+                        PartIIAcquaintedOn = new DateOnly(2026, 11, 6),
+                        PeriodEnd = new DateOnly(2026, 11, 6),
+                        PeriodStart = new DateOnly(2024, 11, 17),
+                        PreparedOn = new DateOnly(2026, 11, 6),
                         Sheet = "C",
-                        SheetConfirmedAt = new DateTime(2025, 11, 12, 9, 0, 0, 0, DateTimeKind.Unspecified),
+                        SheetConfirmedAt = new DateTime(2024, 11, 12, 9, 0, 0, 0, DateTimeKind.Unspecified),
                         StartedAt = new DateTime(2026, 10, 12, 9, 0, 0, 0, DateTimeKind.Unspecified),
                         Status = "Completed"
                     },
@@ -774,58 +787,57 @@ partial class _20261121233824_AddNoteCriterion
                     {
                         Id = 6,
                         DueDate = new DateOnly(2027, 1, 10),
-                        EmployeeAcquaintedOn = new DateOnly(2026, 1, 15),
+                        EmployeeAcquaintedOn = new DateOnly(2025, 1, 15),
                         EmployeeId = 9,
                         EvaluatorId = 3,
                         Expectations = "Rejestr korespondencji prowadzony bez zaległości. Zestawienia danych przygotowywane samodzielnie według wskazówek, bez konieczności poprawek.",
-                        PartIConfirmedAt = new DateTime(2026, 1, 15, 14, 0, 0, 0, DateTimeKind.Unspecified),
-                        PeriodEnd = new DateOnly(2027, 1, 9),
-                        PeriodStart = new DateOnly(2026, 1, 15),
+                        PartIConfirmedAt = new DateTime(2025, 1, 15, 14, 0, 0, 0, DateTimeKind.Unspecified),
+                        PeriodStart = new DateOnly(2025, 1, 15),
                         Sheet = "C",
-                        SheetConfirmedAt = new DateTime(2026, 1, 13, 9, 0, 0, 0, DateTimeKind.Unspecified),
+                        SheetConfirmedAt = new DateTime(2025, 1, 13, 9, 0, 0, 0, DateTimeKind.Unspecified),
                         StartedAt = new DateTime(2026, 11, 16, 14, 0, 0, 0, DateTimeKind.Unspecified),
                         Status = "CriteriaSet"
                     },
                     new
                     {
                         Id = 7,
-                        CompletedAt = new DateTime(2025, 12, 18, 10, 0, 0, 0, DateTimeKind.Unspecified),
-                        DueDate = new DateOnly(2025, 12, 20),
-                        EmployeeAcquaintedOn = new DateOnly(2025, 1, 8),
+                        CompletedAt = new DateTime(2024, 12, 18, 10, 0, 0, 0, DateTimeKind.Unspecified),
+                        DueDate = new DateOnly(2024, 12, 20),
+                        EmployeeAcquaintedOn = new DateOnly(2023, 1, 8),
                         EmployeeId = 12,
                         EvaluatorId = 3,
                         Expectations = "Cykliczne raporty przekazywane w terminie, z krótkim omówieniem najważniejszych zmian w danych.",
-                        PartIConfirmedAt = new DateTime(2025, 1, 8, 14, 0, 0, 0, DateTimeKind.Unspecified),
-                        PeriodEnd = new DateOnly(2025, 12, 19),
-                        PeriodStart = new DateOnly(2025, 1, 8),
+                        PartIConfirmedAt = new DateTime(2023, 1, 8, 14, 0, 0, 0, DateTimeKind.Unspecified),
+                        PartIIAcquaintedOn = new DateOnly(2024, 12, 18),
+                        PeriodEnd = new DateOnly(2024, 12, 18),
+                        PeriodStart = new DateOnly(2023, 1, 8),
+                        PreparedOn = new DateOnly(2024, 12, 18),
                         Sheet = "C",
-                        SheetConfirmedAt = new DateTime(2024, 12, 23, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                        StartedAt = new DateTime(2025, 11, 24, 9, 0, 0, 0, DateTimeKind.Unspecified),
+                        SheetConfirmedAt = new DateTime(2022, 12, 23, 9, 0, 0, 0, DateTimeKind.Unspecified),
+                        StartedAt = new DateTime(2024, 11, 24, 9, 0, 0, 0, DateTimeKind.Unspecified),
                         Status = "Completed"
                     },
                     new
                     {
                         Id = 8,
                         DueDate = new DateOnly(2026, 12, 10),
-                        EmployeeAcquaintedOn = new DateOnly(2025, 12, 17),
+                        EmployeeAcquaintedOn = new DateOnly(2024, 12, 17),
                         EmployeeId = 13,
                         EvaluatorId = 3,
                         Expectations = "Analizy danych przygotowywane samodzielnie, z wnioskami zrozumiałymi dla odbiorców spoza wydziału.",
-                        PartIConfirmedAt = new DateTime(2025, 12, 17, 15, 0, 0, 0, DateTimeKind.Unspecified),
-                        PeriodEnd = new DateOnly(2026, 12, 9),
-                        PeriodStart = new DateOnly(2025, 12, 17),
+                        PartIConfirmedAt = new DateTime(2024, 12, 17, 15, 0, 0, 0, DateTimeKind.Unspecified),
+                        PeriodStart = new DateOnly(2024, 12, 17),
                         Sheet = "C",
-                        SheetConfirmedAt = new DateTime(2025, 12, 12, 9, 0, 0, 0, DateTimeKind.Unspecified),
+                        SheetConfirmedAt = new DateTime(2024, 12, 12, 9, 0, 0, 0, DateTimeKind.Unspecified),
                         Status = "NotStarted"
                     },
                     new
                     {
                         Id = 9,
-                        DueDate = new DateOnly(2027, 11, 10),
+                        DueDate = new DateOnly(2028, 11, 6),
                         EmployeeId = 10,
                         EvaluatorId = 3,
                         Expectations = "Analizy wpływu zmian na usługi cyfrowe z rekomendacją i oceną ryzyka. Samodzielne przedstawianie stanowiska wydziału na posiedzeniach zespołów międzyresortowych.",
-                        PeriodEnd = new DateOnly(2027, 11, 9),
                         PeriodStart = new DateOnly(2026, 11, 6),
                         Sheet = "C",
                         SheetConfirmedAt = new DateTime(2026, 11, 12, 9, 0, 0, 0, DateTimeKind.Unspecified),
@@ -834,99 +846,102 @@ partial class _20261121233824_AddNoteCriterion
                     new
                     {
                         Id = 10,
-                        CompletedAt = new DateTime(2026, 3, 30, 12, 0, 0, 0, DateTimeKind.Unspecified),
-                        DueDate = new DateOnly(2026, 4, 3),
-                        EmployeeAcquaintedOn = new DateOnly(2025, 4, 22),
+                        CompletedAt = new DateTime(2025, 3, 30, 12, 0, 0, 0, DateTimeKind.Unspecified),
+                        DueDate = new DateOnly(2025, 4, 3),
+                        EmployeeAcquaintedOn = new DateOnly(2023, 4, 22),
                         EmployeeId = 14,
                         EvaluatorId = 3,
                         Expectations = "Zestawy wskaźników przygotowywane z opisem metody pomiaru i źródeł danych, uzgodnione z komórkami merytorycznymi.",
-                        PartIConfirmedAt = new DateTime(2025, 4, 22, 10, 0, 0, 0, DateTimeKind.Unspecified),
-                        PeriodEnd = new DateOnly(2026, 4, 2),
-                        PeriodStart = new DateOnly(2025, 4, 22),
+                        PartIConfirmedAt = new DateTime(2023, 4, 22, 10, 0, 0, 0, DateTimeKind.Unspecified),
+                        PartIIAcquaintedOn = new DateOnly(2025, 3, 30),
+                        PeriodEnd = new DateOnly(2025, 3, 30),
+                        PeriodStart = new DateOnly(2023, 4, 22),
+                        PreparedOn = new DateOnly(2025, 3, 30),
                         Sheet = "C",
-                        SheetConfirmedAt = new DateTime(2025, 4, 8, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                        StartedAt = new DateTime(2026, 3, 2, 9, 0, 0, 0, DateTimeKind.Unspecified),
+                        SheetConfirmedAt = new DateTime(2023, 4, 8, 9, 0, 0, 0, DateTimeKind.Unspecified),
+                        StartedAt = new DateTime(2025, 3, 2, 9, 0, 0, 0, DateTimeKind.Unspecified),
                         Status = "Completed"
                     },
                     new
                     {
                         Id = 11,
                         DueDate = new DateOnly(2027, 4, 3),
-                        EmployeeAcquaintedOn = new DateOnly(2026, 4, 21),
+                        EmployeeAcquaintedOn = new DateOnly(2025, 4, 21),
                         EmployeeId = 14,
                         EvaluatorId = 3,
                         Expectations = "Analizy porównawcze dla kierownictwa przekazywane w uzgodnionych terminach. Koordynowanie prac analitycznych kilku osób wydziału bez opóźnień.",
                         Goals = "Opracowanie standardu opisu i weryfikacji źródeł danych dla wydziału do końca 2026 r.",
-                        PartIConfirmedAt = new DateTime(2026, 4, 21, 10, 0, 0, 0, DateTimeKind.Unspecified),
-                        PeriodEnd = new DateOnly(2027, 4, 2),
-                        PeriodStart = new DateOnly(2026, 4, 21),
+                        PartIConfirmedAt = new DateTime(2025, 4, 21, 10, 0, 0, 0, DateTimeKind.Unspecified),
+                        PeriodStart = new DateOnly(2025, 4, 21),
                         Sheet = "C",
-                        SheetConfirmedAt = new DateTime(2026, 4, 7, 9, 0, 0, 0, DateTimeKind.Unspecified),
+                        SheetConfirmedAt = new DateTime(2025, 4, 7, 9, 0, 0, 0, DateTimeKind.Unspecified),
                         Status = "CriteriaSet"
                     },
                     new
                     {
                         Id = 12,
-                        CompletedAt = new DateTime(2026, 1, 14, 12, 0, 0, 0, DateTimeKind.Unspecified),
-                        DueDate = new DateOnly(2026, 1, 17),
-                        EmployeeAcquaintedOn = new DateOnly(2025, 2, 4),
+                        CompletedAt = new DateTime(2025, 1, 14, 12, 0, 0, 0, DateTimeKind.Unspecified),
+                        DueDate = new DateOnly(2025, 1, 17),
+                        EmployeeAcquaintedOn = new DateOnly(2023, 2, 4),
                         EmployeeId = 15,
                         EvaluatorId = 3,
                         Expectations = "Prognozy i analizy trendów przygotowywane w terminie, z opisem założeń i ograniczeń.",
-                        PartIConfirmedAt = new DateTime(2025, 2, 4, 10, 0, 0, 0, DateTimeKind.Unspecified),
-                        PeriodEnd = new DateOnly(2026, 1, 16),
-                        PeriodStart = new DateOnly(2025, 2, 4),
+                        PartIConfirmedAt = new DateTime(2023, 2, 4, 10, 0, 0, 0, DateTimeKind.Unspecified),
+                        PartIIAcquaintedOn = new DateOnly(2025, 1, 14),
+                        PeriodEnd = new DateOnly(2025, 1, 14),
+                        PeriodStart = new DateOnly(2023, 2, 4),
+                        PreparedOn = new DateOnly(2025, 1, 14),
                         Sheet = "C",
-                        SheetConfirmedAt = new DateTime(2025, 1, 21, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                        StartedAt = new DateTime(2025, 12, 1, 9, 0, 0, 0, DateTimeKind.Unspecified),
+                        SheetConfirmedAt = new DateTime(2023, 1, 21, 9, 0, 0, 0, DateTimeKind.Unspecified),
+                        StartedAt = new DateTime(2024, 12, 1, 9, 0, 0, 0, DateTimeKind.Unspecified),
                         Status = "Completed"
                     },
                     new
                     {
                         Id = 13,
                         DueDate = new DateOnly(2027, 1, 17),
-                        EmployeeAcquaintedOn = new DateOnly(2026, 2, 3),
+                        EmployeeAcquaintedOn = new DateOnly(2025, 2, 3),
                         EmployeeId = 15,
                         EvaluatorId = 3,
                         Expectations = "Obliczenia w raportach wydziału sprawdzane przed wysłaniem. Wyjaśnienia metod analizy dla innych komórek udzielane w ciągu tygodnia.",
-                        PartIConfirmedAt = new DateTime(2026, 2, 3, 10, 0, 0, 0, DateTimeKind.Unspecified),
-                        PeriodEnd = new DateOnly(2027, 1, 16),
-                        PeriodStart = new DateOnly(2026, 2, 3),
+                        PartIConfirmedAt = new DateTime(2025, 2, 3, 10, 0, 0, 0, DateTimeKind.Unspecified),
+                        PeriodStart = new DateOnly(2025, 2, 3),
                         Sheet = "C",
-                        SheetConfirmedAt = new DateTime(2026, 1, 20, 9, 0, 0, 0, DateTimeKind.Unspecified),
+                        SheetConfirmedAt = new DateTime(2025, 1, 20, 9, 0, 0, 0, DateTimeKind.Unspecified),
                         Status = "CriteriaSet"
                     },
                     new
                     {
                         Id = 14,
-                        CompletedAt = new DateTime(2025, 11, 28, 12, 0, 0, 0, DateTimeKind.Unspecified),
-                        DueDate = new DateOnly(2025, 11, 28),
-                        EmployeeAcquaintedOn = new DateOnly(2024, 12, 17),
+                        CompletedAt = new DateTime(2024, 11, 28, 12, 0, 0, 0, DateTimeKind.Unspecified),
+                        DueDate = new DateOnly(2024, 11, 28),
+                        EmployeeAcquaintedOn = new DateOnly(2022, 12, 17),
                         EmployeeId = 16,
                         EvaluatorId = 3,
                         Expectations = "Udostępnianie danych publicznych na wnioski w ustawowym terminie, z kompletnym uzasadnieniem odmowy.",
-                        PartIConfirmedAt = new DateTime(2024, 12, 17, 10, 0, 0, 0, DateTimeKind.Unspecified),
-                        PeriodEnd = new DateOnly(2025, 11, 27),
-                        PeriodStart = new DateOnly(2024, 12, 17),
+                        PartIConfirmedAt = new DateTime(2022, 12, 17, 10, 0, 0, 0, DateTimeKind.Unspecified),
+                        PartIIAcquaintedOn = new DateOnly(2024, 11, 28),
+                        PeriodEnd = new DateOnly(2024, 11, 28),
+                        PeriodStart = new DateOnly(2022, 12, 17),
+                        PreparedOn = new DateOnly(2024, 11, 28),
                         Sheet = "C",
-                        SheetConfirmedAt = new DateTime(2024, 12, 3, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                        StartedAt = new DateTime(2025, 10, 1, 9, 0, 0, 0, DateTimeKind.Unspecified),
+                        SheetConfirmedAt = new DateTime(2022, 12, 3, 9, 0, 0, 0, DateTimeKind.Unspecified),
+                        StartedAt = new DateTime(2024, 10, 1, 9, 0, 0, 0, DateTimeKind.Unspecified),
                         Status = "Completed",
-                        WrittenEvaluationAt = new DateTime(2025, 11, 20, 13, 0, 0, 0, DateTimeKind.Unspecified)
+                        WrittenEvaluationAt = new DateTime(2024, 11, 20, 13, 0, 0, 0, DateTimeKind.Unspecified)
                     },
                     new
                     {
                         Id = 15,
                         DueDate = new DateOnly(2026, 11, 28),
-                        EmployeeAcquaintedOn = new DateOnly(2025, 12, 16),
+                        EmployeeAcquaintedOn = new DateOnly(2024, 12, 16),
                         EmployeeId = 16,
                         EvaluatorId = 3,
                         Expectations = "Wnioski o udostępnienie danych rozpatrywane w terminie, także te wymagające uzgodnień z innymi komórkami. Rejestr udostępnionych danych prowadzony na bieżąco.",
-                        PartIConfirmedAt = new DateTime(2025, 12, 16, 10, 0, 0, 0, DateTimeKind.Unspecified),
-                        PeriodEnd = new DateOnly(2026, 11, 27),
-                        PeriodStart = new DateOnly(2025, 12, 16),
+                        PartIConfirmedAt = new DateTime(2024, 12, 16, 10, 0, 0, 0, DateTimeKind.Unspecified),
+                        PeriodStart = new DateOnly(2024, 12, 16),
                         Sheet = "C",
-                        SheetConfirmedAt = new DateTime(2025, 12, 2, 9, 0, 0, 0, DateTimeKind.Unspecified),
+                        SheetConfirmedAt = new DateTime(2024, 12, 2, 9, 0, 0, 0, DateTimeKind.Unspecified),
                         StartedAt = new DateTime(2026, 10, 1, 9, 0, 0, 0, DateTimeKind.Unspecified),
                         Status = "InProgress",
                         WrittenEvaluationAt = new DateTime(2026, 11, 19, 14, 30, 0, 0, DateTimeKind.Unspecified)
@@ -1047,11 +1062,13 @@ partial class _20261121233824_AddNoteCriterion
 
                 SqlServerPropertyBuilderExtensions.UseIdentityColumn(id);
 
+                b.Property<DateTime?>("ClassificationEditedAt")
+                    .HasColumnType("datetime2");
+
                 b.Property<DateTime>("CreatedAt")
                     .HasColumnType("datetime2");
 
                 b.Property<string>("Criterion")
-                    .IsRequired()
                     .HasMaxLength(40)
                     .HasColumnType("nvarchar(40)");
 
@@ -1063,6 +1080,14 @@ partial class _20261121233824_AddNoteCriterion
                     .HasMaxLength(2000)
                     .HasColumnType("nvarchar(2000)");
 
+                b.Property<DateTime?>("TextEditedAt")
+                    .HasColumnType("datetime2");
+
+                b.Property<string>("Tone")
+                    .IsRequired()
+                    .HasMaxLength(20)
+                    .HasColumnType("nvarchar(20)");
+
                 b.HasKey("Id");
 
                 b.HasIndex("EvaluationId", "CreatedAt");
@@ -1073,50 +1098,20 @@ partial class _20261121233824_AddNoteCriterion
                     new
                     {
                         Id = 1,
-                        CreatedAt = new DateTime(2026, 5, 14, 15, 20, 0, 0, DateTimeKind.Unspecified),
-                        Criterion = "WorkOrganization",
+                        CreatedAt = new DateTime(2026, 9, 8, 11, 0, 0, 0, DateTimeKind.Unspecified),
+                        Criterion = "KnowledgeAndDevelopment",
                         EvaluationId = 11,
-                        Text = "Przygotowała zestaw wskaźników do sprawozdania kwartalnego tydzień przed terminem. Kierownictwo departamentu przyjęło go bez poprawek."
+                        Text = "Z własnej inicjatywy poprowadziła dla wydziału warsztat z weryfikacji źródeł danych. Uczestnicy ocenili go jako przydatny.",
+                        Tone = "Positive"
                     },
                     new
                     {
                         Id = 2,
-                        CreatedAt = new DateTime(2026, 9, 8, 11, 0, 0, 0, DateTimeKind.Unspecified),
-                        Criterion = "KnowledgeAndDevelopment",
+                        CreatedAt = new DateTime(2026, 10, 14, 13, 20, 0, 0, DateTimeKind.Unspecified),
+                        Criterion = "Reliability",
                         EvaluationId = 11,
-                        Text = "Z własnej inicjatywy poprowadziła dla wydziału warsztat z weryfikacji źródeł danych. Uczestnicy ocenili go jako przydatny."
-                    },
-                    new
-                    {
-                        Id = 3,
-                        CreatedAt = new DateTime(2026, 3, 10, 9, 45, 0, 0, DateTimeKind.Unspecified),
-                        Criterion = "Reliability",
-                        EvaluationId = 13,
-                        Text = "Prognoza zatrudnienia na 2027 r. wymagała dwóch poprawek metodologicznych. Po wskazówkach przygotował poprawioną wersję w terminie."
-                    },
-                    new
-                    {
-                        Id = 4,
-                        CreatedAt = new DateTime(2026, 10, 2, 14, 10, 0, 0, DateTimeKind.Unspecified),
-                        Criterion = "AnalyticalThinking",
-                        EvaluationId = 13,
-                        Text = "Samodzielnie wykrył błąd w obliczeniach raportu rocznego przed jego wysłaniem do dyrektora i zaproponował dodatkowy krok kontroli."
-                    },
-                    new
-                    {
-                        Id = 5,
-                        CreatedAt = new DateTime(2026, 3, 4, 10, 15, 0, 0, DateTimeKind.Unspecified),
-                        Criterion = "Cooperation",
-                        EvaluationId = 15,
-                        Text = "Rozpatrzyła wszystkie wnioski z pierwszego kwartału w terminie, w tym dwa wymagające uzgodnień z działem prawnym."
-                    },
-                    new
-                    {
-                        Id = 6,
-                        CreatedAt = new DateTime(2026, 8, 21, 13, 40, 0, 0, DateTimeKind.Unspecified),
-                        Criterion = "Reliability",
-                        EvaluationId = 15,
-                        Text = "Uporządkowała rejestr udostępnionych danych i zaproponowała wzór odpowiedzi skracający obsługę typowych wniosków."
+                        Text = "Przekazała kierownictwu zestawienie kwartalne z błędnymi sumami w dwóch tabelach. Poprawioną wersję trzeba było rozesłać ponownie.",
+                        Tone = "Negative"
                     });
             });
 

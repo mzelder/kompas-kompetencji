@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace KompasKompetencji.Web.Data.Migrations;
 
 /// <inheritdoc />
-public partial class _20261122002754_Initial : Migration
+public partial class _20261122011309_Initial : Migration
 {
     /// <inheritdoc />
     protected override void Up(MigrationBuilder migrationBuilder)
@@ -186,7 +186,11 @@ public partial class _20261122002754_Initial : Migration
                 Id = table.Column<int>(type: "int", nullable: false)
                     .Annotation("SqlServer:Identity", "1, 1"),
                 EvaluationId = table.Column<int>(type: "int", nullable: false),
+                Criterion = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: true),
+                Tone = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                 CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                TextEditedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                ClassificationEditedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                 Text = table.Column<string>(type: "nvarchar(2000)", maxLength: 2000, nullable: false)
             },
             constraints: table =>
@@ -346,15 +350,11 @@ public partial class _20261122002754_Initial : Migration
 
         migrationBuilder.InsertData(
             table: "EvaluationNotes",
-            columns: new[] { "Id", "CreatedAt", "EvaluationId", "Text" },
+            columns: new[] { "Id", "ClassificationEditedAt", "CreatedAt", "Criterion", "EvaluationId", "Text", "TextEditedAt", "Tone" },
             values: new object[,]
             {
-                { 1, new DateTime(2026, 5, 14, 15, 20, 0, 0, DateTimeKind.Unspecified), 11, "Przygotowała zestaw wskaźników do sprawozdania kwartalnego tydzień przed terminem. Kierownictwo departamentu przyjęło go bez poprawek." },
-                { 2, new DateTime(2026, 9, 8, 11, 0, 0, 0, DateTimeKind.Unspecified), 11, "Z własnej inicjatywy poprowadziła dla wydziału warsztat z weryfikacji źródeł danych. Uczestnicy ocenili go jako przydatny." },
-                { 3, new DateTime(2026, 3, 10, 9, 45, 0, 0, DateTimeKind.Unspecified), 13, "Prognoza zatrudnienia na 2027 r. wymagała dwóch poprawek metodologicznych. Po wskazówkach przygotował poprawioną wersję w terminie." },
-                { 4, new DateTime(2026, 10, 2, 14, 10, 0, 0, DateTimeKind.Unspecified), 13, "Samodzielnie wykrył błąd w obliczeniach raportu rocznego przed jego wysłaniem do dyrektora i zaproponował dodatkowy krok kontroli." },
-                { 5, new DateTime(2026, 3, 4, 10, 15, 0, 0, DateTimeKind.Unspecified), 15, "Rozpatrzyła wszystkie wnioski z pierwszego kwartału w terminie, w tym dwa wymagające uzgodnień z działem prawnym." },
-                { 6, new DateTime(2026, 8, 21, 13, 40, 0, 0, DateTimeKind.Unspecified), 15, "Uporządkowała rejestr udostępnionych danych i zaproponowała wzór odpowiedzi skracający obsługę typowych wniosków." }
+                { 1, null, new DateTime(2026, 9, 8, 11, 0, 0, 0, DateTimeKind.Unspecified), "KnowledgeAndDevelopment", 11, "Z własnej inicjatywy poprowadziła dla wydziału warsztat z weryfikacji źródeł danych. Uczestnicy ocenili go jako przydatny.", null, "Positive" },
+                { 2, null, new DateTime(2026, 10, 14, 13, 20, 0, 0, DateTimeKind.Unspecified), "Reliability", 11, "Przekazała kierownictwu zestawienie kwartalne z błędnymi sumami w dwóch tabelach. Poprawioną wersję trzeba było rozesłać ponownie.", null, "Negative" }
             });
 
         migrationBuilder.CreateIndex(
