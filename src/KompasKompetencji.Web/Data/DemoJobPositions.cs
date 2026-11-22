@@ -9,15 +9,6 @@ public static class DemoJobPositions
 
     public static IReadOnlyList<JobPosition> All { get; } =
     [
-        DataPosition(1, "DDU WAD 4", "Starszy specjalista",
-            "Przygotowywanie analiz danych wspierających decyzje kierownictwa departamentu oraz dbanie o jakość danych wykorzystywanych w raportach.",
-            Lines(
-                "Przygotowywanie analiz i raportów na potrzeby kierownictwa departamentu",
-                "Opracowywanie wskaźników i metod pomiaru realizacji zadań",
-                "Weryfikacja jakości i kompletności danych z systemów dziedzinowych",
-                "Przygotowywanie projektów stanowisk do dokumentów przekazanych do zaopiniowania",
-                "Wsparcie merytoryczne mniej doświadczonych pracowników wydziału"),
-            Lines("Myślenie analityczne", "Orientacja na cele", "Komunikacja pisemna", "Współpraca")),
         DataPosition(2, "DDU WAD 7", "Specjalista",
             "Realizacja zadań związanych z gromadzeniem, przetwarzaniem i udostępnianiem danych na potrzeby wydziału.",
             Lines(
@@ -38,16 +29,8 @@ public static class DemoJobPositions
                 "Współpraca z innymi komórkami organizacyjnymi i instytucjami",
                 "Prowadzenie ocen okresowych i planowanie rozwoju zawodowego pracowników"),
             RequiredCompetencies = Lines("Zarządzanie zespołem", "Podejmowanie decyzji", "Myślenie strategiczne", "Zarządzanie rozwojem pracowników", "Komunikacja"),
-            Subordinates = SubordinatesRange.Over9,
+            Subordinates = SubordinatesRange.UpTo4,
         },
-        DataPosition(4, "DDU WAD 12", "Referent",
-            "Obsługa administracyjna wydziału i wsparcie pracowników w przygotowywaniu zestawień danych.",
-            Lines(
-                "Prowadzenie rejestru korespondencji wydziału",
-                "Przygotowywanie prostych zestawień danych według wskazówek",
-                "Archiwizowanie dokumentacji wydziału",
-                "Organizacja spotkań i przygotowywanie notatek"),
-            Lines("Rzetelność", "Organizacja pracy własnej", "Komunikacja")),
         DataPosition(5, "DDU WAD 5", "Starszy specjalista",
             "Przygotowywanie i opiniowanie analiz dotyczących usług cyfrowych oraz koordynacja współpracy z dostawcami danych.",
             Lines(
@@ -87,22 +70,6 @@ public static class DemoJobPositions
                 "Opracowywanie standardów opisu i weryfikacji źródeł danych",
                 "Koordynowanie prac analitycznych realizowanych przez kilka osób wydziału"),
             Lines("Myślenie analityczne", "Orientacja na cele", "Współpraca", "Komunikacja pisemna")),
-        DataPosition(9, "DDU WAD 9", "Starszy specjalista",
-            "Przygotowywanie analiz statystycznych i prognoz na potrzeby planowania zadań departamentu.",
-            Lines(
-                "Przygotowywanie prognoz i analiz trendów na podstawie danych wydziału",
-                "Opracowywanie zestawień do planów i sprawozdań departamentu",
-                "Weryfikacja poprawności obliczeń w raportach przygotowywanych przez wydział",
-                "Udzielanie wyjaśnień dotyczących metod analizy innym komórkom"),
-            Lines("Myślenie analityczne", "Rzetelność", "Komunikacja", "Orientacja na cele")),
-        DataPosition(10, "DDU WAD 10", "Specjalista",
-            "Obsługa wniosków o udostępnienie danych i przygotowywanie zestawień dla podmiotów zewnętrznych.",
-            Lines(
-                "Rozpatrywanie wniosków o udostępnienie danych wydziału",
-                "Przygotowywanie zestawień danych dla podmiotów zewnętrznych",
-                "Prowadzenie rejestru udostępnionych danych",
-                "Współpraca z działem prawnym przy odpowiedziach na wnioski"),
-            Lines("Rzetelność", "Komunikacja pisemna", "Współpraca")),
         DataPosition(11, "DDU WAD 3", "Główny specjalista",
             "Przygotowywanie raportów i analiz danych o wnioskach obsługiwanych przez departament oraz dbanie o jakość danych źródłowych.",
             Lines(

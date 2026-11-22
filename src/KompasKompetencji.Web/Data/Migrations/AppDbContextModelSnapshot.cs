@@ -16,7 +16,7 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
     // If you encounter a merge conflict in the line below, it means you need to
     // discard one of the migration branches and recreate its migrations on top of
     // the other branch. See https://aka.ms/efcore-docs-migrations-conflicts for more info.
-    public override string LastMigrationId => "20261122072620_TempMergeSnapshot";
+    public override string LastMigrationId => "20261122074020_AddFullProcessAndOverdueDemo";
 
     protected override void BuildModel(ModelBuilder modelBuilder)
     {
@@ -477,65 +477,17 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
                     new
                     {
                         Id = 1,
-                        At = new DateTime(2022, 12, 16, 10, 0, 0, 0, DateTimeKind.Unspecified),
-                        EvaluationId = 1,
+                        At = new DateTime(2024, 12, 2, 10, 0, 0, 0, DateTimeKind.Unspecified),
+                        EvaluationId = 6,
                         Status = "Held",
                         Type = "Starting"
                     },
                     new
                     {
                         Id = 2,
-                        At = new DateTime(2024, 12, 8, 10, 0, 0, 0, DateTimeKind.Unspecified),
-                        EvaluationId = 1,
-                        Status = "Held",
-                        Type = "Assessment"
-                    },
-                    new
-                    {
-                        Id = 3,
-                        At = new DateTime(2024, 12, 16, 10, 0, 0, 0, DateTimeKind.Unspecified),
-                        EvaluationId = 2,
-                        Status = "Held",
-                        Type = "Starting"
-                    },
-                    new
-                    {
-                        Id = 4,
-                        At = new DateTime(2026, 11, 27, 10, 0, 0, 0, DateTimeKind.Unspecified),
-                        EvaluationId = 2,
+                        At = new DateTime(2026, 11, 26, 10, 0, 0, 0, DateTimeKind.Unspecified),
+                        EvaluationId = 6,
                         Status = "Scheduled",
-                        Type = "Assessment"
-                    },
-                    new
-                    {
-                        Id = 5,
-                        At = new DateTime(2022, 11, 7, 10, 0, 0, 0, DateTimeKind.Unspecified),
-                        EvaluationId = 3,
-                        Status = "Held",
-                        Type = "Starting"
-                    },
-                    new
-                    {
-                        Id = 6,
-                        At = new DateTime(2024, 10, 27, 11, 0, 0, 0, DateTimeKind.Unspecified),
-                        EvaluationId = 3,
-                        Status = "Held",
-                        Type = "Assessment"
-                    },
-                    new
-                    {
-                        Id = 7,
-                        At = new DateTime(2023, 1, 16, 10, 0, 0, 0, DateTimeKind.Unspecified),
-                        EvaluationId = 4,
-                        Status = "Held",
-                        Type = "Starting"
-                    },
-                    new
-                    {
-                        Id = 8,
-                        At = new DateTime(2025, 1, 7, 9, 30, 0, 0, DateTimeKind.Unspecified),
-                        EvaluationId = 4,
-                        Status = "Held",
                         Type = "Assessment"
                     },
                     new
@@ -556,139 +508,19 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
                     },
                     new
                     {
-                        Id = 11,
-                        At = new DateTime(2025, 1, 15, 10, 0, 0, 0, DateTimeKind.Unspecified),
-                        EvaluationId = 6,
-                        Status = "Held",
-                        Type = "Starting"
-                    },
-                    new
-                    {
-                        Id = 12,
-                        At = new DateTime(2026, 12, 18, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                        EvaluationId = 6,
-                        Status = "Scheduled",
-                        Type = "Assessment"
-                    },
-                    new
-                    {
-                        Id = 13,
-                        At = new DateTime(2023, 1, 8, 10, 0, 0, 0, DateTimeKind.Unspecified),
-                        EvaluationId = 7,
-                        Status = "Held",
-                        Type = "Starting"
-                    },
-                    new
-                    {
-                        Id = 14,
-                        At = new DateTime(2024, 12, 17, 12, 0, 0, 0, DateTimeKind.Unspecified),
-                        EvaluationId = 7,
-                        Status = "Held",
-                        Type = "Assessment"
-                    },
-                    new
-                    {
-                        Id = 15,
-                        At = new DateTime(2024, 12, 17, 11, 0, 0, 0, DateTimeKind.Unspecified),
-                        EvaluationId = 8,
-                        Status = "Held",
-                        Type = "Starting"
-                    },
-                    new
-                    {
-                        Id = 16,
-                        At = new DateTime(2026, 11, 14, 10, 0, 0, 0, DateTimeKind.Unspecified),
-                        EvaluationId = 8,
-                        Status = "Scheduled",
-                        Type = "Assessment"
-                    },
-                    new
-                    {
                         Id = 17,
-                        At = new DateTime(2026, 11, 26, 10, 0, 0, 0, DateTimeKind.Unspecified),
+                        At = new DateTime(2026, 11, 19, 10, 0, 0, 0, DateTimeKind.Unspecified),
                         EvaluationId = 9,
                         Status = "Scheduled",
                         Type = "Starting"
                     },
                     new
                     {
-                        Id = 18,
-                        At = new DateTime(2023, 4, 22, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                        EvaluationId = 10,
-                        Status = "Held",
-                        Type = "Starting"
-                    },
-                    new
-                    {
-                        Id = 19,
-                        At = new DateTime(2025, 3, 25, 10, 0, 0, 0, DateTimeKind.Unspecified),
-                        EvaluationId = 10,
-                        Status = "Held",
-                        Type = "Assessment"
-                    },
-                    new
-                    {
                         Id = 20,
-                        At = new DateTime(2025, 4, 21, 9, 0, 0, 0, DateTimeKind.Unspecified),
+                        At = new DateTime(2025, 2, 10, 9, 0, 0, 0, DateTimeKind.Unspecified),
                         EvaluationId = 11,
                         Status = "Held",
                         Type = "Starting"
-                    },
-                    new
-                    {
-                        Id = 21,
-                        At = new DateTime(2023, 2, 4, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                        EvaluationId = 12,
-                        Status = "Held",
-                        Type = "Starting"
-                    },
-                    new
-                    {
-                        Id = 22,
-                        At = new DateTime(2025, 1, 12, 11, 0, 0, 0, DateTimeKind.Unspecified),
-                        EvaluationId = 12,
-                        Status = "Held",
-                        Type = "Assessment"
-                    },
-                    new
-                    {
-                        Id = 23,
-                        At = new DateTime(2025, 2, 3, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                        EvaluationId = 13,
-                        Status = "Held",
-                        Type = "Starting"
-                    },
-                    new
-                    {
-                        Id = 24,
-                        At = new DateTime(2022, 12, 17, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                        EvaluationId = 14,
-                        Status = "Held",
-                        Type = "Starting"
-                    },
-                    new
-                    {
-                        Id = 25,
-                        At = new DateTime(2024, 11, 17, 10, 0, 0, 0, DateTimeKind.Unspecified),
-                        EvaluationId = 14,
-                        Status = "Held",
-                        Type = "Assessment"
-                    },
-                    new
-                    {
-                        Id = 26,
-                        At = new DateTime(2024, 12, 16, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                        EvaluationId = 15,
-                        Status = "Held",
-                        Type = "Starting"
-                    },
-                    new
-                    {
-                        Id = 27,
-                        At = new DateTime(2026, 11, 16, 11, 0, 0, 0, DateTimeKind.Unspecified),
-                        EvaluationId = 15,
-                        Status = "Held",
-                        Type = "Assessment"
                     },
                     new
                     {
@@ -753,150 +585,6 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
                 b.HasData(
                     new
                     {
-                        EvaluationId = 1,
-                        Criterion = "KnowledgeAndDevelopment",
-                        DecidedAt = new DateTime(2024, 12, 10, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                        Level = 4,
-                        SuggestedLevel = 4
-                    },
-                    new
-                    {
-                        EvaluationId = 1,
-                        Criterion = "Reliability",
-                        DecidedAt = new DateTime(2024, 12, 10, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                        Level = 4,
-                        SuggestedLevel = 4
-                    },
-                    new
-                    {
-                        EvaluationId = 1,
-                        Criterion = "WorkOrganization",
-                        DecidedAt = new DateTime(2024, 12, 10, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                        Level = 3,
-                        SuggestedLevel = 3
-                    },
-                    new
-                    {
-                        EvaluationId = 1,
-                        Criterion = "Cooperation",
-                        DecidedAt = new DateTime(2024, 12, 10, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                        Level = 3,
-                        SuggestedLevel = 3
-                    },
-                    new
-                    {
-                        EvaluationId = 1,
-                        Criterion = "Communication",
-                        DecidedAt = new DateTime(2024, 12, 10, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                        Level = 4,
-                        SuggestedLevel = 4
-                    },
-                    new
-                    {
-                        EvaluationId = 1,
-                        Criterion = "AnalyticalThinking",
-                        DecidedAt = new DateTime(2024, 12, 10, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                        Level = 4,
-                        SuggestedLevel = 4
-                    },
-                    new
-                    {
-                        EvaluationId = 3,
-                        Criterion = "KnowledgeAndDevelopment",
-                        DecidedAt = new DateTime(2024, 10, 28, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                        Level = 3,
-                        SuggestedLevel = 3
-                    },
-                    new
-                    {
-                        EvaluationId = 3,
-                        Criterion = "Reliability",
-                        DecidedAt = new DateTime(2024, 10, 28, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                        Level = 3,
-                        SuggestedLevel = 3
-                    },
-                    new
-                    {
-                        EvaluationId = 3,
-                        Criterion = "WorkOrganization",
-                        DecidedAt = new DateTime(2024, 10, 28, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                        Level = 3,
-                        SuggestedLevel = 3
-                    },
-                    new
-                    {
-                        EvaluationId = 3,
-                        Criterion = "Cooperation",
-                        DecidedAt = new DateTime(2024, 10, 28, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                        Level = 3,
-                        SuggestedLevel = 3
-                    },
-                    new
-                    {
-                        EvaluationId = 3,
-                        Criterion = "Communication",
-                        DecidedAt = new DateTime(2024, 10, 28, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                        Level = 3,
-                        SuggestedLevel = 3
-                    },
-                    new
-                    {
-                        EvaluationId = 3,
-                        Criterion = "AnalyticalThinking",
-                        DecidedAt = new DateTime(2024, 10, 28, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                        Level = 3,
-                        SuggestedLevel = 3
-                    },
-                    new
-                    {
-                        EvaluationId = 4,
-                        Criterion = "KnowledgeAndDevelopment",
-                        DecidedAt = new DateTime(2025, 1, 8, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                        Level = 3,
-                        SuggestedLevel = 3
-                    },
-                    new
-                    {
-                        EvaluationId = 4,
-                        Criterion = "Reliability",
-                        DecidedAt = new DateTime(2025, 1, 8, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                        Level = 4,
-                        SuggestedLevel = 4
-                    },
-                    new
-                    {
-                        EvaluationId = 4,
-                        Criterion = "WorkOrganization",
-                        DecidedAt = new DateTime(2025, 1, 8, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                        Level = 3,
-                        SuggestedLevel = 3
-                    },
-                    new
-                    {
-                        EvaluationId = 4,
-                        Criterion = "Cooperation",
-                        DecidedAt = new DateTime(2025, 1, 8, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                        Level = 3,
-                        SuggestedLevel = 3
-                    },
-                    new
-                    {
-                        EvaluationId = 4,
-                        Criterion = "Communication",
-                        DecidedAt = new DateTime(2025, 1, 8, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                        Level = 3,
-                        SuggestedLevel = 3
-                    },
-                    new
-                    {
-                        EvaluationId = 4,
-                        Criterion = "CustomerOrientation",
-                        DecidedAt = new DateTime(2025, 1, 8, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                        Level = 4,
-                        SuggestedLevel = 4
-                    },
-                    new
-                    {
                         EvaluationId = 5,
                         Criterion = "KnowledgeAndDevelopment",
                         DecidedAt = new DateTime(2026, 11, 6, 9, 0, 0, 0, DateTimeKind.Unspecified),
@@ -942,246 +630,6 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
                         DecidedAt = new DateTime(2026, 11, 6, 9, 0, 0, 0, DateTimeKind.Unspecified),
                         Level = 5,
                         SuggestedLevel = 5
-                    },
-                    new
-                    {
-                        EvaluationId = 7,
-                        Criterion = "KnowledgeAndDevelopment",
-                        DecidedAt = new DateTime(2024, 12, 18, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                        Level = 3,
-                        SuggestedLevel = 3
-                    },
-                    new
-                    {
-                        EvaluationId = 7,
-                        Criterion = "Reliability",
-                        DecidedAt = new DateTime(2024, 12, 18, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                        Level = 2,
-                        SuggestedLevel = 2
-                    },
-                    new
-                    {
-                        EvaluationId = 7,
-                        Criterion = "WorkOrganization",
-                        DecidedAt = new DateTime(2024, 12, 18, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                        Level = 3,
-                        SuggestedLevel = 3
-                    },
-                    new
-                    {
-                        EvaluationId = 7,
-                        Criterion = "Cooperation",
-                        DecidedAt = new DateTime(2024, 12, 18, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                        Level = 3,
-                        SuggestedLevel = 3
-                    },
-                    new
-                    {
-                        EvaluationId = 7,
-                        Criterion = "Communication",
-                        DecidedAt = new DateTime(2024, 12, 18, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                        Level = 3,
-                        SuggestedLevel = 3
-                    },
-                    new
-                    {
-                        EvaluationId = 7,
-                        Criterion = "AnalyticalThinking",
-                        DecidedAt = new DateTime(2024, 12, 18, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                        Level = 3,
-                        SuggestedLevel = 3
-                    },
-                    new
-                    {
-                        EvaluationId = 10,
-                        Criterion = "KnowledgeAndDevelopment",
-                        DecidedAt = new DateTime(2025, 3, 30, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                        Level = 4,
-                        SuggestedLevel = 4
-                    },
-                    new
-                    {
-                        EvaluationId = 10,
-                        Criterion = "Reliability",
-                        DecidedAt = new DateTime(2025, 3, 30, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                        Level = 3,
-                        SuggestedLevel = 3
-                    },
-                    new
-                    {
-                        EvaluationId = 10,
-                        Criterion = "WorkOrganization",
-                        DecidedAt = new DateTime(2025, 3, 30, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                        Level = 3,
-                        SuggestedLevel = 3
-                    },
-                    new
-                    {
-                        EvaluationId = 10,
-                        Criterion = "Cooperation",
-                        DecidedAt = new DateTime(2025, 3, 30, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                        Level = 4,
-                        SuggestedLevel = 4
-                    },
-                    new
-                    {
-                        EvaluationId = 10,
-                        Criterion = "Communication",
-                        DecidedAt = new DateTime(2025, 3, 30, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                        Level = 3,
-                        SuggestedLevel = 3
-                    },
-                    new
-                    {
-                        EvaluationId = 10,
-                        Criterion = "AnalyticalThinking",
-                        DecidedAt = new DateTime(2025, 3, 30, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                        Level = 4,
-                        SuggestedLevel = 4
-                    },
-                    new
-                    {
-                        EvaluationId = 12,
-                        Criterion = "KnowledgeAndDevelopment",
-                        DecidedAt = new DateTime(2025, 1, 14, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                        Level = 3,
-                        SuggestedLevel = 3
-                    },
-                    new
-                    {
-                        EvaluationId = 12,
-                        Criterion = "Reliability",
-                        DecidedAt = new DateTime(2025, 1, 14, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                        Level = 3,
-                        SuggestedLevel = 3
-                    },
-                    new
-                    {
-                        EvaluationId = 12,
-                        Criterion = "WorkOrganization",
-                        DecidedAt = new DateTime(2025, 1, 14, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                        Level = 2,
-                        SuggestedLevel = 2
-                    },
-                    new
-                    {
-                        EvaluationId = 12,
-                        Criterion = "Cooperation",
-                        DecidedAt = new DateTime(2025, 1, 14, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                        Level = 3,
-                        SuggestedLevel = 3
-                    },
-                    new
-                    {
-                        EvaluationId = 12,
-                        Criterion = "Communication",
-                        DecidedAt = new DateTime(2025, 1, 14, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                        Level = 3,
-                        SuggestedLevel = 3
-                    },
-                    new
-                    {
-                        EvaluationId = 12,
-                        Criterion = "AnalyticalThinking",
-                        DecidedAt = new DateTime(2025, 1, 14, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                        Level = 4,
-                        SuggestedLevel = 4
-                    },
-                    new
-                    {
-                        EvaluationId = 14,
-                        Criterion = "KnowledgeAndDevelopment",
-                        DecidedAt = new DateTime(2024, 11, 28, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                        Level = 3,
-                        SuggestedLevel = 3
-                    },
-                    new
-                    {
-                        EvaluationId = 14,
-                        Criterion = "Reliability",
-                        DecidedAt = new DateTime(2024, 11, 28, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                        Level = 4,
-                        SuggestedLevel = 4
-                    },
-                    new
-                    {
-                        EvaluationId = 14,
-                        Criterion = "WorkOrganization",
-                        DecidedAt = new DateTime(2024, 11, 28, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                        Level = 3,
-                        SuggestedLevel = 3
-                    },
-                    new
-                    {
-                        EvaluationId = 14,
-                        Criterion = "Cooperation",
-                        DecidedAt = new DateTime(2024, 11, 28, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                        Level = 3,
-                        SuggestedLevel = 3
-                    },
-                    new
-                    {
-                        EvaluationId = 14,
-                        Criterion = "Communication",
-                        DecidedAt = new DateTime(2024, 11, 28, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                        Level = 4,
-                        SuggestedLevel = 4
-                    },
-                    new
-                    {
-                        EvaluationId = 14,
-                        Criterion = "AnalyticalThinking",
-                        DecidedAt = new DateTime(2024, 11, 28, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                        Level = 3,
-                        SuggestedLevel = 3
-                    },
-                    new
-                    {
-                        EvaluationId = 15,
-                        Criterion = "KnowledgeAndDevelopment",
-                        DecidedAt = new DateTime(2026, 11, 19, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                        Level = 4,
-                        SuggestedLevel = 4
-                    },
-                    new
-                    {
-                        EvaluationId = 15,
-                        Criterion = "Reliability",
-                        DecidedAt = new DateTime(2026, 11, 19, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                        Level = 3,
-                        SuggestedLevel = 3
-                    },
-                    new
-                    {
-                        EvaluationId = 15,
-                        Criterion = "WorkOrganization",
-                        DecidedAt = new DateTime(2026, 11, 19, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                        Level = 3,
-                        SuggestedLevel = 3
-                    },
-                    new
-                    {
-                        EvaluationId = 15,
-                        Criterion = "Cooperation",
-                        DecidedAt = new DateTime(2026, 11, 19, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                        Level = 4,
-                        SuggestedLevel = 4
-                    },
-                    new
-                    {
-                        EvaluationId = 15,
-                        Criterion = "Communication",
-                        DecidedAt = new DateTime(2026, 11, 19, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                        Level = 3,
-                        SuggestedLevel = 3
-                    },
-                    new
-                    {
-                        EvaluationId = 15,
-                        Criterion = "AnalyticalThinking",
-                        DecidedAt = new DateTime(2026, 11, 19, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                        Level = 4,
-                        SuggestedLevel = 4
                     },
                     new
                     {
@@ -1335,20 +783,9 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
                 b.HasData(
                     new
                     {
-                        Id = 1,
-                        Department = "Wydział Analiz Danych",
-                        EmployedSince = new DateOnly(2019, 12, 15),
-                        FirstName = "Anna",
-                        IsSupervisor = false,
-                        JobPositionId = 1,
-                        LastName = "Kowalska",
-                        Position = "Starszy specjalista"
-                    },
-                    new
-                    {
                         Id = 2,
                         Department = "Wydział Analiz Danych",
-                        EmployedSince = new DateOnly(2022, 11, 2),
+                        EmployedSince = new DateOnly(2025, 1, 11),
                         FirstName = "Jan",
                         IsSupervisor = false,
                         JobPositionId = 2,
@@ -1378,57 +815,6 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
                     },
                     new
                     {
-                        Id = 5,
-                        Department = "Wydział Usług Cyfrowych",
-                        EmployedSince = new DateOnly(2016, 2, 15),
-                        FirstName = "Marek",
-                        IsSupervisor = true,
-                        LastName = "Lewandowski",
-                        Position = "Naczelnik wydziału"
-                    },
-                    new
-                    {
-                        Id = 6,
-                        Department = "Wydział Usług Cyfrowych",
-                        EmployedSince = new DateOnly(2018, 5, 1),
-                        FirstName = "Magdalena",
-                        IsSupervisor = true,
-                        LastName = "Dąbrowska",
-                        Position = "Zastępca naczelnika wydziału"
-                    },
-                    new
-                    {
-                        Id = 7,
-                        Department = "Wydział Usług Cyfrowych",
-                        EmployedSince = new DateOnly(2021, 9, 1),
-                        FirstName = "Katarzyna",
-                        IsSupervisor = false,
-                        LastName = "Wójcik",
-                        Position = "Główny specjalista"
-                    },
-                    new
-                    {
-                        Id = 8,
-                        Department = "Wydział Usług Cyfrowych",
-                        EmployedSince = new DateOnly(2024, 3, 1),
-                        FirstName = "Piotr",
-                        IsSupervisor = false,
-                        LastName = "Kamiński",
-                        Position = "Starszy referent"
-                    },
-                    new
-                    {
-                        Id = 9,
-                        Department = "Wydział Analiz Danych",
-                        EmployedSince = new DateOnly(2018, 1, 10),
-                        FirstName = "Michał",
-                        IsSupervisor = false,
-                        JobPositionId = 4,
-                        LastName = "Szymański",
-                        Position = "Referent"
-                    },
-                    new
-                    {
                         Id = 10,
                         Department = "Wydział Analiz Danych",
                         EmployedSince = new DateOnly(2020, 6, 1),
@@ -1453,7 +839,7 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
                     {
                         Id = 12,
                         Department = "Wydział Analiz Danych",
-                        EmployedSince = new DateOnly(2021, 12, 20),
+                        EmployedSince = new DateOnly(2024, 11, 15),
                         FirstName = "Karolina",
                         IsSupervisor = false,
                         JobPositionId = 7,
@@ -1462,46 +848,14 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
                     },
                     new
                     {
-                        Id = 13,
-                        Department = "Wydział Analiz Danych",
-                        EmployedSince = new DateOnly(2024, 12, 10),
-                        FirstName = "Łukasz",
-                        IsSupervisor = false,
-                        LastName = "Grabowski",
-                        Position = "Specjalista"
-                    },
-                    new
-                    {
                         Id = 14,
                         Department = "Wydział Analiz Danych",
-                        EmployedSince = new DateOnly(2023, 4, 3),
+                        EmployedSince = new DateOnly(2025, 1, 20),
                         FirstName = "Natalia",
                         IsSupervisor = false,
                         JobPositionId = 8,
                         LastName = "Krawczyk",
                         Position = "Główny specjalista"
-                    },
-                    new
-                    {
-                        Id = 15,
-                        Department = "Wydział Analiz Danych",
-                        EmployedSince = new DateOnly(2022, 1, 17),
-                        FirstName = "Bartosz",
-                        IsSupervisor = false,
-                        JobPositionId = 9,
-                        LastName = "Wróbel",
-                        Position = "Starszy specjalista"
-                    },
-                    new
-                    {
-                        Id = 16,
-                        Department = "Wydział Analiz Danych",
-                        EmployedSince = new DateOnly(2019, 11, 28),
-                        FirstName = "Monika",
-                        IsSupervisor = false,
-                        JobPositionId = 10,
-                        LastName = "Sikora",
-                        Position = "Specjalista"
                     },
                     new
                     {
@@ -1536,11 +890,6 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
                 b.HasData(
                     new
                     {
-                        EmployeeId = 1,
-                        SupervisorId = 3
-                    },
-                    new
-                    {
                         EmployeeId = 2,
                         SupervisorId = 3
                     },
@@ -1548,36 +897,6 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
                     {
                         EmployeeId = 3,
                         SupervisorId = 4
-                    },
-                    new
-                    {
-                        EmployeeId = 5,
-                        SupervisorId = 4
-                    },
-                    new
-                    {
-                        EmployeeId = 6,
-                        SupervisorId = 5
-                    },
-                    new
-                    {
-                        EmployeeId = 7,
-                        SupervisorId = 5
-                    },
-                    new
-                    {
-                        EmployeeId = 8,
-                        SupervisorId = 6
-                    },
-                    new
-                    {
-                        EmployeeId = 8,
-                        SupervisorId = 5
-                    },
-                    new
-                    {
-                        EmployeeId = 9,
-                        SupervisorId = 3
                     },
                     new
                     {
@@ -1596,22 +915,7 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
                     },
                     new
                     {
-                        EmployeeId = 13,
-                        SupervisorId = 3
-                    },
-                    new
-                    {
                         EmployeeId = 14,
-                        SupervisorId = 3
-                    },
-                    new
-                    {
-                        EmployeeId = 15,
-                        SupervisorId = 3
-                    },
-                    new
-                    {
-                        EmployeeId = 16,
                         SupervisorId = 3
                     },
                     new
@@ -1697,79 +1001,6 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
                 b.HasData(
                     new
                     {
-                        Id = 1,
-                        CompletedAt = new DateTime(2024, 12, 10, 14, 0, 0, 0, DateTimeKind.Unspecified),
-                        DueDate = new DateOnly(2024, 12, 15),
-                        EmployeeAcquaintedOn = new DateOnly(2022, 12, 16),
-                        EmployeeId = 1,
-                        EvaluatorId = 3,
-                        Expectations = "Samodzielne przygotowywanie analiz dla kierownictwa w uzgodnionych terminach, z opisem źródeł i ograniczeń danych.",
-                        PartIConfirmedAt = new DateTime(2022, 12, 16, 15, 0, 0, 0, DateTimeKind.Unspecified),
-                        PartIIAcquaintedOn = new DateOnly(2024, 12, 10),
-                        PeriodEnd = new DateOnly(2024, 12, 10),
-                        PeriodStart = new DateOnly(2022, 12, 16),
-                        PreparedOn = new DateOnly(2024, 12, 10),
-                        Sheet = "C",
-                        SheetConfirmedAt = new DateTime(2022, 12, 11, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                        StartedAt = new DateTime(2024, 11, 20, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                        Status = "Completed"
-                    },
-                    new
-                    {
-                        Id = 2,
-                        DueDate = new DateOnly(2026, 12, 15),
-                        EmployeeAcquaintedOn = new DateOnly(2024, 12, 16),
-                        EmployeeId = 1,
-                        EvaluatorId = 3,
-                        Expectations = "Analizy dla kierownictwa oddawane w terminie i bez poprawek merytorycznych. Propozycje nowych wskaźników zgłaszane z własnej inicjatywy, co najmniej raz na kwartał.",
-                        Goals = "Opracowanie zestawu wskaźników realizacji zadań departamentu do końca II kwartału 2026 r.",
-                        PartIConfirmedAt = new DateTime(2024, 12, 16, 15, 0, 0, 0, DateTimeKind.Unspecified),
-                        PeriodStart = new DateOnly(2024, 12, 16),
-                        Sheet = "C",
-                        SheetConfirmedAt = new DateTime(2024, 12, 11, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                        StartedAt = new DateTime(2026, 11, 12, 10, 30, 0, 0, DateTimeKind.Unspecified),
-                        Status = "InProgress"
-                    },
-                    new
-                    {
-                        Id = 3,
-                        CompletedAt = new DateTime(2024, 10, 28, 12, 0, 0, 0, DateTimeKind.Unspecified),
-                        DueDate = new DateOnly(2024, 11, 2),
-                        EmployeeAcquaintedOn = new DateOnly(2022, 11, 7),
-                        EmployeeId = 2,
-                        EvaluatorId = 3,
-                        Expectations = "Zestawienia danych przygotowywane według przyjętego wzoru i sprawdzone przed przekazaniem.",
-                        PartIConfirmedAt = new DateTime(2022, 11, 7, 14, 0, 0, 0, DateTimeKind.Unspecified),
-                        PartIIAcquaintedOn = new DateOnly(2024, 10, 28),
-                        PeriodEnd = new DateOnly(2024, 10, 28),
-                        PeriodStart = new DateOnly(2022, 11, 7),
-                        PreparedOn = new DateOnly(2024, 10, 28),
-                        Sheet = "C",
-                        SheetConfirmedAt = new DateTime(2022, 11, 5, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                        StartedAt = new DateTime(2024, 10, 6, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                        Status = "Completed"
-                    },
-                    new
-                    {
-                        Id = 4,
-                        CompletedAt = new DateTime(2025, 1, 8, 11, 0, 0, 0, DateTimeKind.Unspecified),
-                        DueDate = new DateOnly(2025, 1, 10),
-                        EmployeeAcquaintedOn = new DateOnly(2023, 1, 16),
-                        EmployeeId = 9,
-                        EvaluatorId = 3,
-                        Expectations = "Korespondencja wydziału rejestrowana na bieżąco, odpowiedzi na proste pytania udzielane w ciągu dwóch dni.",
-                        PartIConfirmedAt = new DateTime(2023, 1, 16, 14, 0, 0, 0, DateTimeKind.Unspecified),
-                        PartIIAcquaintedOn = new DateOnly(2025, 1, 8),
-                        PeriodEnd = new DateOnly(2025, 1, 8),
-                        PeriodStart = new DateOnly(2023, 1, 16),
-                        PreparedOn = new DateOnly(2025, 1, 8),
-                        Sheet = "C",
-                        SheetConfirmedAt = new DateTime(2023, 1, 14, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                        StartedAt = new DateTime(2024, 12, 15, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                        Status = "Completed"
-                    },
-                    new
-                    {
                         Id = 5,
                         CompletedAt = new DateTime(2026, 11, 6, 13, 0, 0, 0, DateTimeKind.Unspecified),
                         DueDate = new DateOnly(2026, 11, 10),
@@ -1790,50 +1021,16 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
                     new
                     {
                         Id = 6,
-                        DueDate = new DateOnly(2027, 1, 10),
-                        EmployeeAcquaintedOn = new DateOnly(2025, 1, 15),
-                        EmployeeId = 9,
-                        EvaluatorId = 3,
-                        Expectations = "Rejestr korespondencji prowadzony bez zaległości. Zestawienia danych przygotowywane samodzielnie według wskazówek, bez konieczności poprawek.",
-                        PartIConfirmedAt = new DateTime(2025, 1, 15, 14, 0, 0, 0, DateTimeKind.Unspecified),
-                        PeriodStart = new DateOnly(2025, 1, 15),
-                        Sheet = "C",
-                        SheetConfirmedAt = new DateTime(2025, 1, 13, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                        StartedAt = new DateTime(2026, 11, 16, 14, 0, 0, 0, DateTimeKind.Unspecified),
-                        Status = "CriteriaSet"
-                    },
-                    new
-                    {
-                        Id = 7,
-                        CompletedAt = new DateTime(2024, 12, 18, 10, 0, 0, 0, DateTimeKind.Unspecified),
-                        DueDate = new DateOnly(2024, 12, 20),
-                        EmployeeAcquaintedOn = new DateOnly(2023, 1, 8),
+                        DueDate = new DateOnly(2026, 11, 15),
+                        EmployeeAcquaintedOn = new DateOnly(2024, 12, 2),
                         EmployeeId = 12,
                         EvaluatorId = 3,
                         Expectations = "Cykliczne raporty przekazywane w terminie, z krótkim omówieniem najważniejszych zmian w danych.",
-                        PartIConfirmedAt = new DateTime(2023, 1, 8, 14, 0, 0, 0, DateTimeKind.Unspecified),
-                        PartIIAcquaintedOn = new DateOnly(2024, 12, 18),
-                        PeriodEnd = new DateOnly(2024, 12, 18),
-                        PeriodStart = new DateOnly(2023, 1, 8),
-                        PreparedOn = new DateOnly(2024, 12, 18),
+                        PartIConfirmedAt = new DateTime(2024, 12, 2, 14, 0, 0, 0, DateTimeKind.Unspecified),
+                        PeriodStart = new DateOnly(2024, 12, 2),
                         Sheet = "C",
-                        SheetConfirmedAt = new DateTime(2022, 12, 23, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                        StartedAt = new DateTime(2024, 11, 24, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                        Status = "Completed"
-                    },
-                    new
-                    {
-                        Id = 8,
-                        DueDate = new DateOnly(2026, 12, 10),
-                        EmployeeAcquaintedOn = new DateOnly(2024, 12, 17),
-                        EmployeeId = 13,
-                        EvaluatorId = 3,
-                        Expectations = "Analizy danych przygotowywane samodzielnie, z wnioskami zrozumiałymi dla odbiorców spoza wydziału.",
-                        PartIConfirmedAt = new DateTime(2024, 12, 17, 15, 0, 0, 0, DateTimeKind.Unspecified),
-                        PeriodStart = new DateOnly(2024, 12, 17),
-                        Sheet = "C",
-                        SheetConfirmedAt = new DateTime(2024, 12, 12, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                        Status = "NotStarted"
+                        SheetConfirmedAt = new DateTime(2024, 11, 20, 9, 0, 0, 0, DateTimeKind.Unspecified),
+                        Status = "CriteriaSet"
                     },
                     new
                     {
@@ -1849,106 +1046,18 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
                     },
                     new
                     {
-                        Id = 10,
-                        CompletedAt = new DateTime(2025, 3, 30, 12, 0, 0, 0, DateTimeKind.Unspecified),
-                        DueDate = new DateOnly(2025, 4, 3),
-                        EmployeeAcquaintedOn = new DateOnly(2023, 4, 22),
-                        EmployeeId = 14,
-                        EvaluatorId = 3,
-                        Expectations = "Zestawy wskaźników przygotowywane z opisem metody pomiaru i źródeł danych, uzgodnione z komórkami merytorycznymi.",
-                        PartIConfirmedAt = new DateTime(2023, 4, 22, 10, 0, 0, 0, DateTimeKind.Unspecified),
-                        PartIIAcquaintedOn = new DateOnly(2025, 3, 30),
-                        PeriodEnd = new DateOnly(2025, 3, 30),
-                        PeriodStart = new DateOnly(2023, 4, 22),
-                        PreparedOn = new DateOnly(2025, 3, 30),
-                        Sheet = "C",
-                        SheetConfirmedAt = new DateTime(2023, 4, 8, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                        StartedAt = new DateTime(2025, 3, 2, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                        Status = "Completed"
-                    },
-                    new
-                    {
                         Id = 11,
-                        DueDate = new DateOnly(2027, 4, 3),
-                        EmployeeAcquaintedOn = new DateOnly(2025, 4, 21),
+                        DueDate = new DateOnly(2027, 1, 20),
+                        EmployeeAcquaintedOn = new DateOnly(2025, 2, 10),
                         EmployeeId = 14,
                         EvaluatorId = 3,
                         Expectations = "Analizy porównawcze dla kierownictwa przekazywane w uzgodnionych terminach. Koordynowanie prac analitycznych kilku osób wydziału bez opóźnień.",
                         Goals = "Opracowanie standardu opisu i weryfikacji źródeł danych dla wydziału do końca 2026 r.",
-                        PartIConfirmedAt = new DateTime(2025, 4, 21, 10, 0, 0, 0, DateTimeKind.Unspecified),
-                        PeriodStart = new DateOnly(2025, 4, 21),
+                        PartIConfirmedAt = new DateTime(2025, 2, 10, 10, 0, 0, 0, DateTimeKind.Unspecified),
+                        PeriodStart = new DateOnly(2025, 2, 10),
                         Sheet = "C",
-                        SheetConfirmedAt = new DateTime(2025, 4, 7, 9, 0, 0, 0, DateTimeKind.Unspecified),
+                        SheetConfirmedAt = new DateTime(2025, 1, 27, 9, 0, 0, 0, DateTimeKind.Unspecified),
                         Status = "CriteriaSet"
-                    },
-                    new
-                    {
-                        Id = 12,
-                        CompletedAt = new DateTime(2025, 1, 14, 12, 0, 0, 0, DateTimeKind.Unspecified),
-                        DueDate = new DateOnly(2025, 1, 17),
-                        EmployeeAcquaintedOn = new DateOnly(2023, 2, 4),
-                        EmployeeId = 15,
-                        EvaluatorId = 3,
-                        Expectations = "Prognozy i analizy trendów przygotowywane w terminie, z opisem założeń i ograniczeń.",
-                        PartIConfirmedAt = new DateTime(2023, 2, 4, 10, 0, 0, 0, DateTimeKind.Unspecified),
-                        PartIIAcquaintedOn = new DateOnly(2025, 1, 14),
-                        PeriodEnd = new DateOnly(2025, 1, 14),
-                        PeriodStart = new DateOnly(2023, 2, 4),
-                        PreparedOn = new DateOnly(2025, 1, 14),
-                        Sheet = "C",
-                        SheetConfirmedAt = new DateTime(2023, 1, 21, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                        StartedAt = new DateTime(2024, 12, 1, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                        Status = "Completed"
-                    },
-                    new
-                    {
-                        Id = 13,
-                        DueDate = new DateOnly(2027, 1, 17),
-                        EmployeeAcquaintedOn = new DateOnly(2025, 2, 3),
-                        EmployeeId = 15,
-                        EvaluatorId = 3,
-                        Expectations = "Obliczenia w raportach wydziału sprawdzane przed wysłaniem. Wyjaśnienia metod analizy dla innych komórek udzielane w ciągu tygodnia.",
-                        PartIConfirmedAt = new DateTime(2025, 2, 3, 10, 0, 0, 0, DateTimeKind.Unspecified),
-                        PeriodStart = new DateOnly(2025, 2, 3),
-                        Sheet = "C",
-                        SheetConfirmedAt = new DateTime(2025, 1, 20, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                        Status = "CriteriaSet"
-                    },
-                    new
-                    {
-                        Id = 14,
-                        CompletedAt = new DateTime(2024, 11, 28, 12, 0, 0, 0, DateTimeKind.Unspecified),
-                        DueDate = new DateOnly(2024, 11, 28),
-                        EmployeeAcquaintedOn = new DateOnly(2022, 12, 17),
-                        EmployeeId = 16,
-                        EvaluatorId = 3,
-                        Expectations = "Udostępnianie danych publicznych na wnioski w ustawowym terminie, z kompletnym uzasadnieniem odmowy.",
-                        PartIConfirmedAt = new DateTime(2022, 12, 17, 10, 0, 0, 0, DateTimeKind.Unspecified),
-                        PartIIAcquaintedOn = new DateOnly(2024, 11, 28),
-                        PeriodEnd = new DateOnly(2024, 11, 28),
-                        PeriodStart = new DateOnly(2022, 12, 17),
-                        PreparedOn = new DateOnly(2024, 11, 28),
-                        Sheet = "C",
-                        SheetConfirmedAt = new DateTime(2022, 12, 3, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                        StartedAt = new DateTime(2024, 10, 1, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                        Status = "Completed",
-                        WrittenEvaluationAt = new DateTime(2024, 11, 20, 13, 0, 0, 0, DateTimeKind.Unspecified)
-                    },
-                    new
-                    {
-                        Id = 15,
-                        DueDate = new DateOnly(2026, 11, 28),
-                        EmployeeAcquaintedOn = new DateOnly(2024, 12, 16),
-                        EmployeeId = 16,
-                        EvaluatorId = 3,
-                        Expectations = "Wnioski o udostępnienie danych rozpatrywane w terminie, także te wymagające uzgodnień z innymi komórkami. Rejestr udostępnionych danych prowadzony na bieżąco.",
-                        PartIConfirmedAt = new DateTime(2024, 12, 16, 10, 0, 0, 0, DateTimeKind.Unspecified),
-                        PeriodStart = new DateOnly(2024, 12, 16),
-                        Sheet = "C",
-                        SheetConfirmedAt = new DateTime(2024, 12, 2, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                        StartedAt = new DateTime(2026, 10, 1, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                        Status = "InProgress",
-                        WrittenEvaluationAt = new DateTime(2026, 11, 19, 14, 30, 0, 0, DateTimeKind.Unspecified)
                     },
                     new
                     {
@@ -2002,52 +1111,12 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
                 b.HasData(
                     new
                     {
-                        EvaluationId = 1,
-                        Criterion = "AnalyticalThinking"
-                    },
-                    new
-                    {
-                        EvaluationId = 2,
-                        Criterion = "AnalyticalThinking"
-                    },
-                    new
-                    {
-                        EvaluationId = 2,
-                        Criterion = "Creativity"
-                    },
-                    new
-                    {
-                        EvaluationId = 3,
-                        Criterion = "AnalyticalThinking"
-                    },
-                    new
-                    {
-                        EvaluationId = 4,
-                        Criterion = "CustomerOrientation"
-                    },
-                    new
-                    {
                         EvaluationId = 5,
                         Criterion = "AnalyticalThinking"
                     },
                     new
                     {
                         EvaluationId = 6,
-                        Criterion = "CustomerOrientation"
-                    },
-                    new
-                    {
-                        EvaluationId = 6,
-                        Criterion = "AnalyticalThinking"
-                    },
-                    new
-                    {
-                        EvaluationId = 7,
-                        Criterion = "AnalyticalThinking"
-                    },
-                    new
-                    {
-                        EvaluationId = 8,
                         Criterion = "AnalyticalThinking"
                     },
                     new
@@ -2062,32 +1131,7 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
                     },
                     new
                     {
-                        EvaluationId = 10,
-                        Criterion = "AnalyticalThinking"
-                    },
-                    new
-                    {
                         EvaluationId = 11,
-                        Criterion = "AnalyticalThinking"
-                    },
-                    new
-                    {
-                        EvaluationId = 12,
-                        Criterion = "AnalyticalThinking"
-                    },
-                    new
-                    {
-                        EvaluationId = 13,
-                        Criterion = "AnalyticalThinking"
-                    },
-                    new
-                    {
-                        EvaluationId = 14,
-                        Criterion = "AnalyticalThinking"
-                    },
-                    new
-                    {
-                        EvaluationId = 15,
                         Criterion = "AnalyticalThinking"
                     },
                     new
@@ -3894,143 +2938,6 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
                 b.HasData(
                     new
                     {
-                        EvaluationId = 15,
-                        IndicatorId = 7,
-                        Level = 4
-                    },
-                    new
-                    {
-                        EvaluationId = 15,
-                        IndicatorId = 8,
-                        Level = 4
-                    },
-                    new
-                    {
-                        EvaluationId = 15,
-                        IndicatorId = 9,
-                        Level = 3
-                    },
-                    new
-                    {
-                        EvaluationId = 15,
-                        IndicatorId = 1,
-                        Level = 4
-                    },
-                    new
-                    {
-                        EvaluationId = 15,
-                        IndicatorId = 2,
-                        Level = 2
-                    },
-                    new
-                    {
-                        EvaluationId = 15,
-                        IndicatorId = 10,
-                        Level = 3
-                    },
-                    new
-                    {
-                        EvaluationId = 15,
-                        IndicatorId = 11,
-                        Level = 4
-                    },
-                    new
-                    {
-                        EvaluationId = 15,
-                        IndicatorId = 12
-                    },
-                    new
-                    {
-                        EvaluationId = 15,
-                        IndicatorId = 13,
-                        Level = 2
-                    },
-                    new
-                    {
-                        EvaluationId = 15,
-                        IndicatorId = 14,
-                        Level = 3
-                    },
-                    new
-                    {
-                        EvaluationId = 15,
-                        IndicatorId = 17,
-                        Level = 4
-                    },
-                    new
-                    {
-                        EvaluationId = 15,
-                        IndicatorId = 18,
-                        Level = 3
-                    },
-                    new
-                    {
-                        EvaluationId = 15,
-                        IndicatorId = 19,
-                        Level = 4
-                    },
-                    new
-                    {
-                        EvaluationId = 15,
-                        IndicatorId = 20,
-                        Level = 4
-                    },
-                    new
-                    {
-                        EvaluationId = 15,
-                        IndicatorId = 21,
-                        Level = 3
-                    },
-                    new
-                    {
-                        EvaluationId = 15,
-                        IndicatorId = 22,
-                        Level = 5
-                    },
-                    new
-                    {
-                        EvaluationId = 15,
-                        IndicatorId = 3,
-                        Level = 3
-                    },
-                    new
-                    {
-                        EvaluationId = 15,
-                        IndicatorId = 4,
-                        Level = 3
-                    },
-                    new
-                    {
-                        EvaluationId = 15,
-                        IndicatorId = 5,
-                        Level = 3
-                    },
-                    new
-                    {
-                        EvaluationId = 15,
-                        IndicatorId = 6,
-                        Level = 4
-                    },
-                    new
-                    {
-                        EvaluationId = 15,
-                        IndicatorId = 23,
-                        Level = 4
-                    },
-                    new
-                    {
-                        EvaluationId = 15,
-                        IndicatorId = 24,
-                        Level = 4
-                    },
-                    new
-                    {
-                        EvaluationId = 15,
-                        IndicatorId = 25,
-                        Level = 3
-                    },
-                    new
-                    {
                         EvaluationId = 17,
                         IndicatorId = 7,
                         Level = 3
@@ -4243,20 +3150,6 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
                 b.HasData(
                     new
                     {
-                        Id = 1,
-                        Department = "Departament Danych i Usług Cyfrowych",
-                        DirectSupervisorTitle = "Naczelnik wydziału",
-                        IndirectSupervisorTitle = "Dyrektor departamentu",
-                        Purpose = "Przygotowywanie analiz danych wspierających decyzje kierownictwa departamentu oraz dbanie o jakość danych wykorzystywanych w raportach.",
-                        RequiredCompetencies = "Myślenie analityczne\nOrientacja na cele\nKomunikacja pisemna\nWspółpraca",
-                        Subordinates = "None",
-                        Symbol = "DDU WAD 4",
-                        Tasks = "Przygotowywanie analiz i raportów na potrzeby kierownictwa departamentu\nOpracowywanie wskaźników i metod pomiaru realizacji zadań\nWeryfikacja jakości i kompletności danych z systemów dziedzinowych\nPrzygotowywanie projektów stanowisk do dokumentów przekazanych do zaopiniowania\nWsparcie merytoryczne mniej doświadczonych pracowników wydziału",
-                        Title = "Starszy specjalista",
-                        Unit = "Wydział Analiz Danych"
-                    },
-                    new
-                    {
                         Id = 2,
                         Department = "Departament Danych i Usług Cyfrowych",
                         DirectSupervisorTitle = "Naczelnik wydziału",
@@ -4276,24 +3169,10 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
                         DirectSupervisorTitle = "Dyrektor departamentu",
                         Purpose = "Kierowanie Wydziałem Analiz Danych, zapewnienie terminowej i rzetelnej realizacji zadań wydziału oraz rozwój kompetencji podległych pracowników.",
                         RequiredCompetencies = "Zarządzanie zespołem\nPodejmowanie decyzji\nMyślenie strategiczne\nZarządzanie rozwojem pracowników\nKomunikacja",
-                        Subordinates = "Over9",
+                        Subordinates = "UpTo4",
                         Symbol = "DDU WAD 1",
                         Tasks = "Planowanie, organizowanie i nadzorowanie pracy wydziału\nPrzydzielanie zadań i ocena ich realizacji przez pracowników\nPrzygotowywanie stanowisk i rekomendacji dla dyrektora departamentu\nWspółpraca z innymi komórkami organizacyjnymi i instytucjami\nProwadzenie ocen okresowych i planowanie rozwoju zawodowego pracowników",
                         Title = "Naczelnik wydziału",
-                        Unit = "Wydział Analiz Danych"
-                    },
-                    new
-                    {
-                        Id = 4,
-                        Department = "Departament Danych i Usług Cyfrowych",
-                        DirectSupervisorTitle = "Naczelnik wydziału",
-                        IndirectSupervisorTitle = "Dyrektor departamentu",
-                        Purpose = "Obsługa administracyjna wydziału i wsparcie pracowników w przygotowywaniu zestawień danych.",
-                        RequiredCompetencies = "Rzetelność\nOrganizacja pracy własnej\nKomunikacja",
-                        Subordinates = "None",
-                        Symbol = "DDU WAD 12",
-                        Tasks = "Prowadzenie rejestru korespondencji wydziału\nPrzygotowywanie prostych zestawień danych według wskazówek\nArchiwizowanie dokumentacji wydziału\nOrganizacja spotkań i przygotowywanie notatek",
-                        Title = "Referent",
                         Unit = "Wydział Analiz Danych"
                     },
                     new
@@ -4350,34 +3229,6 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
                         Symbol = "DDU WAD 2",
                         Tasks = "Projektowanie wskaźników i metod pomiaru dla zadań departamentu\nPrzygotowywanie analiz porównawczych na potrzeby kierownictwa\nOpracowywanie standardów opisu i weryfikacji źródeł danych\nKoordynowanie prac analitycznych realizowanych przez kilka osób wydziału",
                         Title = "Główny specjalista",
-                        Unit = "Wydział Analiz Danych"
-                    },
-                    new
-                    {
-                        Id = 9,
-                        Department = "Departament Danych i Usług Cyfrowych",
-                        DirectSupervisorTitle = "Naczelnik wydziału",
-                        IndirectSupervisorTitle = "Dyrektor departamentu",
-                        Purpose = "Przygotowywanie analiz statystycznych i prognoz na potrzeby planowania zadań departamentu.",
-                        RequiredCompetencies = "Myślenie analityczne\nRzetelność\nKomunikacja\nOrientacja na cele",
-                        Subordinates = "None",
-                        Symbol = "DDU WAD 9",
-                        Tasks = "Przygotowywanie prognoz i analiz trendów na podstawie danych wydziału\nOpracowywanie zestawień do planów i sprawozdań departamentu\nWeryfikacja poprawności obliczeń w raportach przygotowywanych przez wydział\nUdzielanie wyjaśnień dotyczących metod analizy innym komórkom",
-                        Title = "Starszy specjalista",
-                        Unit = "Wydział Analiz Danych"
-                    },
-                    new
-                    {
-                        Id = 10,
-                        Department = "Departament Danych i Usług Cyfrowych",
-                        DirectSupervisorTitle = "Naczelnik wydziału",
-                        IndirectSupervisorTitle = "Dyrektor departamentu",
-                        Purpose = "Obsługa wniosków o udostępnienie danych i przygotowywanie zestawień dla podmiotów zewnętrznych.",
-                        RequiredCompetencies = "Rzetelność\nKomunikacja pisemna\nWspółpraca",
-                        Subordinates = "None",
-                        Symbol = "DDU WAD 10",
-                        Tasks = "Rozpatrywanie wniosków o udostępnienie danych wydziału\nPrzygotowywanie zestawień danych dla podmiotów zewnętrznych\nProwadzenie rejestru udostępnionych danych\nWspółpraca z działem prawnym przy odpowiedziach na wnioski",
-                        Title = "Specjalista",
                         Unit = "Wydział Analiz Danych"
                     },
                     new
