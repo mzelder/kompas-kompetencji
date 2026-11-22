@@ -1,0 +1,10 @@
+**/bin
+**/obj
+publish
+publish.zip
+.git
+.vs
+tests
+tresci_zadania
+tickety_do_implementacji
+knowledge-base/sources
