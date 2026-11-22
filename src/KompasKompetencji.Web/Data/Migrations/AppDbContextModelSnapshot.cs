@@ -16,7 +16,7 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
     // If you encounter a merge conflict in the line below, it means you need to
     // discard one of the migration branches and recreate its migrations on top of
     // the other branch. See https://aka.ms/efcore-docs-migrations-conflicts for more info.
-    public override string LastMigrationId => "20261121231852_Initial";
+    public override string LastMigrationId => "20261122003620_TrimDemoNotes";
 
     protected override void BuildModel(ModelBuilder modelBuilder)
     {
@@ -1049,8 +1049,15 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
 
                 SqlServerPropertyBuilderExtensions.UseIdentityColumn(id);
 
+                b.Property<DateTime?>("ClassificationEditedAt")
+                    .HasColumnType("datetime2");
+
                 b.Property<DateTime>("CreatedAt")
                     .HasColumnType("datetime2");
+
+                b.Property<string>("Criterion")
+                    .HasMaxLength(40)
+                    .HasColumnType("nvarchar(40)");
 
                 b.Property<int>("EvaluationId")
                     .HasColumnType("int");
@@ -1059,6 +1066,14 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
                     .IsRequired()
                     .HasMaxLength(2000)
                     .HasColumnType("nvarchar(2000)");
+
+                b.Property<DateTime?>("TextEditedAt")
+                    .HasColumnType("datetime2");
+
+                b.Property<string>("Tone")
+                    .IsRequired()
+                    .HasMaxLength(20)
+                    .HasColumnType("nvarchar(20)");
 
                 b.HasKey("Id");
 
@@ -1070,44 +1085,20 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
                     new
                     {
                         Id = 1,
-                        CreatedAt = new DateTime(2026, 5, 14, 15, 20, 0, 0, DateTimeKind.Unspecified),
+                        CreatedAt = new DateTime(2026, 9, 8, 11, 0, 0, 0, DateTimeKind.Unspecified),
+                        Criterion = "KnowledgeAndDevelopment",
                         EvaluationId = 11,
-                        Text = "Przygotowała zestaw wskaźników do sprawozdania kwartalnego tydzień przed terminem. Kierownictwo departamentu przyjęło go bez poprawek."
+                        Text = "Z własnej inicjatywy poprowadziła dla wydziału warsztat z weryfikacji źródeł danych. Uczestnicy ocenili go jako przydatny.",
+                        Tone = "Positive"
                     },
                     new
                     {
                         Id = 2,
-                        CreatedAt = new DateTime(2026, 9, 8, 11, 0, 0, 0, DateTimeKind.Unspecified),
+                        CreatedAt = new DateTime(2026, 10, 14, 13, 20, 0, 0, DateTimeKind.Unspecified),
+                        Criterion = "Reliability",
                         EvaluationId = 11,
-                        Text = "Z własnej inicjatywy poprowadziła dla wydziału warsztat z weryfikacji źródeł danych. Uczestnicy ocenili go jako przydatny."
-                    },
-                    new
-                    {
-                        Id = 3,
-                        CreatedAt = new DateTime(2026, 3, 10, 9, 45, 0, 0, DateTimeKind.Unspecified),
-                        EvaluationId = 13,
-                        Text = "Prognoza zatrudnienia na 2027 r. wymagała dwóch poprawek metodologicznych. Po wskazówkach przygotował poprawioną wersję w terminie."
-                    },
-                    new
-                    {
-                        Id = 4,
-                        CreatedAt = new DateTime(2026, 10, 2, 14, 10, 0, 0, DateTimeKind.Unspecified),
-                        EvaluationId = 13,
-                        Text = "Samodzielnie wykrył błąd w obliczeniach raportu rocznego przed jego wysłaniem do dyrektora i zaproponował dodatkowy krok kontroli."
-                    },
-                    new
-                    {
-                        Id = 5,
-                        CreatedAt = new DateTime(2026, 3, 4, 10, 15, 0, 0, DateTimeKind.Unspecified),
-                        EvaluationId = 15,
-                        Text = "Rozpatrzyła wszystkie wnioski z pierwszego kwartału w terminie, w tym dwa wymagające uzgodnień z działem prawnym."
-                    },
-                    new
-                    {
-                        Id = 6,
-                        CreatedAt = new DateTime(2026, 8, 21, 13, 40, 0, 0, DateTimeKind.Unspecified),
-                        EvaluationId = 15,
-                        Text = "Uporządkowała rejestr udostępnionych danych i zaproponowała wzór odpowiedzi skracający obsługę typowych wniosków."
+                        Text = "Przekazała kierownictwu zestawienie kwartalne z błędnymi sumami w dwóch tabelach. Poprawioną wersję trzeba było rozesłać ponownie.",
+                        Tone = "Negative"
                     });
             });
 

@@ -1,3 +1,4 @@
+using KompasKompetencji.Web.Assistant;
 using KompasKompetencji.Web.Data;
 using KompasKompetencji.Web.Organization;
 using Microsoft.EntityFrameworkCore;
@@ -57,9 +58,11 @@ public sealed record EmployeeEvaluationView(
     IReadOnlyList<EvaluationNote> Notes)
 {
     public bool IsPartIConfirmed => StartingConversationStep == StartingConversationStep.Confirmed;
+
+    public IReadOnlyList<Criterion> Criteria => [.. MandatoryCriteria, .. AdditionalCriteria];
 }
 
-public sealed class EvaluationService(IDbContextFactory<AppDbContext> dbFactory)
+public sealed class EvaluationService(IDbContextFactory<AppDbContext> dbFactory, NoteCriterionClassifier noteClassifier)
 {
     public static readonly TimeSpan ConversationLength = TimeSpan.FromHours(1);
 
@@ -312,18 +315,18 @@ public sealed class EvaluationService(IDbContextFactory<AppDbContext> dbFactory)
             notes);
     }
 
-    public async Task<OperationResult> AddNoteAsync(
+    public async Task<(OperationResult Result, NoteClassification? Classification)> AddNoteAsync(
         int supervisorId, int employeeId, string text, DateTime now, CancellationToken ct = default)
     {
         var trimmed = text.Trim();
         if (trimmed.Length == 0)
         {
-            return OperationResult.Fail("Wpisz treść notatki.");
+            return (OperationResult.Fail("Wpisz treść notatki."), null);
         }
 
         if (trimmed.Length > EvaluationNote.MaxTextLength)
         {
-            return OperationResult.Fail($"Notatka może mieć najwyżej {EvaluationNote.MaxTextLength} znaków.");
+            return (OperationResult.Fail($"Notatka może mieć najwyżej {EvaluationNote.MaxTextLength} znaków."), null);
         }
 
         await using var db = await dbFactory.CreateDbContextAsync(ct);
@@ -331,12 +334,86 @@ public sealed class EvaluationService(IDbContextFactory<AppDbContext> dbFactory)
         var open = await FindAssessmentEvaluationAsync(db, supervisorId, employeeId, ct);
         if (open is null)
         {
-            return OperationResult.Fail("Notatki dodaje się na etapie oceny pracownika z Twojego zespołu.");
+            return (OperationResult.Fail("Notatki dodaje się na etapie oceny pracownika z Twojego zespołu."), null);
         }
 
-        db.EvaluationNotes.Add(new EvaluationNote { EvaluationId = open.Id, CreatedAt = now, Text = trimmed });
+        var evaluationCriteria = EvaluationCriteria.Mandatory(open.Sheet)
+            .Concat(open.AdditionalCriteria.Select(a => a.Criterion).OrderBy(c => c))
+            .ToList();
+        var classification = await noteClassifier.ClassifyAsync(trimmed, evaluationCriteria, ct);
+
+        db.EvaluationNotes.Add(new EvaluationNote
+        {
+            EvaluationId = open.Id,
+            Criterion = classification.Criterion,
+            Tone = classification.Tone,
+            CreatedAt = now,
+            Text = trimmed,
+        });
         await db.SaveChangesAsync(ct);
-        return OperationResult.Success;
+        return (OperationResult.Success, classification);
+    }
+
+    public async Task<(OperationResult Result, NoteClassification? Reclassified)> UpdateNoteAsync(
+        int supervisorId, int employeeId, int noteId, string text, bool manualClassification, Criterion? criterion, NoteTone tone,
+        DateTime now, CancellationToken ct = default)
+    {
+        var trimmed = text.Trim();
+        if (trimmed.Length == 0)
+        {
+            return (OperationResult.Fail("Wpisz treść notatki."), null);
+        }
+
+        if (trimmed.Length > EvaluationNote.MaxTextLength)
+        {
+            return (OperationResult.Fail($"Notatka może mieć najwyżej {EvaluationNote.MaxTextLength} znaków."), null);
+        }
+
+        await using var db = await dbFactory.CreateDbContextAsync(ct);
+
+        var open = await FindAssessmentEvaluationAsync(db, supervisorId, employeeId, ct);
+        var note = open is null
+            ? null
+            : await db.EvaluationNotes.SingleOrDefaultAsync(n => n.Id == noteId && n.EvaluationId == open.Id, ct);
+        if (open is null || note is null)
+        {
+            return (OperationResult.Fail("Nie znaleziono notatki."), null);
+        }
+
+        var evaluationCriteria = EvaluationCriteria.Mandatory(open.Sheet)
+            .Concat(open.AdditionalCriteria.Select(a => a.Criterion).OrderBy(c => c))
+            .ToList();
+        if (manualClassification && criterion is Criterion selected && !evaluationCriteria.Contains(selected))
+        {
+            return (OperationResult.Fail("To kryterium nie jest ustalone w tej ocenie. Wybierz kryterium z listy."), null);
+        }
+
+        var textChanged = note.Text != trimmed;
+        var classificationChanged = manualClassification && (note.Criterion != criterion || note.Tone != tone);
+        NoteClassification? reclassified = null;
+
+        if (textChanged)
+        {
+            note.Text = trimmed;
+            note.TextEditedAt = now;
+        }
+
+        if (classificationChanged)
+        {
+            note.Criterion = criterion;
+            note.Tone = tone;
+            note.ClassificationEditedAt = now;
+        }
+        else if (textChanged && !manualClassification)
+        {
+            reclassified = await noteClassifier.ClassifyAsync(trimmed, evaluationCriteria, ct);
+            note.Criterion = reclassified.Criterion;
+            note.Tone = reclassified.Tone;
+            note.ClassificationEditedAt = null;
+        }
+
+        await db.SaveChangesAsync(ct);
+        return (OperationResult.Success, reclassified);
     }
 
     public async Task<OperationResult> DeleteNoteAsync(
@@ -397,7 +474,7 @@ public sealed class EvaluationService(IDbContextFactory<AppDbContext> dbFactory)
             return null;
         }
 
-        var evaluations = await db.Evaluations.AsNoTracking().Where(v => v.EmployeeId == employeeId).ToListAsync(ct);
+        var evaluations = await db.Evaluations.AsNoTracking().Include(v => v.AdditionalCriteria).Where(v => v.EmployeeId == employeeId).ToListAsync(ct);
         var open = EvaluationSchedule.OpenEvaluation(evaluations);
         return EvaluationStages.Current(open) == EvaluationStage.Assessment ? open : null;
     }

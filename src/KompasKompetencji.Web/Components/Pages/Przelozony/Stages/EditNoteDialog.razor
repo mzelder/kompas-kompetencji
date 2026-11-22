@@ -1,0 +1,45 @@
+<RadzenStack Gap="1.25rem">
+    <RadzenFormField Text="Treść notatki" Variant="Variant.Outlined" class="rz-w-100">
+        <ChildContent>
+            <RadzenTextArea @bind-Value="text" Name="EditNoteText" Rows="4" MaxLength="@EvaluationNote.MaxTextLength" />
+        </ChildContent>
+    </RadzenFormField>
+
+    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.5rem">
+        <RadzenCheckBox TValue="bool" Name="ManualClassification" Value="@manual" ValueChanged="@OnManualChanged" />
+        <RadzenLabel Component="ManualClassification" Text="Ustaw kryterium i wydźwięk ręcznie bez pomocy AI" />
+    </RadzenStack>
+
+    <RadzenFormField Text="Kryterium" Variant="Variant.Outlined" class="rz-w-100">
+        <ChildContent>
+            <RadzenDropDown TValue="string" @bind-Value="criterionKey" Data="@CriterionOptions" Disabled="@(!manual)"
+                            TextProperty="@nameof(CriterionOption.Text)" ValueProperty="@nameof(CriterionOption.Value)" Name="EditNoteCriterion" />
+        </ChildContent>
+    </RadzenFormField>
+
+    <RadzenStack Gap="0.5rem">
+        <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">Wydźwięk</RadzenText>
+        <RadzenRadioButtonList TValue="NoteTone" @bind-Value="tone" Orientation="Orientation.Horizontal" Gap="1.5rem" Disabled="@(!manual)">
+            <Items>
+                @foreach (var option in Enum.GetValues<NoteTone>())
+                {
+                    <RadzenRadioButtonListItem TValue="NoteTone" Value="@option" Text="@EvaluationText.NoteToneLabel(option)" />
+                }
+            </Items>
+        </RadzenRadioButtonList>
+    </RadzenStack>
+
+    @if (errorMessage is not null)
+    {
+        <RadzenAlert AlertStyle="AlertStyle.Danger" Variant="Variant.Flat" Shade="Shade.Lighter" AllowClose="false" class="rz-m-0">
+            @errorMessage
+        </RadzenAlert>
+    }
+
+    <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End" Gap="0.5rem">
+        <RadzenButton Text="Anuluj" Variant="Variant.Text" ButtonStyle="ButtonStyle.Base" Disabled="@busy"
+                      Click="@(() => DialogService.Close(false))" />
+        <RadzenButton Text="Zapisz zmiany" Icon="save" ButtonStyle="ButtonStyle.Primary"
+                      IsBusy="@busy" BusyText="@(manual ? "Zapisywanie…" : "Zapisywanie i analiza…")" Click="@SaveAsync" />
+    </RadzenStack>
+</RadzenStack>

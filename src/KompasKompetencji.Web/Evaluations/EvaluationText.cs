@@ -46,6 +46,13 @@ public static class EvaluationText
 
     public static string Sheet(EvaluationSheet sheet) => $"Arkusz {sheet}";
 
+    public static string NoteToneLabel(NoteTone tone) => tone switch
+    {
+        NoteTone.Positive => "Pozytywna",
+        NoteTone.Negative => "Negatywna",
+        _ => "Neutralna",
+    };
+
     public static string SheetDescription(EvaluationSheet sheet) => sheet switch
     {
         EvaluationSheet.B => "Dla osób kierujących zespołem: kryteria obejmują też zarządzanie ludźmi.",

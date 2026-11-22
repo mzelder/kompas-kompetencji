@@ -15,13 +15,25 @@
 
 <RadzenCard Variant="Variant.Outlined">
     <RadzenStack Gap="1rem">
-        <RadzenStack Gap="0">
-            <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H2" class="rz-m-0">Notatki</RadzenText>
-            <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">
-                @(ReadOnly ? "Notatki zapisane w trakcie okresu oceny." : "Przez cały okres oceny zapisuj konkretne przykłady pracy. Przydadzą się na rozmowie oceniającej i przy ocenie na piśmie.")
-            </RadzenText>
-        </RadzenStack>
+        <div class="collapsible-heading" role="button" tabindex="0" aria-expanded="@(!collapsed)"
+             title="@(collapsed ? "Rozwiń notatki" : "Zwiń notatki")" @onclick="@ToggleCollapsed" @onkeydown="@OnHeadingKeyDown">
+            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween" Gap="1rem">
+                <RadzenStack Gap="0" class="card-heading">
+                    <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H2" class="rz-m-0">Notatki (@View.Notes.Count)</RadzenText>
+                    <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">
+                        @(ReadOnly ? "Notatki zapisane w trakcie okresu oceny." : "Przez cały okres oceny zapisuj konkretne przykłady pracy. Przydadzą się na rozmowie oceniającej i przy ocenie na piśmie.")
+                    </RadzenText>
+                </RadzenStack>
+                <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.75rem" class="no-shrink">
+                    <AiAssistBadge Description="Asystent AI przypisuje notatkę do kryterium i oznacza jej wydźwięk. Nie ocenia pracownika: o ocenie decydujesz Ty." />
+                    <RadzenIcon Icon="@(collapsed ? "expand_more" : "expand_less")" />
+                </RadzenStack>
+            </RadzenStack>
+        </div>
 
+        @if (!collapsed)
+        {
+        <RadzenStack Gap="1rem">
         @if (!ReadOnly)
         {
             <RadzenStack Gap="0.5rem">
@@ -29,11 +41,6 @@
                     <ChildContent>
                         <RadzenTextArea @bind-Value="text" Name="NoteText" Rows="3" MaxLength="@EvaluationNote.MaxTextLength" />
                     </ChildContent>
-                    <Helper>
-                        <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">
-                            Opisz konkretną sytuację: co pracownik zrobił i z jakim skutkiem. Data zapisze się sama.
-                        </RadzenText>
-                    </Helper>
                 </RadzenFormField>
 
                 @if (errorMessage is not null)
@@ -45,7 +52,7 @@
 
                 <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End">
                     <RadzenButton Text="Dodaj notatkę" Icon="note_add" ButtonStyle="ButtonStyle.Primary"
-                                  IsBusy="@busy" BusyText="Zapisywanie..." Click="@AddAsync" />
+                                  IsBusy="@busy" BusyText="Analizuję notatkę..." Click="@AddAsync" />
                 </RadzenStack>
             </RadzenStack>
         }
@@ -56,17 +63,55 @@
         }
         else
         {
+            <RadzenFormField Text="Pokaż notatki" Variant="Variant.Outlined" class="rz-w-100">
+                <ChildContent>
+                    <RadzenDropDown TValue="string" @bind-Value="filter" Data="@FilterOptions"
+                                    TextProperty="@nameof(FilterOption.Text)" ValueProperty="@nameof(FilterOption.Value)"
+                                    Placeholder="@($"Wszystkie kryteria ({View.Notes.Count})")" AllowClear="true" Name="NoteFilter" />
+                </ChildContent>
+                <Helper>
+                    <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">
+                        W nawiasie liczba notatek. Kryterium z zerem nie ma jeszcze żadnego przykładu.
+                    </RadzenText>
+                </Helper>
+            </RadzenFormField>
+
+            @if (VisibleNotes.Count == 0)
+            {
+                <RadzenText TextStyle="TextStyle.Body2" class="rz-m-0 rz-color-base-300">
+                    @(filter == WithoutCriterion ? "Każda notatka ma przypisane kryterium." : "Nie ma jeszcze notatek do tego kryterium.")
+                </RadzenText>
+            }
+
             <RadzenStack Gap="0.75rem" class="notes-list">
-                @foreach (var note in View.Notes)
+                @foreach (var note in VisibleNotes)
                 {
-                    <RadzenCard Variant="Variant.Filled" class="rz-p-3">
+                    <RadzenCard Variant="Variant.Filled" class="@($"rz-p-3 note-card {ToneClass(note.Tone)}")">
                         <RadzenStack Gap="0.25rem">
                             <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween" Gap="1rem">
-                                <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">@EvaluationText.Date(note.CreatedAt)</RadzenText>
+                                <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.75rem" Wrap="FlexWrap.Wrap" class="min-w-0">
+                                    <RadzenIcon Icon="@ToneIcon(note.Tone)" IconColor="@ToneColor(note.Tone)" class="no-shrink"
+                                                title="@($"{EvaluationText.NoteToneLabel(note.Tone)} ({ClassificationSource(note)})")" />
+                                    @if (note.Criterion is Criterion criterion)
+                                    {
+                                        <RadzenBadge BadgeStyle="BadgeStyle.Info" Variant="Variant.Flat" Shade="Shade.Lighter" IsPill="true"
+                                                     Text="@EvaluationCriteria.Name(criterion)" title="@($"Kryterium: {ClassificationSource(note)}")" />
+                                    }
+                                    <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">@EvaluationText.Date(note.CreatedAt)</RadzenText>
+                                    @if (note.IsEdited)
+                                    {
+                                        <RadzenBadge BadgeStyle="BadgeStyle.Base" Variant="Variant.Flat" Shade="Shade.Lighter" IsPill="true"
+                                                     Text="Edytowano" title="@EditedDescription(note)" />
+                                    }
+                                </RadzenStack>
                                 @if (!ReadOnly)
                                 {
-                                    <RadzenButton Icon="delete" Variant="Variant.Text" ButtonStyle="ButtonStyle.Base" Size="ButtonSize.Small"
-                                                  title="Usuń notatkę" Click="@(() => DeleteAsync(note))" />
+                                    <RadzenStack Orientation="Orientation.Horizontal" Gap="0" class="no-shrink">
+                                        <RadzenButton Icon="edit" Variant="Variant.Text" ButtonStyle="ButtonStyle.Base" Size="ButtonSize.Small"
+                                                      title="Edytuj notatkę, kryterium i wydźwięk" Click="@(() => EditAsync(note))" />
+                                        <RadzenButton Icon="delete" Variant="Variant.Text" ButtonStyle="ButtonStyle.Base" Size="ButtonSize.Small"
+                                                      title="Usuń notatkę" Click="@(() => DeleteAsync(note))" />
+                                    </RadzenStack>
                                 }
                             </RadzenStack>
                             <RadzenText TextStyle="TextStyle.Body2" class="rz-m-0 note-text">@note.Text</RadzenText>
@@ -74,6 +119,8 @@
                     </RadzenCard>
                 }
             </RadzenStack>
+        }
+        </RadzenStack>
         }
     </RadzenStack>
 </RadzenCard>
