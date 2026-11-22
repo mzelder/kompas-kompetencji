@@ -22,7 +22,7 @@ public static class RoleNavigation
             [
                 new("Przebieg oceny", "/przelozony/przebieg-oceny", "route"),
                 new("Model kompetencji", "/przelozony/model-kompetencji", "psychology"),
-                new("Zasady i materiały", "/przelozony/zasady", "menu_book"),
+                new("Materiały", "/przelozony/materialy", "menu_book"),
             ]),
         ],
         AppRoles.Hr =>

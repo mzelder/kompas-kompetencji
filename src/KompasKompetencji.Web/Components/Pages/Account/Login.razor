@@ -109,7 +109,7 @@
                     <RadzenText TextStyle="TextStyle.H6" class="rz-m-0">Konta testowe</RadzenText>
                 </RadzenStack>
 
-                @foreach (var account in TestAccounts.All)
+                @foreach (var account in TestAccounts.QuickLogin)
                 {
                     <RadzenCard Variant="Variant.Filled" class="rz-p-3">
                         <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center"
@@ -124,11 +124,18 @@
                                 </RadzenStack>
                             </RadzenStack>
                             <RadzenButton Text="Zaloguj" Icon="bolt" Size="ButtonSize.Small" Variant="Variant.Flat"
-                                          ButtonStyle="ButtonStyle.Secondary" Disabled="@busy"
+                                          ButtonStyle="ButtonStyle.Secondary" Disabled="@(busy || resetting)"
                                           Click="@(() => SignInAsTestAccountAsync(account))" />
                         </RadzenStack>
                     </RadzenCard>
                 }
+
+                <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween"
+                             Gap="1rem" Wrap="FlexWrap.Wrap" class="conversation-row">
+                    <RadzenButton Text="Zresetuj bazę z danymi testowymi" Icon="restart_alt" Size="ButtonSize.Small" Variant="Variant.Outlined"
+                                  ButtonStyle="ButtonStyle.Warning" class="no-shrink" Disabled="@busy"
+                                  IsBusy="@resetting" BusyText="Resetowanie…" Click="@ResetDatabaseAsync" />
+                </RadzenStack>
             </RadzenStack>
         </RadzenCard>
     }

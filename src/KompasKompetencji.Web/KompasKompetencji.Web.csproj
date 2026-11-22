@@ -21,6 +21,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="..\..\competency-model\competency-model.json" LogicalName="competency-model.json" />
+    <Content Include="..\..\knowledge-base\sources\*.pdf;..\..\knowledge-base\sources\*.docx;..\..\knowledge-base\sources\*.xlsx" LinkBase="Materials" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
     <Content Include="..\..\knowledge-base\knowledge-base.json" Link="Assistant\knowledge-base.json" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
   </ItemGroup>
 

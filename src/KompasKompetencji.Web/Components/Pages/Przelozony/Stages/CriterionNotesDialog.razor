@@ -1,0 +1,28 @@
+<RadzenStack Gap="0.75rem">
+    @if (Notes.Count == 0)
+    {
+        <RadzenText TextStyle="TextStyle.Body2" class="rz-m-0 rz-color-base-300">Nie ma notatek do tego kryterium.</RadzenText>
+    }
+    else
+    {
+        <RadzenStack Gap="0.75rem" class="notes-list">
+            @foreach (var note in Notes.OrderByDescending(n => n.CreatedAt))
+            {
+                <RadzenCard Variant="Variant.Filled" class="@($"rz-p-3 note-card note-tone-{note.Tone.ToString().ToLowerInvariant()}")">
+                    <RadzenStack Gap="0.25rem">
+                        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.75rem">
+                            <RadzenIcon Icon="@ToneIcon(note.Tone)" IconColor="@ToneColor(note.Tone)" class="no-shrink"
+                                        title="@EvaluationText.NoteToneLabel(note.Tone)" />
+                            <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">@EvaluationText.Date(note.CreatedAt)</RadzenText>
+                        </RadzenStack>
+                        <RadzenText TextStyle="TextStyle.Body2" class="rz-m-0 note-text">@note.Text</RadzenText>
+                    </RadzenStack>
+                </RadzenCard>
+            }
+        </RadzenStack>
+    }
+
+    <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End">
+        <RadzenButton Text="Zamknij" Variant="Variant.Text" ButtonStyle="ButtonStyle.Base" Click="@(() => DialogService.Close(null))" />
+    </RadzenStack>
+</RadzenStack>

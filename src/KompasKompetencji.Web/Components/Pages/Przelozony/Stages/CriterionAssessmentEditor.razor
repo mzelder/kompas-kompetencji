@@ -1,0 +1,112 @@
+<RadzenStack Gap="1rem">
+    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Start" JustifyContent="JustifyContent.SpaceBetween" Gap="1rem" Wrap="FlexWrap.Wrap">
+        <RadzenStack Gap="0" class="card-heading">
+            <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H3" class="rz-m-0">@EvaluationCriteria.Name(Assessment.Criterion)</RadzenText>
+            <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">
+                @(Assessment.IsMandatory ? "Kryterium obowiązkowe" : "Kryterium dodatkowe") · wskaźniki behawioralne: @Assessment.Indicators.Count
+            </RadzenText>
+        </RadzenStack>
+        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.5rem" Wrap="FlexWrap.Wrap" class="no-shrink">
+            <RadzenButton Text="@($"Notatki ({Notes.Count})")" Icon="sticky_note_2" Variant="Variant.Outlined" ButtonStyle="ButtonStyle.Base" Size="ButtonSize.Small"
+                          Disabled="@(Notes.Count == 0)" title="@(Notes.Count == 0 ? "Nie ma notatek do tego kryterium" : "Przejrzyj notatki do tego kryterium")"
+                          Click="@ShowNotesAsync" />
+            @if (!ReadOnly)
+            {
+                <RadzenButton Text="Podpowiedz z notatek" Icon="smart_toy" ButtonStyle="ButtonStyle.Secondary" Size="ButtonSize.Small"
+                              Disabled="@(Notes.Count == 0)" IsBusy="@suggesting" BusyText="Analizuję notatki…"
+                              title="@(Notes.Count == 0 ? "Podpowiedź wymaga notatek do tego kryterium" : "Asystent AI wskaże opisy zachowań pasujące do notatek")"
+                              Click="@SuggestAsync" />
+            }
+        </RadzenStack>
+    </RadzenStack>
+
+    @foreach (var indicator in Assessment.Indicators)
+    {
+        var suggestion = suggestions?.For(indicator.Indicator.Id);
+        var expanded = expandedIndicators.Contains(indicator.Indicator.Id);
+        <RadzenCard Variant="Variant.Filled" class="rz-p-3">
+            <RadzenStack Gap="0.75rem">
+                <RadzenText TextStyle="TextStyle.Body1" class="rz-m-0">@indicator.Indicator.Number. @indicator.Indicator.Text</RadzenText>
+
+                <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.75rem" Wrap="FlexWrap.Wrap">
+                    <RadzenDropDown TValue="string" Value="@RatingValue(indicator)" ValueChanged="@(value => RateAsync(indicator, value))"
+                                    Data="@RatingOptions" TextProperty="@nameof(Option.Text)" ValueProperty="@nameof(Option.Value)"
+                                    Placeholder="Wybierz poziom zachowania" Disabled="@ReadOnly" class="rating-select"
+                                    Name="@($"Indicator{indicator.Indicator.Id}")" />
+                    <RadzenButton Text="@(expanded ? "Ukryj opisy zachowań" : "Pokaż opisy zachowań")" Icon="@(expanded ? "expand_less" : "expand_more")"
+                                  Variant="Variant.Text" ButtonStyle="ButtonStyle.Base" Size="ButtonSize.Small"
+                                  Click="@(() => ToggleExpanded(indicator.Indicator.Id))" />
+                </RadzenStack>
+
+                @if (suggestion is not null)
+                {
+                    <div class="ai-hint">
+                        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween" Gap="0.75rem">
+                            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Start" Gap="0.5rem" class="min-w-0">
+                                <RadzenIcon Icon="smart_toy" class="no-shrink" />
+                                <RadzenText TextStyle="TextStyle.Body2" class="rz-m-0">
+                                    <strong>Podpowiedź AI: @(suggestion.Level is int level ? CompetencyLevels.Name(level) : NoBasisText)</strong>
+                                    @if (!string.IsNullOrEmpty(suggestion.Reason))
+                                    {
+                                        <span> – @suggestion.Reason</span>
+                                    }
+                                </RadzenText>
+                            </RadzenStack>
+                            @if (!ReadOnly)
+                            {
+                                <RadzenButton Text="Zastosuj" Icon="done" Variant="Variant.Text" ButtonStyle="ButtonStyle.Primary" Size="ButtonSize.Small"
+                                              class="no-shrink" Click="@(() => RateAsync(indicator, suggestion.Level?.ToString() ?? NoBasisValue))" />
+                            }
+                        </RadzenStack>
+                    </div>
+                }
+
+                @if (expanded)
+                {
+                    <RadzenStack Gap="0.5rem">
+                        @foreach (var behavior in indicator.Indicator.Behaviors.OrderBy(b => b.Level))
+                        {
+                            var isSelected = indicator.IsAnswered && indicator.Level == behavior.Level;
+                            <div class="@BehaviorClass(isSelected)" role="@(ReadOnly ? null : "button")" tabindex="@(ReadOnly ? null : "0")"
+                                 @onclick="@(() => SelectBehaviorAsync(indicator, behavior.Level))">
+                                <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">@CompetencyLevels.NameWithPoints(behavior.Level)</RadzenText>
+                                <RadzenText TextStyle="TextStyle.Body2" class="rz-m-0">@behavior.Description</RadzenText>
+                            </div>
+                        }
+                    </RadzenStack>
+                }
+            </RadzenStack>
+        </RadzenCard>
+    }
+
+    <RadzenCard Variant="Variant.Outlined" class="rz-p-3">
+        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween" Gap="1rem" Wrap="FlexWrap.Wrap">
+            <RadzenStack Gap="0.25rem" class="min-w-0">
+                <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">Poziom kryterium</RadzenText>
+                <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.5rem">
+                    @if (Assessment.Decision is CriterionDecision decision)
+                    {
+                        <RadzenIcon Icon="check_circle" IconColor="@Colors.Success" class="no-shrink" />
+                        <RadzenText TextStyle="TextStyle.Body1" class="rz-m-0 stat-value">@CompetencyLevels.NameWithPoints(decision.Level)</RadzenText>
+                    }
+                    else
+                    {
+                        <RadzenText TextStyle="TextStyle.Body1" class="rz-m-0 rz-color-base-300">@PendingLevelText</RadzenText>
+                    }
+                </RadzenStack>
+            </RadzenStack>
+            @if (Assessment.IsDecided && HasNext)
+            {
+                <RadzenButton Text="Następne kryterium" Icon="arrow_forward" ButtonStyle="ButtonStyle.Primary" Size="ButtonSize.Small"
+                              class="no-shrink" Click="@(() => OnNext.InvokeAsync())" />
+            }
+        </RadzenStack>
+    </RadzenCard>
+
+    @if (Assessment.Suggestion.HasTooFewBasis)
+    {
+        <RadzenAlert AlertStyle="AlertStyle.Warning" Variant="Variant.Flat" Shade="Shade.Lighter" AllowClose="false" class="rz-m-0">
+            Oceniono mniej niż połowę wskaźników. Poziom kryterium ma słabe podstawy, więc sprawdź, czy przy pozostałych wskaźnikach na pewno brakuje przykładów.
+        </RadzenAlert>
+    }
+</RadzenStack>

@@ -24,6 +24,7 @@ src/KompasKompetencji.Web/
   Assistant/                        asystent AI: klient modelu, RAG, odmowa, pseudonimizacja
 tests/KompasKompetencji.Tests/      testy xUnit (wyszukiwarka, asystent)
 knowledge-base/                     baza wiedzy asystenta: źródła, skrypt, knowledge-base.json
+competency-model/                   model kompetencji: skrypt i competency-model.json (z Model_kompetencji.xlsx)
 ```
 
 ## Uruchomienie krok po kroku
@@ -87,6 +88,8 @@ dotnet run --project src/KompasKompetencji.Web --launch-profile https
 ```
 
 Przy pierwszym uruchomieniu w trybie Development aplikacja **sama tworzy bazę `KompasKompetencji` i stosuje migracje** (wraz z danymi demo). Nie trzeba ręcznie uruchamiać `database update`.
+
+Kolejne uruchomienia **nie kasują danych**: aplikacja tylko stosuje nowe migracje. Żeby wrócić do danych testowych, użyj przycisku **„Zresetuj bazę z danymi testowymi”** na ekranie logowania (karta „Konta testowe”, tylko w trybie Development). Po zmianie danych demo w kodzie też trzeba go użyć.
 
 Jeśli przeglądarka ostrzega o certyfikacie, zaufaj certyfikatowi deweloperskiemu (jednorazowo):
 

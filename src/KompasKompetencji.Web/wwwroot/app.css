@@ -419,3 +419,34 @@ h1:focus {
     cursor: pointer;
     user-select: none;
 }
+
+.rating-select {
+    min-width: 16rem;
+    max-width: 100%;
+}
+
+.criterion-list-name {
+    white-space: normal;
+}
+
+.ai-hint {
+    padding: 0.5rem 0.75rem;
+    border-radius: var(--rz-border-radius);
+    background-color: var(--rz-info-lighter);
+}
+
+.behavior-option {
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--rz-base-700);
+    border-radius: var(--rz-border-radius);
+    cursor: pointer;
+}
+
+.behavior-option.selected {
+    border-color: var(--rz-primary);
+    background-color: var(--rz-primary-lighter);
+}
+
+.behavior-option.readonly {
+    cursor: default;
+}

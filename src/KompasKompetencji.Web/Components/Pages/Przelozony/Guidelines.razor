@@ -1,7 +1,93 @@
-@page "/przelozony/zasady"
+@page "/przelozony/materialy"
+@using KompasKompetencji.Web.Materials
 
-<PageTitle>Zasady i materiały – Kompas kompetencji</PageTitle>
+<PageTitle>Materiały – Kompas kompetencji</PageTitle>
 
-<PageHeader Title="Zasady i materiały" Subtitle="Przebieg oceny okresowej, terminy, arkusze i przepisy." />
+<PageHeader Title="Materiały" Subtitle="Dokumenty źródłowe o ocenie okresowej, arkusze oceny i skala ocen." />
 
-<StatusMessage Icon="menu_book" Title="Brak materiałów" Text="Materiały nie zostały jeszcze dodane." />
+<RadzenCard Variant="Variant.Outlined">
+    <RadzenStack Gap="1.5rem">
+        <RadzenStack Gap="0">
+            <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H2" class="rz-m-0">Materiały do pobrania</RadzenText>
+            <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">
+                Dokumenty źródłowe. Na nich opiera się też asystent AI. Pliki PDF otwierają się w nowej karcie, a arkusze się pobierają.
+            </RadzenText>
+        </RadzenStack>
+        @foreach (var group in MaterialCatalog.All.GroupBy(m => m.Group))
+        {
+            <RadzenStack Gap="0.75rem">
+                <RadzenText TextStyle="TextStyle.Overline" class="rz-m-0 rz-color-base-300">@group.Key</RadzenText>
+                <RadzenRow Gap="1rem">
+                    @foreach (var material in group)
+                    {
+                        <RadzenColumn Size="12" SizeMD="6" SizeXL="4">
+                            <RadzenCard Variant="Variant.Filled" class="rz-p-3 rz-h-100">
+                                <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Start" Gap="0.75rem">
+                                    <RadzenIcon Icon="@material.Icon" IconColor="@Colors.Primary" class="icon-md no-shrink" />
+                                    <RadzenStack Gap="0.25rem" class="min-w-0">
+                                        <RadzenText TextStyle="TextStyle.Body1" class="rz-m-0">@material.Title</RadzenText>
+                                        <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">@material.Description</RadzenText>
+                                        <RadzenLink Path="@material.Url" Target="_blank" Icon="@(material.Extension == "PDF" ? "open_in_new" : "download")"
+                                                    Text="@($"{(material.Extension == "PDF" ? "Otwórz" : "Pobierz")} ({material.Extension})")" />
+                                    </RadzenStack>
+                                </RadzenStack>
+                            </RadzenCard>
+                        </RadzenColumn>
+                    }
+                </RadzenRow>
+            </RadzenStack>
+        }
+    </RadzenStack>
+</RadzenCard>
+
+<RadzenRow Gap="1.5rem" class="rz-mt-6">
+    <RadzenColumn Size="12" SizeMD="6">
+        <RadzenCard Variant="Variant.Outlined" class="rz-h-100">
+            <RadzenStack Gap="1rem">
+                <RadzenStack Gap="0">
+                    <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H2" class="rz-m-0">Arkusze oceny</RadzenText>
+                    <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">
+                        Kryteria obowiązkowe. Do tego 0–@EvaluationCriteria.MaxAdditional kryteriów dodatkowych wybranych przez przełożonego.
+                    </RadzenText>
+                </RadzenStack>
+                @foreach (var sheet in Enum.GetValues<EvaluationSheet>())
+                {
+                    <RadzenCard Variant="Variant.Filled" class="rz-p-3">
+                        <RadzenStack Gap="0.5rem">
+                            <RadzenStack Gap="0">
+                                <RadzenText TextStyle="TextStyle.Body1" class="rz-m-0 stat-value">@EvaluationText.Sheet(sheet)</RadzenText>
+                                <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">@EvaluationText.SheetDescription(sheet)</RadzenText>
+                            </RadzenStack>
+                            <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" Wrap="FlexWrap.Wrap">
+                                @foreach (var criterion in EvaluationCriteria.Mandatory(sheet))
+                                {
+                                    <RadzenBadge BadgeStyle="BadgeStyle.Primary" Variant="Variant.Flat" Shade="Shade.Lighter" IsPill="true"
+                                                 Text="@EvaluationCriteria.Name(criterion)" />
+                                }
+                            </RadzenStack>
+                        </RadzenStack>
+                    </RadzenCard>
+                }
+            </RadzenStack>
+        </RadzenCard>
+    </RadzenColumn>
+
+    <RadzenColumn Size="12" SizeMD="6">
+        <RadzenCard Variant="Variant.Outlined" class="rz-h-100">
+            <RadzenStack Gap="1rem">
+                <RadzenStack Gap="0">
+                    <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H2" class="rz-m-0">Skala ocen</RadzenText>
+                    <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">
+                        Punkty, które dostaje kryterium na danym poziomie.
+                    </RadzenText>
+                </RadzenStack>
+                <RadzenDataGrid TItem="ScaleRow" Data="@ScaleRows" AllowSorting="false" GridLines="DataGridGridLines.Horizontal">
+                    <Columns>
+                        <RadzenDataGridColumn Property="@nameof(ScaleRow.Level)" Title="Poziom" />
+                        <RadzenDataGridColumn Property="@nameof(ScaleRow.Points)" Title="Punkty" Width="100px" />
+                    </Columns>
+                </RadzenDataGrid>
+            </RadzenStack>
+        </RadzenCard>
+    </RadzenColumn>
+</RadzenRow>

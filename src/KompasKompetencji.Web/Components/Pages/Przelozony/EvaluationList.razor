@@ -1,7 +1,122 @@
 @page "/przelozony/oceny"
+@using KompasKompetencji.Web.Evaluations.Pdf
 
 <PageTitle>Oceny – Kompas kompetencji</PageTitle>
 
 <PageHeader Title="Oceny" Subtitle="Oceny w toku i zakończone oceny Twoich pracowników." />
 
-<StatusMessage Icon="assignment" Title="Brak ocen do wyświetlenia" Text="Nie ma tu jeszcze żadnych ocen." />
+@if (loadError is not null)
+{
+    <RadzenAlert AlertStyle="AlertStyle.Danger" Variant="Variant.Flat" Shade="Shade.Lighter" AllowClose="false" class="rz-mb-4">
+        Nie udało się wczytać ocen: @loadError
+    </RadzenAlert>
+}
+else if (accountNotLinked)
+{
+    <StatusMessage Icon="link_off" IconColor="@Colors.Warning" Title="Konto nie jest powiązane z pracownikiem"
+                   Text="Poproś HR o powiązanie Twojego konta z kartą pracownika, aby zobaczyć oceny swojego zespołu." />
+}
+else
+{
+    <RadzenCard Variant="Variant.Outlined">
+        <RadzenStack Gap="1rem">
+            <SearchBox Value="@search" ValueChanged="@OnSearchChanged" Placeholder="Szukaj: nazwisko, komórka" />
+
+            <RadzenTabs RenderMode="TabRenderMode.Client">
+                <Tabs>
+                    <RadzenTabsItem Text="@($"W toku ({inProgress.Count})")">
+                        <RadzenDataGrid TItem="EvaluationListRow" Data="@inProgress" IsLoading="@loading" AllowSorting="true"
+                                        RowClick="@OnRowClick" class="person-grid"
+                                        EmptyText="@(string.IsNullOrWhiteSpace(search) ? "Nie ma ocen w toku." : "Nikt nie pasuje do wyszukiwania.")">
+                            <Columns>
+                                <RadzenDataGridColumn Property="@nameof(EvaluationListRow.FullName)" Title="Pracownik" Width="260px">
+                                    <Template Context="row">
+                                        <PersonName Person="@row.Employee" ShowSupervisorIcon="false" />
+                                    </Template>
+                                </RadzenDataGridColumn>
+                                <RadzenDataGridColumn Property="@nameof(EvaluationListRow.Stage)" Title="Etap oceny" Width="240px">
+                                    <Template Context="row">
+                                        @if (row.Stage is EvaluationStage stage)
+                                        {
+                                            <StageMarker Stage="@stage" />
+                                        }
+                                    </Template>
+                                </RadzenDataGridColumn>
+                                <RadzenDataGridColumn Property="@nameof(EvaluationListRow.DueDate)" Title="Termin oceny" Width="180px">
+                                    <Template Context="row">
+                                        <RadzenStack Gap="0">
+                                            <RadzenText TextStyle="TextStyle.Body2" class="rz-m-0">@EvaluationText.Date(row.DueDate)</RadzenText>
+                                            <RadzenText TextStyle="TextStyle.Caption" class="@(row.DueDate < today ? "rz-m-0 rz-color-danger text-small" : "rz-m-0 rz-color-base-500 text-small")">
+                                                @EvaluationText.RelativeToToday(row.DueDate, today)
+                                            </RadzenText>
+                                        </RadzenStack>
+                                    </Template>
+                                </RadzenDataGridColumn>
+                                <RadzenDataGridColumn Property="@nameof(EvaluationListRow.CriteriaProgress)" Title="Ocena kryteriów" Width="200px">
+                                    <Template Context="row">
+                                        @if (row.Stage >= EvaluationStage.Assessment)
+                                        {
+                                            <RadzenStack Gap="0.25rem">
+                                                <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0">Zatwierdzone: @row.DecidedCriteria z @row.TotalCriteria</RadzenText>
+                                                <RadzenProgressBar Value="@row.CriteriaProgress" ShowValue="false" Style="height: 0.375rem;"
+                                                                   ProgressBarStyle="@(row.CriteriaProgress == 100 ? ProgressBarStyle.Success : ProgressBarStyle.Primary)" />
+                                            </RadzenStack>
+                                        }
+                                        else
+                                        {
+                                            <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">Po zatwierdzeniu części I</RadzenText>
+                                        }
+                                    </Template>
+                                </RadzenDataGridColumn>
+                                <RadzenDataGridColumn Property="@nameof(EvaluationListRow.AveragePoints)" Title="Wynik">
+                                    <Template Context="row">
+                                        <EvaluationResult Summary="@row.Summary" EmptyText="Po ocenie wszystkich kryteriów" />
+                                    </Template>
+                                </RadzenDataGridColumn>
+                            </Columns>
+                        </RadzenDataGrid>
+                    </RadzenTabsItem>
+
+                    <RadzenTabsItem Text="@($"Zakończone ({completed.Count})")">
+                        <RadzenDataGrid TItem="EvaluationListRow" Data="@completed" IsLoading="@loading" AllowSorting="true"
+                                        EmptyText="@(string.IsNullOrWhiteSpace(search) ? "Nie ma jeszcze zakończonych ocen." : "Nikt nie pasuje do wyszukiwania.")">
+                            <Columns>
+                                <RadzenDataGridColumn Property="@nameof(EvaluationListRow.FullName)" Title="Pracownik" Width="260px">
+                                    <Template Context="row">
+                                        <PersonName Person="@row.Employee" ShowSupervisorIcon="false" />
+                                    </Template>
+                                </RadzenDataGridColumn>
+                                <RadzenDataGridColumn Property="@nameof(EvaluationListRow.Sheet)" Title="Arkusz" Width="110px">
+                                    <Template Context="row">@EvaluationText.Sheet(row.Sheet)</Template>
+                                </RadzenDataGridColumn>
+                                <RadzenDataGridColumn Property="@nameof(EvaluationListRow.PreparedOn)" Title="Sporządzona" Width="200px">
+                                    <Template Context="row">
+                                        <RadzenStack Gap="0">
+                                            <RadzenText TextStyle="TextStyle.Body2" class="rz-m-0">@(row.PreparedOn is DateOnly preparedOn ? EvaluationText.Date(preparedOn) : "–")</RadzenText>
+                                            <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-500 text-small">
+                                                Okres od @EvaluationText.Date(row.PeriodStart)
+                                            </RadzenText>
+                                        </RadzenStack>
+                                    </Template>
+                                </RadzenDataGridColumn>
+                                <RadzenDataGridColumn Property="@nameof(EvaluationListRow.AveragePoints)" Title="Wynik">
+                                    <Template Context="row">
+                                        <EvaluationResult Summary="@row.Summary" EmptyText="Wynik nie został zapisany w aplikacji" />
+                                    </Template>
+                                </RadzenDataGridColumn>
+                                <RadzenDataGridColumn Title="Arkusz PDF" Sortable="false" Width="140px">
+                                    <Template Context="row">
+                                        @if (row.CanDownloadSheet)
+                                        {
+                                            <RadzenLink Path="@EvaluationPdfEndpoints.SheetUrl(row.Id)" Target="_blank" Icon="picture_as_pdf" Text="Pobierz" />
+                                        }
+                                    </Template>
+                                </RadzenDataGridColumn>
+                            </Columns>
+                        </RadzenDataGrid>
+                    </RadzenTabsItem>
+                </Tabs>
+            </RadzenTabs>
+        </RadzenStack>
+    </RadzenCard>
+}

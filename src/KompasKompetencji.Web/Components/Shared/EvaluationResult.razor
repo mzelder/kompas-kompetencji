@@ -1,0 +1,15 @@
+@if (Summary is WrittenEvaluationSummary summary)
+{
+    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.75rem" Wrap="FlexWrap.Wrap">
+        <RadzenStack Gap="0">
+            <RadzenText TextStyle="TextStyle.Body2" class="rz-m-0">@summary.OverallLevel</RadzenText>
+            <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-500 text-small">Średnia: @summary.AveragePoints.ToString("0.##") pkt</RadzenText>
+        </RadzenStack>
+        <RadzenBadge BadgeStyle="@(summary.IsPositive ? BadgeStyle.Success : BadgeStyle.Danger)" Variant="Variant.Flat" Shade="Shade.Lighter" IsPill="true"
+                     Text="@(summary.IsPositive ? "Pozytywna" : "Negatywna")" />
+    </RadzenStack>
+}
+else
+{
+    <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">@EmptyText</RadzenText>
+}
