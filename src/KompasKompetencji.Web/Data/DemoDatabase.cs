@@ -13,14 +13,8 @@ public sealed class DemoDatabase(
     {
         await using (var db = await dbFactory.CreateDbContextAsync(ct))
         {
-            var known = db.Database.GetMigrations().ToHashSet();
-            var applied = await db.Database.GetAppliedMigrationsAsync(ct);
-            var unknown = applied.Where(m => !known.Contains(m)).ToList();
-            if (unknown.Count > 0)
-            {
-                logger.LogWarning("Baza ma migracje nieznane w kodzie ({Migrations}). Tworzę ją od nowa z danymi testowymi.", string.Join(", ", unknown));
-                await db.Database.EnsureDeletedAsync(ct);
-            }
+            logger.LogWarning("Usuwam bazę i tworzę ją od nowa z danymi testowymi.");
+            await db.Database.EnsureDeletedAsync(ct);
             await db.Database.MigrateAsync(ct);
         }
         await users.EnsureTestAccountsAsync(ct);

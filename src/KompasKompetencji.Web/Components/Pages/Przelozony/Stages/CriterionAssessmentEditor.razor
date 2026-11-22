@@ -22,7 +22,7 @@
 
     @foreach (var indicator in Assessment.Indicators)
     {
-        var suggestion = suggestions?.For(indicator.Indicator.Id);
+        var suggestion = resolvedSuggestions.Contains(indicator.Indicator.Id) ? null : suggestions?.For(indicator.Indicator.Id);
         var expanded = expandedIndicators.Contains(indicator.Indicator.Id);
         <RadzenCard Variant="Variant.Filled" class="rz-p-3">
             <RadzenStack Gap="0.75rem">
@@ -45,7 +45,7 @@
                             <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Start" Gap="0.5rem" class="min-w-0">
                                 <RadzenIcon Icon="smart_toy" class="no-shrink" />
                                 <RadzenText TextStyle="TextStyle.Body2" class="rz-m-0">
-                                    <strong>Podpowiedź AI: @(suggestion.Level is int level ? CompetencyLevels.Name(level) : NoBasisText)</strong>
+                                    <strong>@(suggestion.Level is int level ? CompetencyLevels.Name(level) : NoBasisText)</strong>
                                     @if (!string.IsNullOrEmpty(suggestion.Reason))
                                     {
                                         <span> – @suggestion.Reason</span>
@@ -54,8 +54,12 @@
                             </RadzenStack>
                             @if (!ReadOnly)
                             {
-                                <RadzenButton Text="Zastosuj" Icon="done" Variant="Variant.Text" ButtonStyle="ButtonStyle.Primary" Size="ButtonSize.Small"
-                                              class="no-shrink" Click="@(() => RateAsync(indicator, suggestion.Level?.ToString() ?? NoBasisValue))" />
+                                <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.25rem" class="no-shrink">
+                                    <RadzenButton Text="Zastosuj" Icon="done" Variant="Variant.Text" ButtonStyle="ButtonStyle.Primary" Size="ButtonSize.Small"
+                                                  Click="@(() => ApplySuggestionAsync(indicator, suggestion))" />
+                                    <RadzenButton Text="Zignoruj" Icon="close" Variant="Variant.Text" ButtonStyle="ButtonStyle.Base" Size="ButtonSize.Small"
+                                                  Click="@(() => DismissSuggestion(indicator.Indicator.Id))" />
+                                </RadzenStack>
                             }
                         </RadzenStack>
                     </div>

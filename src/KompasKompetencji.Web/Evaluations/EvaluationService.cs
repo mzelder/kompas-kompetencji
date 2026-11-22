@@ -398,7 +398,26 @@ public sealed class EvaluationService(IDbContextFactory<AppDbContext> dbFactory,
 
         var isPrintable = evaluation.Status == EvaluationStatus.Completed
             || EvaluationStages.Current(evaluation) == EvaluationStage.Completion;
-        return isPrintable ? EvaluationSheetData.From(evaluation) : null;
+        if (!isPrintable)
+        {
+            return null;
+        }
+
+        var previous = await db.Evaluations.AsNoTracking()
+            .Include(v => v.AdditionalCriteria)
+            .Where(v => v.EmployeeId == evaluation.EmployeeId && v.Id != evaluation.Id
+                && v.Status == EvaluationStatus.Completed && v.PreparedOn != null && v.DueDate < evaluation.DueDate)
+            .OrderByDescending(v => v.DueDate)
+            .FirstOrDefaultAsync(ct);
+        var evaluationIds = previous is null ? [evaluation.Id] : new[] { evaluation.Id, previous.Id };
+        var decisions = await db.CriterionDecisions.AsNoTracking()
+            .Where(d => evaluationIds.Contains(d.EvaluationId))
+            .ToListAsync(ct);
+
+        var previousSheet = previous is not null && EvaluationSheetData.Summarize(previous, decisions) is WrittenEvaluationSummary summary
+            ? new SheetPreviousEvaluation(summary.IsPositive, summary.OverallLevel, previous.PreparedOn!.Value)
+            : null;
+        return EvaluationSheetData.From(evaluation, decisions, previousSheet);
     }
 
     private static CompletionView DescribeCompletion(Evaluation open, DateOnly today) => new(

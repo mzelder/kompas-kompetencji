@@ -475,6 +475,91 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
                 {
                     Id = 9, EvaluationId = 17, Criterion = Criterion.KnowledgeAndDevelopment, Tone = NoteTone.Positive, CreatedAt = new DateTime(2026, 9, 30, 10, 0, 0),
                     Text = "Ukończyła szkolenie z analizy danych i zastosowała nową metodę w raporcie kwartalnym. Pokazała ją też zespołowi na spotkaniu wydziału.",
+                },
+                new EvaluationNote
+                {
+                    Id = 10, EvaluationId = 15, Criterion = Criterion.Reliability, Tone = NoteTone.Positive, CreatedAt = new DateTime(2025, 2, 11, 10, 30, 0),
+                    Text = "Przy wniosku o dane z rejestru zawierającego dane osobowe sama ustaliła, które zasady anonimizacji mają zastosowanie, i przed wysyłką dodała drugą kontrolę zestawienia.",
+                },
+                new EvaluationNote
+                {
+                    Id = 11, EvaluationId = 15, Criterion = Criterion.KnowledgeAndDevelopment, Tone = NoteTone.Positive, CreatedAt = new DateTime(2025, 5, 20, 14, 0, 0),
+                    Text = "Przy nietypowym wniosku o dane z trzech rejestrów połączyła znajomość przepisów o dostępie do informacji publicznej z metodami łączenia danych i wyjaśniła, dlaczego części danych nie da się zestawić.",
+                },
+                new EvaluationNote
+                {
+                    Id = 12, EvaluationId = 15, Criterion = Criterion.Cooperation, Tone = NoteTone.Positive, CreatedAt = new DateTime(2025, 9, 16, 9, 45, 0),
+                    Text = "Z własnej inicjatywy przygotowała dla wydziału instrukcję obsługi wniosków o dane z rejestru i odpowiadała na pytania nowych osób. Po kolejnych pytaniach uzupełniła instrukcję o przykłady.",
+                },
+                new EvaluationNote
+                {
+                    Id = 13, EvaluationId = 15, Criterion = Criterion.Reliability, Tone = NoteTone.Negative, CreatedAt = new DateTime(2025, 10, 7, 15, 10, 0),
+                    Text = "Dwie odpowiedzi na wnioski o dane przygotowała dopiero po przypomnieniu, w ostatnim dniu terminu. O tym, że czeka na dane z innej komórki, poinformowała dzień przed terminem.",
+                },
+                new EvaluationNote
+                {
+                    Id = 14, EvaluationId = 15, Criterion = Criterion.Communication, Tone = NoteTone.Neutral, CreatedAt = new DateTime(2026, 1, 21, 11, 20, 0),
+                    Text = "Odpowiedzi na wnioski są poprawne i podają termin przekazania brakujących danych, ale przy złożonych sprawach wnioskodawcy dopytują o kontekst i znaczenie skrótów.",
+                },
+                new EvaluationNote
+                {
+                    Id = 15, EvaluationId = 15, Criterion = Criterion.KnowledgeAndDevelopment, Tone = NoteTone.Positive, CreatedAt = new DateTime(2026, 3, 10, 13, 0, 0),
+                    Text = "Przed zmianą przepisów o ponownym wykorzystywaniu informacji sama zapisała się na szkolenie, a potem sprawdziła na kilku wnioskach, czy nowy wzór odpowiedzi skraca ich obsługę.",
+                },
+                new EvaluationNote
+                {
+                    Id = 16, EvaluationId = 15, Criterion = Criterion.WorkOrganization, Tone = NoteTone.Negative, CreatedAt = new DateTime(2026, 4, 15, 16, 0, 0),
+                    Text = "Po pilnym zleceniu raportu dla ministerstwa przesunęła obsługę wniosków, ale o skutkach dla ich terminów poinformowała dopiero po pytaniu naczelnika.",
+                },
+                new EvaluationNote
+                {
+                    Id = 17, EvaluationId = 15, Criterion = Criterion.AnalyticalThinking, Tone = NoteTone.Positive, CreatedAt = new DateTime(2026, 6, 9, 10, 15, 0),
+                    Text = "Zauważyła, że wzrost liczby wniosków o dane zbiega się ze zmianą strony BIP. Sprawdziła to na danych z dwóch lat i odrzuciła wyjaśnienie sezonowe.",
+                },
+                new EvaluationNote
+                {
+                    Id = 18, EvaluationId = 15, Criterion = Criterion.Communication, Tone = NoteTone.Positive, CreatedAt = new DateTime(2026, 8, 26, 12, 30, 0),
+                    Text = "Na spotkaniu z Biurem Prawnym uzasadniła odmowę udostępnienia części danych, odpowiedziała na zastrzeżenia i wyjaśniła ograniczenia danych z rejestru.",
+                },
+                new EvaluationNote
+                {
+                    Id = 19, EvaluationId = 15, Criterion = Criterion.WorkOrganization, Tone = NoteTone.Positive, CreatedAt = new DateTime(2026, 9, 22, 9, 0, 0),
+                    Text = "Przy trzech wnioskach z tym samym terminem porównała skutki opóźnienia każdego z nich i uzgodniła z naczelnikiem kolejność obsługi.",
+                },
+                new EvaluationNote
+                {
+                    Id = 20, EvaluationId = 17, Criterion = Criterion.WorkOrganization, Tone = NoteTone.Positive, CreatedAt = new DateTime(2025, 1, 28, 10, 0, 0),
+                    Text = "Przy raporcie rocznym rozpisała etapy z terminami cząstkowymi i punktami kontroli danych od trzech komórek. Zaplanowała też, co zrobi, jeśli któraś komórka spóźni się z danymi.",
+                },
+                new EvaluationNote
+                {
+                    Id = 21, EvaluationId = 17, Criterion = Criterion.Communication, Tone = NoteTone.Positive, CreatedAt = new DateTime(2025, 4, 23, 13, 30, 0),
+                    Text = "Na spotkaniu z Wydziałem Budżetu powtórzyła własnymi słowami stanowisko rozmówców i wyjaśniła, że obie strony inaczej rozumieją pojęcie „wydatki wykonane”.",
+                },
+                new EvaluationNote
+                {
+                    Id = 22, EvaluationId = 17, Criterion = Criterion.Creativity, Tone = NoteTone.Positive, CreatedAt = new DateTime(2025, 7, 8, 11, 15, 0),
+                    Text = "Zaproponowała zastąpienie ręcznego scalania arkuszy prostym skryptem. Wypróbowała go na jednym raporcie, porównała wyniki z wersją ręczną i poprawiła skrypt po uwagach zespołu.",
+                },
+                new EvaluationNote
+                {
+                    Id = 23, EvaluationId = 17, Criterion = Criterion.KnowledgeAndDevelopment, Tone = NoteTone.Positive, CreatedAt = new DateTime(2025, 10, 21, 9, 40, 0),
+                    Text = "Do zestawienia o zatrudnieniu porównała dane z dwóch systemów kadrowych, wyjaśniła rozbieżności i wybrała źródło zgodne z zasadami ochrony danych.",
+                },
+                new EvaluationNote
+                {
+                    Id = 24, EvaluationId = 17, Criterion = Criterion.Cooperation, Tone = NoteTone.Positive, CreatedAt = new DateTime(2026, 1, 15, 14, 20, 0),
+                    Text = "W podsumowaniu raportu rocznego wymieniła osoby z Wydziału Budżetu, które przygotowały dane źródłowe, i opisała, dlaczego ich praca była ważna dla wyniku.",
+                },
+                new EvaluationNote
+                {
+                    Id = 25, EvaluationId = 17, Criterion = Criterion.Reliability, Tone = NoteTone.Neutral, CreatedAt = new DateTime(2026, 3, 18, 15, 0, 0),
+                    Text = "Kolejne zestawienia przekazywała w terminie, ale o zagrożeniu terminu raportu półrocznego poinformowała dopiero w dniu wysyłki.",
+                },
+                new EvaluationNote
+                {
+                    Id = 26, EvaluationId = 17, Criterion = Criterion.Creativity, Tone = NoteTone.Negative, CreatedAt = new DateTime(2026, 7, 1, 10, 30, 0),
+                    Text = "W raporcie o skargach trzymała się dotychczasowego podziału na kategorie, mimo że nowe rodzaje skarg do nich nie pasowały. Zmieniła podział dopiero po sugestii naczelnika.",
                 });
         });
 
@@ -596,6 +681,21 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
                 .WithMany()
                 .HasForeignKey(p => p.IndicatorId)
                 .OnDelete(DeleteBehavior.NoAction);
+
+            r.HasData(
+                DemoRatings(15, Criterion.KnowledgeAndDevelopment, 4, 4, 3)
+                    .Concat(DemoRatings(15, Criterion.Reliability, 4, 2))
+                    .Concat(DemoRatings(15, Criterion.WorkOrganization, 3, 4, null, 2, 3))
+                    .Concat(DemoRatings(15, Criterion.Cooperation, 4, 3, 4, 4, 3, 5))
+                    .Concat(DemoRatings(15, Criterion.Communication, 3, 3, 3, 4))
+                    .Concat(DemoRatings(15, Criterion.AnalyticalThinking, 4, 4, 3))
+                    .Concat(DemoRatings(17, Criterion.KnowledgeAndDevelopment, 3, 4, 4))
+                    .Concat(DemoRatings(17, Criterion.Reliability, 4, 2))
+                    .Concat(DemoRatings(17, Criterion.WorkOrganization, 4, 3, null, 3, 3))
+                    .Concat(DemoRatings(17, Criterion.Cooperation, 3, 3, 3, 4, 3, 3))
+                    .Concat(DemoRatings(17, Criterion.Communication, 4, 3, 4, 3))
+                    .Concat(DemoRatings(17, Criterion.AnalyticalThinking, 4, 4, 3))
+                    .Concat(DemoRatings(17, Criterion.Creativity, 4, 2)));
         });
 
         modelBuilder.Entity<CriterionDecision>(d =>
@@ -669,9 +769,26 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
                 new CriterionDecision { EvaluationId = 16, Criterion = Criterion.WorkOrganization, SuggestedLevel = 3, Level = 3, DecidedAt = new DateTime(2024, 12, 5, 9, 0, 0) },
                 new CriterionDecision { EvaluationId = 16, Criterion = Criterion.Cooperation, SuggestedLevel = 4, Level = 4, DecidedAt = new DateTime(2024, 12, 5, 9, 0, 0) },
                 new CriterionDecision { EvaluationId = 16, Criterion = Criterion.Communication, SuggestedLevel = 4, Level = 4, DecidedAt = new DateTime(2024, 12, 5, 9, 0, 0) },
-                new CriterionDecision { EvaluationId = 16, Criterion = Criterion.AnalyticalThinking, SuggestedLevel = 4, Level = 4, DecidedAt = new DateTime(2024, 12, 5, 9, 0, 0) });
+                new CriterionDecision { EvaluationId = 16, Criterion = Criterion.AnalyticalThinking, SuggestedLevel = 4, Level = 4, DecidedAt = new DateTime(2024, 12, 5, 9, 0, 0) },
+                new CriterionDecision { EvaluationId = 17, Criterion = Criterion.KnowledgeAndDevelopment, SuggestedLevel = 4, Level = 4, DecidedAt = new DateTime(2026, 11, 20, 10, 0, 0) },
+                new CriterionDecision { EvaluationId = 17, Criterion = Criterion.Reliability, SuggestedLevel = 3, Level = 3, DecidedAt = new DateTime(2026, 11, 20, 10, 0, 0) },
+                new CriterionDecision { EvaluationId = 17, Criterion = Criterion.WorkOrganization, SuggestedLevel = 3, Level = 3, DecidedAt = new DateTime(2026, 11, 20, 10, 0, 0) },
+                new CriterionDecision { EvaluationId = 17, Criterion = Criterion.Cooperation, SuggestedLevel = 3, Level = 3, DecidedAt = new DateTime(2026, 11, 20, 10, 0, 0) },
+                new CriterionDecision { EvaluationId = 17, Criterion = Criterion.Communication, SuggestedLevel = 4, Level = 4, DecidedAt = new DateTime(2026, 11, 20, 10, 0, 0) },
+                new CriterionDecision { EvaluationId = 17, Criterion = Criterion.AnalyticalThinking, SuggestedLevel = 4, Level = 4, DecidedAt = new DateTime(2026, 11, 20, 10, 0, 0) },
+                new CriterionDecision { EvaluationId = 17, Criterion = Criterion.Creativity, SuggestedLevel = 3, Level = 3, DecidedAt = new DateTime(2026, 11, 20, 10, 0, 0) });
         });
     }
 
     private static string Lines(params string[] lines) => string.Join('\n', lines);
+
+    private static IEnumerable<IndicatorRating> DemoRatings(int evaluationId, Criterion criterion, params int?[] levels)
+    {
+        var indicators = CompetencyModelSource.Indicators.Where(i => i.Criterion == criterion).OrderBy(i => i.Number).ToList();
+        if (indicators.Count != levels.Length)
+        {
+            throw new InvalidOperationException($"Kryterium {criterion} ma {indicators.Count} wskaźników, a dane demo podają {levels.Length} odpowiedzi.");
+        }
+        return indicators.Zip(levels, (indicator, level) => new IndicatorRating { EvaluationId = evaluationId, IndicatorId = indicator.Id, Level = level });
+    }
 }

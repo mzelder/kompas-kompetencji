@@ -21,7 +21,7 @@ public static class EvaluationProcessGuide
         [
             "Wyznacz termin rozmowy rozpoczynającej. Zobaczysz ją w kalendarzu rozmów.",
             "Przed rozmową przygotuj propozycję części I arkusza: 5 kryteriów obowiązkowych wynika z arkusza, a do 3 dodatkowych wybierasz sam. Aplikacja podpowie je na podstawie opisu stanowiska.",
-            "Dopisz oczekiwania wobec pracownika i ewentualnie cele. Propozycję możesz zapisać i poprawiać.",
+            "Dopisz oczekiwania wobec pracownika i ewentualnie cele. Propozycję możesz zapisać i poprawiać. Jeśli rozmowa nie ma jeszcze terminu, po zapisie aplikacja od razu zaproponuje jego wyznaczenie.",
             "Na rozmowie omówcie obowiązki, kryteria i oczekiwania. Po rozmowie oznacz ją jako odbytą.",
             "Zatwierdź część I z datą zapoznania pracownika. Od tej daty liczy się okres oceny, a część I staje się tylko do odczytu.",
         ]),

@@ -16,7 +16,7 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
     // If you encounter a merge conflict in the line below, it means you need to
     // discard one of the migration branches and recreate its migrations on top of
     // the other branch. See https://aka.ms/efcore-docs-migrations-conflicts for more info.
-    public override string LastMigrationId => "20261122015531_AddDemoCriterionDecisions";
+    public override string LastMigrationId => "20261122062557_AddJoannaPawlakRatingsAndNotes";
 
     protected override void BuildModel(ModelBuilder modelBuilder)
     {
@@ -1230,6 +1230,62 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
                         DecidedAt = new DateTime(2024, 12, 5, 9, 0, 0, 0, DateTimeKind.Unspecified),
                         Level = 4,
                         SuggestedLevel = 4
+                    },
+                    new
+                    {
+                        EvaluationId = 17,
+                        Criterion = "KnowledgeAndDevelopment",
+                        DecidedAt = new DateTime(2026, 11, 20, 10, 0, 0, 0, DateTimeKind.Unspecified),
+                        Level = 4,
+                        SuggestedLevel = 4
+                    },
+                    new
+                    {
+                        EvaluationId = 17,
+                        Criterion = "Reliability",
+                        DecidedAt = new DateTime(2026, 11, 20, 10, 0, 0, 0, DateTimeKind.Unspecified),
+                        Level = 3,
+                        SuggestedLevel = 3
+                    },
+                    new
+                    {
+                        EvaluationId = 17,
+                        Criterion = "WorkOrganization",
+                        DecidedAt = new DateTime(2026, 11, 20, 10, 0, 0, 0, DateTimeKind.Unspecified),
+                        Level = 3,
+                        SuggestedLevel = 3
+                    },
+                    new
+                    {
+                        EvaluationId = 17,
+                        Criterion = "Cooperation",
+                        DecidedAt = new DateTime(2026, 11, 20, 10, 0, 0, 0, DateTimeKind.Unspecified),
+                        Level = 3,
+                        SuggestedLevel = 3
+                    },
+                    new
+                    {
+                        EvaluationId = 17,
+                        Criterion = "Communication",
+                        DecidedAt = new DateTime(2026, 11, 20, 10, 0, 0, 0, DateTimeKind.Unspecified),
+                        Level = 4,
+                        SuggestedLevel = 4
+                    },
+                    new
+                    {
+                        EvaluationId = 17,
+                        Criterion = "AnalyticalThinking",
+                        DecidedAt = new DateTime(2026, 11, 20, 10, 0, 0, 0, DateTimeKind.Unspecified),
+                        Level = 4,
+                        SuggestedLevel = 4
+                    },
+                    new
+                    {
+                        EvaluationId = 17,
+                        Criterion = "Creativity",
+                        DecidedAt = new DateTime(2026, 11, 20, 10, 0, 0, 0, DateTimeKind.Unspecified),
+                        Level = 3,
+                        SuggestedLevel = 3
                     });
             });
 
@@ -2156,6 +2212,159 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
                         EvaluationId = 17,
                         Text = "Ukończyła szkolenie z analizy danych i zastosowała nową metodę w raporcie kwartalnym. Pokazała ją też zespołowi na spotkaniu wydziału.",
                         Tone = "Positive"
+                    },
+                    new
+                    {
+                        Id = 10,
+                        CreatedAt = new DateTime(2025, 2, 11, 10, 30, 0, 0, DateTimeKind.Unspecified),
+                        Criterion = "Reliability",
+                        EvaluationId = 15,
+                        Text = "Przy wniosku o dane z rejestru zawierającego dane osobowe sama ustaliła, które zasady anonimizacji mają zastosowanie, i przed wysyłką dodała drugą kontrolę zestawienia.",
+                        Tone = "Positive"
+                    },
+                    new
+                    {
+                        Id = 11,
+                        CreatedAt = new DateTime(2025, 5, 20, 14, 0, 0, 0, DateTimeKind.Unspecified),
+                        Criterion = "KnowledgeAndDevelopment",
+                        EvaluationId = 15,
+                        Text = "Przy nietypowym wniosku o dane z trzech rejestrów połączyła znajomość przepisów o dostępie do informacji publicznej z metodami łączenia danych i wyjaśniła, dlaczego części danych nie da się zestawić.",
+                        Tone = "Positive"
+                    },
+                    new
+                    {
+                        Id = 12,
+                        CreatedAt = new DateTime(2025, 9, 16, 9, 45, 0, 0, DateTimeKind.Unspecified),
+                        Criterion = "Cooperation",
+                        EvaluationId = 15,
+                        Text = "Z własnej inicjatywy przygotowała dla wydziału instrukcję obsługi wniosków o dane z rejestru i odpowiadała na pytania nowych osób. Po kolejnych pytaniach uzupełniła instrukcję o przykłady.",
+                        Tone = "Positive"
+                    },
+                    new
+                    {
+                        Id = 13,
+                        CreatedAt = new DateTime(2025, 10, 7, 15, 10, 0, 0, DateTimeKind.Unspecified),
+                        Criterion = "Reliability",
+                        EvaluationId = 15,
+                        Text = "Dwie odpowiedzi na wnioski o dane przygotowała dopiero po przypomnieniu, w ostatnim dniu terminu. O tym, że czeka na dane z innej komórki, poinformowała dzień przed terminem.",
+                        Tone = "Negative"
+                    },
+                    new
+                    {
+                        Id = 14,
+                        CreatedAt = new DateTime(2026, 1, 21, 11, 20, 0, 0, DateTimeKind.Unspecified),
+                        Criterion = "Communication",
+                        EvaluationId = 15,
+                        Text = "Odpowiedzi na wnioski są poprawne i podają termin przekazania brakujących danych, ale przy złożonych sprawach wnioskodawcy dopytują o kontekst i znaczenie skrótów.",
+                        Tone = "Neutral"
+                    },
+                    new
+                    {
+                        Id = 15,
+                        CreatedAt = new DateTime(2026, 3, 10, 13, 0, 0, 0, DateTimeKind.Unspecified),
+                        Criterion = "KnowledgeAndDevelopment",
+                        EvaluationId = 15,
+                        Text = "Przed zmianą przepisów o ponownym wykorzystywaniu informacji sama zapisała się na szkolenie, a potem sprawdziła na kilku wnioskach, czy nowy wzór odpowiedzi skraca ich obsługę.",
+                        Tone = "Positive"
+                    },
+                    new
+                    {
+                        Id = 16,
+                        CreatedAt = new DateTime(2026, 4, 15, 16, 0, 0, 0, DateTimeKind.Unspecified),
+                        Criterion = "WorkOrganization",
+                        EvaluationId = 15,
+                        Text = "Po pilnym zleceniu raportu dla ministerstwa przesunęła obsługę wniosków, ale o skutkach dla ich terminów poinformowała dopiero po pytaniu naczelnika.",
+                        Tone = "Negative"
+                    },
+                    new
+                    {
+                        Id = 17,
+                        CreatedAt = new DateTime(2026, 6, 9, 10, 15, 0, 0, DateTimeKind.Unspecified),
+                        Criterion = "AnalyticalThinking",
+                        EvaluationId = 15,
+                        Text = "Zauważyła, że wzrost liczby wniosków o dane zbiega się ze zmianą strony BIP. Sprawdziła to na danych z dwóch lat i odrzuciła wyjaśnienie sezonowe.",
+                        Tone = "Positive"
+                    },
+                    new
+                    {
+                        Id = 18,
+                        CreatedAt = new DateTime(2026, 8, 26, 12, 30, 0, 0, DateTimeKind.Unspecified),
+                        Criterion = "Communication",
+                        EvaluationId = 15,
+                        Text = "Na spotkaniu z Biurem Prawnym uzasadniła odmowę udostępnienia części danych, odpowiedziała na zastrzeżenia i wyjaśniła ograniczenia danych z rejestru.",
+                        Tone = "Positive"
+                    },
+                    new
+                    {
+                        Id = 19,
+                        CreatedAt = new DateTime(2026, 9, 22, 9, 0, 0, 0, DateTimeKind.Unspecified),
+                        Criterion = "WorkOrganization",
+                        EvaluationId = 15,
+                        Text = "Przy trzech wnioskach z tym samym terminem porównała skutki opóźnienia każdego z nich i uzgodniła z naczelnikiem kolejność obsługi.",
+                        Tone = "Positive"
+                    },
+                    new
+                    {
+                        Id = 20,
+                        CreatedAt = new DateTime(2025, 1, 28, 10, 0, 0, 0, DateTimeKind.Unspecified),
+                        Criterion = "WorkOrganization",
+                        EvaluationId = 17,
+                        Text = "Przy raporcie rocznym rozpisała etapy z terminami cząstkowymi i punktami kontroli danych od trzech komórek. Zaplanowała też, co zrobi, jeśli któraś komórka spóźni się z danymi.",
+                        Tone = "Positive"
+                    },
+                    new
+                    {
+                        Id = 21,
+                        CreatedAt = new DateTime(2025, 4, 23, 13, 30, 0, 0, DateTimeKind.Unspecified),
+                        Criterion = "Communication",
+                        EvaluationId = 17,
+                        Text = "Na spotkaniu z Wydziałem Budżetu powtórzyła własnymi słowami stanowisko rozmówców i wyjaśniła, że obie strony inaczej rozumieją pojęcie „wydatki wykonane”.",
+                        Tone = "Positive"
+                    },
+                    new
+                    {
+                        Id = 22,
+                        CreatedAt = new DateTime(2025, 7, 8, 11, 15, 0, 0, DateTimeKind.Unspecified),
+                        Criterion = "Creativity",
+                        EvaluationId = 17,
+                        Text = "Zaproponowała zastąpienie ręcznego scalania arkuszy prostym skryptem. Wypróbowała go na jednym raporcie, porównała wyniki z wersją ręczną i poprawiła skrypt po uwagach zespołu.",
+                        Tone = "Positive"
+                    },
+                    new
+                    {
+                        Id = 23,
+                        CreatedAt = new DateTime(2025, 10, 21, 9, 40, 0, 0, DateTimeKind.Unspecified),
+                        Criterion = "KnowledgeAndDevelopment",
+                        EvaluationId = 17,
+                        Text = "Do zestawienia o zatrudnieniu porównała dane z dwóch systemów kadrowych, wyjaśniła rozbieżności i wybrała źródło zgodne z zasadami ochrony danych.",
+                        Tone = "Positive"
+                    },
+                    new
+                    {
+                        Id = 24,
+                        CreatedAt = new DateTime(2026, 1, 15, 14, 20, 0, 0, DateTimeKind.Unspecified),
+                        Criterion = "Cooperation",
+                        EvaluationId = 17,
+                        Text = "W podsumowaniu raportu rocznego wymieniła osoby z Wydziału Budżetu, które przygotowały dane źródłowe, i opisała, dlaczego ich praca była ważna dla wyniku.",
+                        Tone = "Positive"
+                    },
+                    new
+                    {
+                        Id = 25,
+                        CreatedAt = new DateTime(2026, 3, 18, 15, 0, 0, 0, DateTimeKind.Unspecified),
+                        Criterion = "Reliability",
+                        EvaluationId = 17,
+                        Text = "Kolejne zestawienia przekazywała w terminie, ale o zagrożeniu terminu raportu półrocznego poinformowała dopiero w dniu wysyłki.",
+                        Tone = "Neutral"
+                    },
+                    new
+                    {
+                        Id = 26,
+                        CreatedAt = new DateTime(2026, 7, 1, 10, 30, 0, 0, DateTimeKind.Unspecified),
+                        Criterion = "Creativity",
+                        EvaluationId = 17,
+                        Text = "W raporcie o skargach trzymała się dotychczasowego podziału na kategorie, mimo że nowe rodzaje skarg do nich nie pasowały. Zmieniła podział dopiero po sugestii naczelnika.",
+                        Tone = "Negative"
                     });
             });
 
@@ -3665,6 +3874,294 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
                 b.HasIndex("IndicatorId");
 
                 b.ToTable("IndicatorRatings");
+
+                b.HasData(
+                    new
+                    {
+                        EvaluationId = 15,
+                        IndicatorId = 7,
+                        Level = 4
+                    },
+                    new
+                    {
+                        EvaluationId = 15,
+                        IndicatorId = 8,
+                        Level = 4
+                    },
+                    new
+                    {
+                        EvaluationId = 15,
+                        IndicatorId = 9,
+                        Level = 3
+                    },
+                    new
+                    {
+                        EvaluationId = 15,
+                        IndicatorId = 1,
+                        Level = 4
+                    },
+                    new
+                    {
+                        EvaluationId = 15,
+                        IndicatorId = 2,
+                        Level = 2
+                    },
+                    new
+                    {
+                        EvaluationId = 15,
+                        IndicatorId = 10,
+                        Level = 3
+                    },
+                    new
+                    {
+                        EvaluationId = 15,
+                        IndicatorId = 11,
+                        Level = 4
+                    },
+                    new
+                    {
+                        EvaluationId = 15,
+                        IndicatorId = 12
+                    },
+                    new
+                    {
+                        EvaluationId = 15,
+                        IndicatorId = 13,
+                        Level = 2
+                    },
+                    new
+                    {
+                        EvaluationId = 15,
+                        IndicatorId = 14,
+                        Level = 3
+                    },
+                    new
+                    {
+                        EvaluationId = 15,
+                        IndicatorId = 17,
+                        Level = 4
+                    },
+                    new
+                    {
+                        EvaluationId = 15,
+                        IndicatorId = 18,
+                        Level = 3
+                    },
+                    new
+                    {
+                        EvaluationId = 15,
+                        IndicatorId = 19,
+                        Level = 4
+                    },
+                    new
+                    {
+                        EvaluationId = 15,
+                        IndicatorId = 20,
+                        Level = 4
+                    },
+                    new
+                    {
+                        EvaluationId = 15,
+                        IndicatorId = 21,
+                        Level = 3
+                    },
+                    new
+                    {
+                        EvaluationId = 15,
+                        IndicatorId = 22,
+                        Level = 5
+                    },
+                    new
+                    {
+                        EvaluationId = 15,
+                        IndicatorId = 3,
+                        Level = 3
+                    },
+                    new
+                    {
+                        EvaluationId = 15,
+                        IndicatorId = 4,
+                        Level = 3
+                    },
+                    new
+                    {
+                        EvaluationId = 15,
+                        IndicatorId = 5,
+                        Level = 3
+                    },
+                    new
+                    {
+                        EvaluationId = 15,
+                        IndicatorId = 6,
+                        Level = 4
+                    },
+                    new
+                    {
+                        EvaluationId = 15,
+                        IndicatorId = 23,
+                        Level = 4
+                    },
+                    new
+                    {
+                        EvaluationId = 15,
+                        IndicatorId = 24,
+                        Level = 4
+                    },
+                    new
+                    {
+                        EvaluationId = 15,
+                        IndicatorId = 25,
+                        Level = 3
+                    },
+                    new
+                    {
+                        EvaluationId = 17,
+                        IndicatorId = 7,
+                        Level = 3
+                    },
+                    new
+                    {
+                        EvaluationId = 17,
+                        IndicatorId = 8,
+                        Level = 4
+                    },
+                    new
+                    {
+                        EvaluationId = 17,
+                        IndicatorId = 9,
+                        Level = 4
+                    },
+                    new
+                    {
+                        EvaluationId = 17,
+                        IndicatorId = 1,
+                        Level = 4
+                    },
+                    new
+                    {
+                        EvaluationId = 17,
+                        IndicatorId = 2,
+                        Level = 2
+                    },
+                    new
+                    {
+                        EvaluationId = 17,
+                        IndicatorId = 10,
+                        Level = 4
+                    },
+                    new
+                    {
+                        EvaluationId = 17,
+                        IndicatorId = 11,
+                        Level = 3
+                    },
+                    new
+                    {
+                        EvaluationId = 17,
+                        IndicatorId = 12
+                    },
+                    new
+                    {
+                        EvaluationId = 17,
+                        IndicatorId = 13,
+                        Level = 3
+                    },
+                    new
+                    {
+                        EvaluationId = 17,
+                        IndicatorId = 14,
+                        Level = 3
+                    },
+                    new
+                    {
+                        EvaluationId = 17,
+                        IndicatorId = 17,
+                        Level = 3
+                    },
+                    new
+                    {
+                        EvaluationId = 17,
+                        IndicatorId = 18,
+                        Level = 3
+                    },
+                    new
+                    {
+                        EvaluationId = 17,
+                        IndicatorId = 19,
+                        Level = 3
+                    },
+                    new
+                    {
+                        EvaluationId = 17,
+                        IndicatorId = 20,
+                        Level = 4
+                    },
+                    new
+                    {
+                        EvaluationId = 17,
+                        IndicatorId = 21,
+                        Level = 3
+                    },
+                    new
+                    {
+                        EvaluationId = 17,
+                        IndicatorId = 22,
+                        Level = 3
+                    },
+                    new
+                    {
+                        EvaluationId = 17,
+                        IndicatorId = 3,
+                        Level = 4
+                    },
+                    new
+                    {
+                        EvaluationId = 17,
+                        IndicatorId = 4,
+                        Level = 3
+                    },
+                    new
+                    {
+                        EvaluationId = 17,
+                        IndicatorId = 5,
+                        Level = 4
+                    },
+                    new
+                    {
+                        EvaluationId = 17,
+                        IndicatorId = 6,
+                        Level = 3
+                    },
+                    new
+                    {
+                        EvaluationId = 17,
+                        IndicatorId = 23,
+                        Level = 4
+                    },
+                    new
+                    {
+                        EvaluationId = 17,
+                        IndicatorId = 24,
+                        Level = 4
+                    },
+                    new
+                    {
+                        EvaluationId = 17,
+                        IndicatorId = 25,
+                        Level = 3
+                    },
+                    new
+                    {
+                        EvaluationId = 17,
+                        IndicatorId = 15,
+                        Level = 4
+                    },
+                    new
+                    {
+                        EvaluationId = 17,
+                        IndicatorId = 16,
+                        Level = 2
+                    });
             });
 
         modelBuilder.Entity("KompasKompetencji.Web.Data.JobDescription", b =>

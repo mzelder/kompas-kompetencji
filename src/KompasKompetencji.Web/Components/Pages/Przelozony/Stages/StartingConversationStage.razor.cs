@@ -81,6 +81,10 @@ public partial class StartingConversationStage
         }
 
         NotificationService.Notify(NotificationSeverity.Success, "Propozycja zapisana", View.Employee.FullName);
+        if (Conversation is null)
+        {
+            await ScheduleConversationAsync();
+        }
         await OnChanged.InvokeAsync();
     }
 
@@ -125,11 +129,21 @@ public partial class StartingConversationStage
 
     private async Task EditConversationAsync()
     {
-        if (await ConversationDialog.OpenAsync(DialogService, View.Task, ConversationType.Starting, SupervisorId, Today))
+        if (await ScheduleConversationAsync())
         {
-            NotificationService.Notify(NotificationSeverity.Success, "Zapisano termin rozmowy", $"{View.Employee.FullName} · {EvaluationText.ConversationTypeName(ConversationType.Starting)}");
             await OnChanged.InvokeAsync();
         }
+    }
+
+    private async Task<bool> ScheduleConversationAsync()
+    {
+        if (!await ConversationDialog.OpenAsync(DialogService, View.Task, ConversationType.Starting, SupervisorId, Today))
+        {
+            return false;
+        }
+
+        NotificationService.Notify(NotificationSeverity.Success, "Zapisano termin rozmowy", $"{View.Employee.FullName} · {EvaluationText.ConversationTypeName(ConversationType.Starting)}");
+        return true;
     }
 
     private async Task MarkHeldAsync()

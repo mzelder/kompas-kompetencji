@@ -1,47 +1,60 @@
-<RadzenCard Variant="Variant.Outlined" class="rz-h-100">
+<RadzenCard Variant="Variant.Outlined">
     <RadzenStack Gap="1rem">
-        <RadzenStack Gap="0">
-            <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H2" class="rz-m-0">Plan rozmowy</RadzenText>
-            <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">Omów z pracownikiem kolejno te punkty. Ustalenia wpisz w część I arkusza.</RadzenText>
-        </RadzenStack>
-
-        @foreach (var topic in Topics)
-        {
-            <RadzenCard Variant="Variant.Filled" class="rz-p-3">
-                <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Start" Gap="0.75rem">
-                    <RadzenIcon Icon="@topic.Icon" IconColor="@Colors.Primary" />
-                    <RadzenStack Gap="0.25rem" class="rz-w-100">
-                        <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-m-0">@topic.Title</RadzenText>
-                        <RadzenText TextStyle="TextStyle.Body2" class="rz-m-0 rz-color-base-300">@topic.Description</RadzenText>
-
-                        @if (topic.ShowsJobTasks)
-                        {
-                            @if (JobDescription is JobDescription jobDescription)
-                            {
-                                <RadzenButton Variant="Variant.Text" ButtonStyle="ButtonStyle.Primary" Size="ButtonSize.Small" class="rz-p-0 align-self-start"
-                                              Icon="@(tasksExpanded ? "expand_less" : "expand_more")"
-                                              Text="@(tasksExpanded ? "Ukryj zadania z opisu stanowiska" : $"Pokaż zadania z opisu stanowiska ({jobDescription.TaskList.Count})")"
-                                              Click="@(() => tasksExpanded = !tasksExpanded)" />
-                                @if (tasksExpanded)
-                                {
-                                    <ul class="rz-m-0 topic-tasks">
-                                        @foreach (var task in jobDescription.TaskList)
-                                        {
-                                            <li><RadzenText TextStyle="TextStyle.Body2" class="rz-m-0">@task</RadzenText></li>
-                                        }
-                                    </ul>
-                                }
-                            }
-                            else
-                            {
-                                <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-warning">
-                                    Opis stanowiska nie jest uzupełniony. Omów obowiązki na podstawie stanowiska.
-                                </RadzenText>
-                            }
-                        }
-                    </RadzenStack>
+        <div class="collapsible-heading" role="button" tabindex="0" aria-expanded="@(!collapsed)"
+             title="@(collapsed ? "Rozwiń plan rozmowy" : "Zwiń plan rozmowy")" @onclick="@ToggleCollapsed" @onkeydown="@OnHeadingKeyDown">
+            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween" Gap="1rem">
+                <RadzenStack Gap="0" class="card-heading">
+                    <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H2" class="rz-m-0">Plan rozmowy (@Topics.Count)</RadzenText>
+                    <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">Omów z pracownikiem kolejno te punkty. Ustalenia wpisz w część I arkusza.</RadzenText>
                 </RadzenStack>
-            </RadzenCard>
+                <RadzenIcon Icon="@(collapsed ? "expand_more" : "expand_less")" class="no-shrink" />
+            </RadzenStack>
+        </div>
+
+        @if (!collapsed)
+        {
+            <RadzenRow Gap="1rem">
+                @foreach (var topic in Topics)
+                {
+                    <RadzenColumn Size="12" SizeMD="6">
+                        <RadzenCard Variant="Variant.Filled" class="rz-p-3 rz-h-100">
+                            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Start" Gap="0.75rem">
+                                <RadzenIcon Icon="@topic.Icon" IconColor="@Colors.Primary" />
+                                <RadzenStack Gap="0.25rem" class="rz-w-100">
+                                    <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-m-0">@topic.Title</RadzenText>
+                                    <RadzenText TextStyle="TextStyle.Body2" class="rz-m-0 rz-color-base-300">@topic.Description</RadzenText>
+
+                                    @if (topic.ShowsJobTasks)
+                                    {
+                                        @if (JobDescription is JobDescription jobDescription)
+                                        {
+                                            <RadzenButton Variant="Variant.Text" ButtonStyle="ButtonStyle.Primary" Size="ButtonSize.Small" class="rz-p-0 align-self-start"
+                                                          Icon="@(tasksExpanded ? "expand_less" : "expand_more")"
+                                                          Text="@(tasksExpanded ? "Ukryj zadania z opisu stanowiska" : $"Pokaż zadania z opisu stanowiska ({jobDescription.TaskList.Count})")"
+                                                          Click="@(() => tasksExpanded = !tasksExpanded)" />
+                                            @if (tasksExpanded)
+                                            {
+                                                <ul class="rz-m-0 topic-tasks">
+                                                    @foreach (var task in jobDescription.TaskList)
+                                                    {
+                                                        <li><RadzenText TextStyle="TextStyle.Body2" class="rz-m-0">@task</RadzenText></li>
+                                                    }
+                                                </ul>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-warning">
+                                                Opis stanowiska nie jest uzupełniony. Omów obowiązki na podstawie stanowiska.
+                                            </RadzenText>
+                                        }
+                                    }
+                                </RadzenStack>
+                            </RadzenStack>
+                        </RadzenCard>
+                    </RadzenColumn>
+                }
+            </RadzenRow>
         }
     </RadzenStack>
 </RadzenCard>
