@@ -179,6 +179,10 @@ Aplikacja działa w środowisku `Demo` (`appsettings.Demo.json`):
 
 Te same flagi są włączone w `appsettings.Development.json`.
 
+**Automatycznie:** każdy push na branch `test` uruchamia `.github/workflows/deploy-test.yml` (testy, publikacja, wdrożenie na App Service `kompas-kompetencji-demo`). GitHub loguje się do Azure tożsamością `oidc-msi-b83b` przez OIDC (federacja tylko dla brancha `test`), bez sekretów w repozytorium. Ręcznie: zakładka Actions → „Run workflow”.
+
+**Ręcznie, skryptami:**
+
 1. Zainstaluj Azure CLI (`winget install Microsoft.AzureCLI`) i zaloguj się: `az login`.
 2. Raz utwórz zasoby (nazwy aplikacji i serwera SQL muszą być unikalne w całym Azure):
    ```powershell

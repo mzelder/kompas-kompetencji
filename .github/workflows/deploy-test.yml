@@ -1,0 +1,42 @@
+name: Wdrozenie demo (branch test)
+
+on:
+  push:
+    branches: [test]
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+concurrency:
+  group: deploy-test
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '11.0.x'
+
+      - name: Testy
+        run: dotnet test
+
+      - name: Publikacja
+        run: dotnet publish src/KompasKompetencji.Web -c Release -o ${{ runner.temp }}/app
+
+      - uses: azure/login@v2
+        with:
+          client-id: 18c7e823-c4c5-481e-9ada-a52dd4f7362a
+          tenant-id: c49efbf9-9d24-483e-ba5a-e79e7cc0228a
+          subscription-id: 052b2005-32ea-45e2-8c9b-cd28b3bb73b3
+
+      - name: Wdrozenie na App Service
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: kompas-kompetencji-demo
+          package: ${{ runner.temp }}/app
