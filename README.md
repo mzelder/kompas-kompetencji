@@ -169,7 +169,7 @@ dotnet ef database drop --project src/KompasKompetencji.Web --force
 | Błąd o wersji frameworka `net11.0` | Zainstaluj .NET SDK 11. |
 | Port zajęty | Zmień `applicationUrl` w `src/KompasKompetencji.Web/Properties/launchSettings.json`. |
 
-## Wdrożenie demo na Azure (branch `deploy/azure`)
+## Wdrożenie demo na Azure (branch `test`)
 
 Układ: App Service (Linux, plan B1, WebSockety włączone) i Azure SQL Database w darmowej ofercie (serverless, auto-pauza po wyczerpaniu limitu).
 
