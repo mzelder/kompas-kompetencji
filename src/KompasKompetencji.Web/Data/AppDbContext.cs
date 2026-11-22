@@ -15,7 +15,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
 
     public DbSet<EvaluationAdditionalCriterion> EvaluationAdditionalCriteria => Set<EvaluationAdditionalCriterion>();
 
-    public DbSet<JobDescription> JobDescriptions => Set<JobDescription>();
+    public DbSet<JobPosition> JobPositions => Set<JobPosition>();
 
     public DbSet<EvaluationNote> EvaluationNotes => Set<EvaluationNote>();
 
@@ -52,25 +52,29 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             e.Property(p => p.LastName).HasMaxLength(100);
             e.Property(p => p.Position).HasMaxLength(200);
             e.Property(p => p.Department).HasMaxLength(200);
+            e.HasOne(p => p.JobPosition)
+                .WithMany(p => p.Employees)
+                .HasForeignKey(p => p.JobPositionId)
+                .OnDelete(DeleteBehavior.SetNull);
 
             e.HasData(
-                new Employee { Id = 1, FirstName = "Anna", LastName = "Kowalska", Position = "Starszy specjalista", Department = "Wydział Analiz Danych", EmployedSince = new DateOnly(2019, 12, 15) },
-                new Employee { Id = 2, FirstName = "Jan", LastName = "Nowak", Position = "Specjalista", Department = "Wydział Analiz Danych", EmployedSince = new DateOnly(2022, 11, 2) },
-                new Employee { Id = 3, FirstName = "Ewa", LastName = "Wiśniewska", Position = "Naczelnik wydziału", Department = "Wydział Analiz Danych", IsSupervisor = true, EmployedSince = new DateOnly(2015, 4, 1) },
+                new Employee { Id = 1, FirstName = "Anna", LastName = "Kowalska", Position = "Starszy specjalista", Department = "Wydział Analiz Danych", JobPositionId = 1, EmployedSince = new DateOnly(2019, 12, 15) },
+                new Employee { Id = 2, FirstName = "Jan", LastName = "Nowak", Position = "Specjalista", Department = "Wydział Analiz Danych", JobPositionId = 2, EmployedSince = new DateOnly(2022, 11, 2) },
+                new Employee { Id = 3, FirstName = "Ewa", LastName = "Wiśniewska", Position = "Naczelnik wydziału", Department = "Wydział Analiz Danych", IsSupervisor = true, JobPositionId = 3, EmployedSince = new DateOnly(2015, 4, 1) },
                 new Employee { Id = 4, FirstName = "Tomasz", LastName = "Zieliński", Position = "Dyrektor departamentu", Department = "Departament Danych i Usług Cyfrowych", IsSupervisor = true, EmployedSince = new DateOnly(2012, 9, 1) },
                 new Employee { Id = 5, FirstName = "Marek", LastName = "Lewandowski", Position = "Naczelnik wydziału", Department = "Wydział Usług Cyfrowych", IsSupervisor = true, EmployedSince = new DateOnly(2016, 2, 15) },
                 new Employee { Id = 6, FirstName = "Magdalena", LastName = "Dąbrowska", Position = "Zastępca naczelnika wydziału", Department = "Wydział Usług Cyfrowych", IsSupervisor = true, EmployedSince = new DateOnly(2018, 5, 1) },
                 new Employee { Id = 7, FirstName = "Katarzyna", LastName = "Wójcik", Position = "Główny specjalista", Department = "Wydział Usług Cyfrowych", EmployedSince = new DateOnly(2021, 9, 1) },
                 new Employee { Id = 8, FirstName = "Piotr", LastName = "Kamiński", Position = "Starszy referent", Department = "Wydział Usług Cyfrowych", EmployedSince = new DateOnly(2024, 3, 1) },
-                new Employee { Id = 9, FirstName = "Michał", LastName = "Szymański", Position = "Referent", Department = "Wydział Analiz Danych", EmployedSince = new DateOnly(2018, 1, 10) },
-                new Employee { Id = 10, FirstName = "Agnieszka", LastName = "Woźniak", Position = "Starszy specjalista", Department = "Wydział Analiz Danych", EmployedSince = new DateOnly(2020, 6, 1) },
-                new Employee { Id = 11, FirstName = "Paweł", LastName = "Kozłowski", Position = "Starszy specjalista", Department = "Wydział Analiz Danych", EmployedSince = new DateOnly(2026, 11, 5) },
-                new Employee { Id = 12, FirstName = "Karolina", LastName = "Mazur", Position = "Specjalista", Department = "Wydział Analiz Danych", EmployedSince = new DateOnly(2021, 12, 20) },
+                new Employee { Id = 9, FirstName = "Michał", LastName = "Szymański", Position = "Referent", Department = "Wydział Analiz Danych", JobPositionId = 4, EmployedSince = new DateOnly(2018, 1, 10) },
+                new Employee { Id = 10, FirstName = "Agnieszka", LastName = "Woźniak", Position = "Starszy specjalista", Department = "Wydział Analiz Danych", JobPositionId = 5, EmployedSince = new DateOnly(2020, 6, 1) },
+                new Employee { Id = 11, FirstName = "Paweł", LastName = "Kozłowski", Position = "Starszy specjalista", Department = "Wydział Analiz Danych", JobPositionId = 6, EmployedSince = new DateOnly(2026, 11, 5) },
+                new Employee { Id = 12, FirstName = "Karolina", LastName = "Mazur", Position = "Specjalista", Department = "Wydział Analiz Danych", JobPositionId = 7, EmployedSince = new DateOnly(2021, 12, 20) },
                 new Employee { Id = 13, FirstName = "Łukasz", LastName = "Grabowski", Position = "Specjalista", Department = "Wydział Analiz Danych", EmployedSince = new DateOnly(2024, 12, 10) },
-                new Employee { Id = 14, FirstName = "Natalia", LastName = "Krawczyk", Position = "Główny specjalista", Department = "Wydział Analiz Danych", EmployedSince = new DateOnly(2023, 4, 3) },
-                new Employee { Id = 15, FirstName = "Bartosz", LastName = "Wróbel", Position = "Starszy specjalista", Department = "Wydział Analiz Danych", EmployedSince = new DateOnly(2022, 1, 17) },
-                new Employee { Id = 16, FirstName = "Monika", LastName = "Sikora", Position = "Specjalista", Department = "Wydział Analiz Danych", EmployedSince = new DateOnly(2019, 11, 28) },
-                new Employee { Id = 17, FirstName = "Joanna", LastName = "Pawlak", Position = "Główny specjalista", Department = "Wydział Analiz Danych", EmployedSince = new DateOnly(2020, 12, 7) });
+                new Employee { Id = 14, FirstName = "Natalia", LastName = "Krawczyk", Position = "Główny specjalista", Department = "Wydział Analiz Danych", JobPositionId = 8, EmployedSince = new DateOnly(2023, 4, 3) },
+                new Employee { Id = 15, FirstName = "Bartosz", LastName = "Wróbel", Position = "Starszy specjalista", Department = "Wydział Analiz Danych", JobPositionId = 9, EmployedSince = new DateOnly(2022, 1, 17) },
+                new Employee { Id = 16, FirstName = "Monika", LastName = "Sikora", Position = "Specjalista", Department = "Wydział Analiz Danych", JobPositionId = 10, EmployedSince = new DateOnly(2019, 11, 28) },
+                new Employee { Id = 17, FirstName = "Joanna", LastName = "Pawlak", Position = "Główny specjalista", Department = "Wydział Analiz Danych", JobPositionId = 11, EmployedSince = new DateOnly(2020, 12, 7) });
         });
 
         modelBuilder.Entity<EmployeeSupervisor>(l =>
@@ -107,151 +111,19 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
                 new EmployeeSupervisor { EmployeeId = 17, SupervisorId = 3 });
         });
 
-        modelBuilder.Entity<JobDescription>(j =>
+        modelBuilder.Entity<JobPosition>(j =>
         {
-            j.ToTable("JobDescriptions");
-            j.HasKey(p => p.EmployeeId);
-            j.Property(p => p.Purpose).HasMaxLength(1000);
-            j.Property(p => p.Tasks).HasMaxLength(4000);
+            j.ToTable("JobPositions");
+            j.Property(p => p.Symbol).HasMaxLength(50);
+            j.HasIndex(p => p.Symbol).IsUnique();
+            j.Property(p => p.Title).HasMaxLength(200);
+            j.Property(p => p.Department).HasMaxLength(200);
+            j.Property(p => p.Unit).HasMaxLength(200);
+            j.Property(p => p.DirectSupervisorTitle).HasMaxLength(200);
+            j.Property(p => p.IndirectSupervisorTitle).HasMaxLength(200);
             j.Property(p => p.RequiredCompetencies).HasMaxLength(1000);
-            j.HasOne(p => p.Employee)
-                .WithOne(p => p.JobDescription)
-                .HasForeignKey<JobDescription>(p => p.EmployeeId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            j.HasData(
-                new JobDescription
-                {
-                    EmployeeId = 1,
-                    Purpose = "Przygotowywanie analiz danych wspierających decyzje kierownictwa departamentu oraz dbanie o jakość danych wykorzystywanych w raportach.",
-                    Tasks = Lines(
-                        "Przygotowywanie analiz i raportów na potrzeby kierownictwa departamentu",
-                        "Opracowywanie wskaźników i metod pomiaru realizacji zadań",
-                        "Weryfikacja jakości i kompletności danych z systemów dziedzinowych",
-                        "Przygotowywanie projektów stanowisk do dokumentów przekazanych do zaopiniowania",
-                        "Wsparcie merytoryczne mniej doświadczonych pracowników wydziału"),
-                    RequiredCompetencies = Lines("Myślenie analityczne", "Orientacja na cele", "Komunikacja pisemna", "Współpraca"),
-                },
-                new JobDescription
-                {
-                    EmployeeId = 2,
-                    Purpose = "Realizacja zadań związanych z gromadzeniem, przetwarzaniem i udostępnianiem danych na potrzeby wydziału.",
-                    Tasks = Lines(
-                        "Gromadzenie i porządkowanie danych z jednostek podległych",
-                        "Przygotowywanie zestawień i wizualizacji danych",
-                        "Udzielanie odpowiedzi na zapytania dotyczące danych publicznych",
-                        "Prowadzenie dokumentacji źródeł danych"),
-                    RequiredCompetencies = Lines("Myślenie analityczne", "Rzetelność", "Komunikacja", "Współpraca"),
-                },
-                new JobDescription
-                {
-                    EmployeeId = 3,
-                    Purpose = "Kierowanie Wydziałem Analiz Danych, zapewnienie terminowej i rzetelnej realizacji zadań wydziału oraz rozwój kompetencji podległych pracowników.",
-                    Tasks = Lines(
-                        "Planowanie, organizowanie i nadzorowanie pracy wydziału",
-                        "Przydzielanie zadań i ocena ich realizacji przez pracowników",
-                        "Przygotowywanie stanowisk i rekomendacji dla dyrektora departamentu",
-                        "Współpraca z innymi komórkami organizacyjnymi i instytucjami",
-                        "Prowadzenie ocen okresowych i planowanie rozwoju zawodowego pracowników"),
-                    RequiredCompetencies = Lines("Zarządzanie zespołem", "Podejmowanie decyzji", "Myślenie strategiczne", "Zarządzanie rozwojem pracowników", "Komunikacja"),
-                    SubordinatesCount = 6,
-                },
-                new JobDescription
-                {
-                    EmployeeId = 9,
-                    Purpose = "Obsługa administracyjna wydziału i wsparcie pracowników w przygotowywaniu zestawień danych.",
-                    Tasks = Lines(
-                        "Prowadzenie rejestru korespondencji wydziału",
-                        "Przygotowywanie prostych zestawień danych według wskazówek",
-                        "Archiwizowanie dokumentacji wydziału",
-                        "Organizacja spotkań i przygotowywanie notatek"),
-                    RequiredCompetencies = Lines("Rzetelność", "Organizacja pracy własnej", "Komunikacja"),
-                },
-                new JobDescription
-                {
-                    EmployeeId = 10,
-                    Purpose = "Przygotowywanie i opiniowanie analiz dotyczących usług cyfrowych oraz koordynacja współpracy z dostawcami danych.",
-                    Tasks = Lines(
-                        "Opracowywanie analiz wpływu planowanych zmian na usługi cyfrowe",
-                        "Opiniowanie projektów dokumentów pod kątem danych i wskaźników",
-                        "Koordynowanie współpracy z instytucjami przekazującymi dane",
-                        "Prowadzenie spotkań roboczych z udziałem innych komórek",
-                        "Przygotowywanie materiałów na posiedzenia zespołów międzyresortowych"),
-                    RequiredCompetencies = Lines("Myślenie analityczne", "Współpraca", "Komunikacja", "Orientacja na cele"),
-                },
-                new JobDescription
-                {
-                    EmployeeId = 11,
-                    Purpose = "Prowadzenie spraw dotyczących reagowania na incydenty i sytuacje kryzysowe w zakresie danych i usług cyfrowych departamentu.",
-                    Tasks = Lines(
-                        "Udział w opracowaniu i aktualizacji planu reagowania na incydenty dotyczące danych i usług cyfrowych",
-                        "Analiza zgłoszonych incydentów i przygotowywanie rekomendacji działań naprawczych",
-                        "Współpraca z zespołami reagowania na incydenty w innych urzędach i instytucjach",
-                        "Udział w przygotowaniu i przeprowadzaniu ćwiczeń z reagowania na sytuacje kryzysowe",
-                        "Prowadzenie kontroli przestrzegania procedur bezpieczeństwa danych w jednostkach podległych"),
-                    RequiredCompetencies = Lines(
-                        "Organizacja pracy i orientacja na osiąganie celów",
-                        "Współpraca",
-                        "Myślenie analityczne",
-                        "Wykorzystywanie wiedzy i doskonalenie zawodowe",
-                        "Radzenie sobie w sytuacjach kryzysowych"),
-                },
-                new JobDescription
-                {
-                    EmployeeId = 12,
-                    Purpose = "Realizacja zadań związanych z analizą danych i przygotowywaniem informacji dla kierownictwa.",
-                    Tasks = Lines(
-                        "Przygotowywanie cyklicznych raportów z danych wydziału",
-                        "Analiza danych ankietowych i statystycznych",
-                        "Przygotowywanie projektów odpowiedzi na pisma",
-                        "Aktualizacja danych publikowanych w serwisie urzędu"),
-                    RequiredCompetencies = Lines("Myślenie analityczne", "Rzetelność", "Komunikacja pisemna"),
-                },
-                new JobDescription
-                {
-                    EmployeeId = 14,
-                    Purpose = "Projektowanie i utrzymanie zestawów wskaźników wydziału oraz zapewnienie spójności metod analizy danych.",
-                    Tasks = Lines(
-                        "Projektowanie wskaźników i metod pomiaru dla zadań departamentu",
-                        "Przygotowywanie analiz porównawczych na potrzeby kierownictwa",
-                        "Opracowywanie standardów opisu i weryfikacji źródeł danych",
-                        "Koordynowanie prac analitycznych realizowanych przez kilka osób wydziału"),
-                    RequiredCompetencies = Lines("Myślenie analityczne", "Orientacja na cele", "Współpraca", "Komunikacja pisemna"),
-                },
-                new JobDescription
-                {
-                    EmployeeId = 15,
-                    Purpose = "Przygotowywanie analiz statystycznych i prognoz na potrzeby planowania zadań departamentu.",
-                    Tasks = Lines(
-                        "Przygotowywanie prognoz i analiz trendów na podstawie danych wydziału",
-                        "Opracowywanie zestawień do planów i sprawozdań departamentu",
-                        "Weryfikacja poprawności obliczeń w raportach przygotowywanych przez wydział",
-                        "Udzielanie wyjaśnień dotyczących metod analizy innym komórkom"),
-                    RequiredCompetencies = Lines("Myślenie analityczne", "Rzetelność", "Komunikacja", "Orientacja na cele"),
-                },
-                new JobDescription
-                {
-                    EmployeeId = 16,
-                    Purpose = "Obsługa wniosków o udostępnienie danych i przygotowywanie zestawień dla podmiotów zewnętrznych.",
-                    Tasks = Lines(
-                        "Rozpatrywanie wniosków o udostępnienie danych wydziału",
-                        "Przygotowywanie zestawień danych dla podmiotów zewnętrznych",
-                        "Prowadzenie rejestru udostępnionych danych",
-                        "Współpraca z działem prawnym przy odpowiedziach na wnioski"),
-                    RequiredCompetencies = Lines("Rzetelność", "Komunikacja pisemna", "Współpraca"),
-                },
-                new JobDescription
-                {
-                    EmployeeId = 17,
-                    Purpose = "Przygotowywanie raportów i analiz danych o wnioskach obsługiwanych przez departament oraz dbanie o jakość danych źródłowych.",
-                    Tasks = Lines(
-                        "Przygotowywanie raportów kwartalnych i rocznych o wnioskach",
-                        "Analiza trendów i przyczyn zmian w liczbie wniosków",
-                        "Weryfikacja zgodności danych z rejestrami źródłowymi",
-                        "Przygotowywanie notatek informacyjnych dla kierownictwa",
-                        "Wsparcie nowych pracowników w pracy z danymi"),
-                    RequiredCompetencies = Lines("Myślenie analityczne", "Rzetelność", "Komunikacja pisemna", "Kreatywność"),
-                });
+            j.Property(p => p.Subordinates).HasConversion<string>().HasMaxLength(20);
+            j.HasData(DemoJobPositions.All);
         });
 
         modelBuilder.Entity<Evaluation>(v =>
@@ -475,6 +347,91 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
                 {
                     Id = 9, EvaluationId = 17, Criterion = Criterion.KnowledgeAndDevelopment, Tone = NoteTone.Positive, CreatedAt = new DateTime(2026, 9, 30, 10, 0, 0),
                     Text = "Ukończyła szkolenie z analizy danych i zastosowała nową metodę w raporcie kwartalnym. Pokazała ją też zespołowi na spotkaniu wydziału.",
+                },
+                new EvaluationNote
+                {
+                    Id = 10, EvaluationId = 15, Criterion = Criterion.Reliability, Tone = NoteTone.Positive, CreatedAt = new DateTime(2025, 2, 11, 10, 30, 0),
+                    Text = "Przy wniosku o dane z rejestru zawierającego dane osobowe sama ustaliła, które zasady anonimizacji mają zastosowanie, i przed wysyłką dodała drugą kontrolę zestawienia.",
+                },
+                new EvaluationNote
+                {
+                    Id = 11, EvaluationId = 15, Criterion = Criterion.KnowledgeAndDevelopment, Tone = NoteTone.Positive, CreatedAt = new DateTime(2025, 5, 20, 14, 0, 0),
+                    Text = "Przy nietypowym wniosku o dane z trzech rejestrów połączyła znajomość przepisów o dostępie do informacji publicznej z metodami łączenia danych i wyjaśniła, dlaczego części danych nie da się zestawić.",
+                },
+                new EvaluationNote
+                {
+                    Id = 12, EvaluationId = 15, Criterion = Criterion.Cooperation, Tone = NoteTone.Positive, CreatedAt = new DateTime(2025, 9, 16, 9, 45, 0),
+                    Text = "Z własnej inicjatywy przygotowała dla wydziału instrukcję obsługi wniosków o dane z rejestru i odpowiadała na pytania nowych osób. Po kolejnych pytaniach uzupełniła instrukcję o przykłady.",
+                },
+                new EvaluationNote
+                {
+                    Id = 13, EvaluationId = 15, Criterion = Criterion.Reliability, Tone = NoteTone.Negative, CreatedAt = new DateTime(2025, 10, 7, 15, 10, 0),
+                    Text = "Dwie odpowiedzi na wnioski o dane przygotowała dopiero po przypomnieniu, w ostatnim dniu terminu. O tym, że czeka na dane z innej komórki, poinformowała dzień przed terminem.",
+                },
+                new EvaluationNote
+                {
+                    Id = 14, EvaluationId = 15, Criterion = Criterion.Communication, Tone = NoteTone.Neutral, CreatedAt = new DateTime(2026, 1, 21, 11, 20, 0),
+                    Text = "Odpowiedzi na wnioski są poprawne i podają termin przekazania brakujących danych, ale przy złożonych sprawach wnioskodawcy dopytują o kontekst i znaczenie skrótów.",
+                },
+                new EvaluationNote
+                {
+                    Id = 15, EvaluationId = 15, Criterion = Criterion.KnowledgeAndDevelopment, Tone = NoteTone.Positive, CreatedAt = new DateTime(2026, 3, 10, 13, 0, 0),
+                    Text = "Przed zmianą przepisów o ponownym wykorzystywaniu informacji sama zapisała się na szkolenie, a potem sprawdziła na kilku wnioskach, czy nowy wzór odpowiedzi skraca ich obsługę.",
+                },
+                new EvaluationNote
+                {
+                    Id = 16, EvaluationId = 15, Criterion = Criterion.WorkOrganization, Tone = NoteTone.Negative, CreatedAt = new DateTime(2026, 4, 15, 16, 0, 0),
+                    Text = "Po pilnym zleceniu raportu dla ministerstwa przesunęła obsługę wniosków, ale o skutkach dla ich terminów poinformowała dopiero po pytaniu naczelnika.",
+                },
+                new EvaluationNote
+                {
+                    Id = 17, EvaluationId = 15, Criterion = Criterion.AnalyticalThinking, Tone = NoteTone.Positive, CreatedAt = new DateTime(2026, 6, 9, 10, 15, 0),
+                    Text = "Zauważyła, że wzrost liczby wniosków o dane zbiega się ze zmianą strony BIP. Sprawdziła to na danych z dwóch lat i odrzuciła wyjaśnienie sezonowe.",
+                },
+                new EvaluationNote
+                {
+                    Id = 18, EvaluationId = 15, Criterion = Criterion.Communication, Tone = NoteTone.Positive, CreatedAt = new DateTime(2026, 8, 26, 12, 30, 0),
+                    Text = "Na spotkaniu z Biurem Prawnym uzasadniła odmowę udostępnienia części danych, odpowiedziała na zastrzeżenia i wyjaśniła ograniczenia danych z rejestru.",
+                },
+                new EvaluationNote
+                {
+                    Id = 19, EvaluationId = 15, Criterion = Criterion.WorkOrganization, Tone = NoteTone.Positive, CreatedAt = new DateTime(2026, 9, 22, 9, 0, 0),
+                    Text = "Przy trzech wnioskach z tym samym terminem porównała skutki opóźnienia każdego z nich i uzgodniła z naczelnikiem kolejność obsługi.",
+                },
+                new EvaluationNote
+                {
+                    Id = 20, EvaluationId = 17, Criterion = Criterion.WorkOrganization, Tone = NoteTone.Positive, CreatedAt = new DateTime(2025, 1, 28, 10, 0, 0),
+                    Text = "Przy raporcie rocznym rozpisała etapy z terminami cząstkowymi i punktami kontroli danych od trzech komórek. Zaplanowała też, co zrobi, jeśli któraś komórka spóźni się z danymi.",
+                },
+                new EvaluationNote
+                {
+                    Id = 21, EvaluationId = 17, Criterion = Criterion.Communication, Tone = NoteTone.Positive, CreatedAt = new DateTime(2025, 4, 23, 13, 30, 0),
+                    Text = "Na spotkaniu z Wydziałem Budżetu powtórzyła własnymi słowami stanowisko rozmówców i wyjaśniła, że obie strony inaczej rozumieją pojęcie „wydatki wykonane”.",
+                },
+                new EvaluationNote
+                {
+                    Id = 22, EvaluationId = 17, Criterion = Criterion.Creativity, Tone = NoteTone.Positive, CreatedAt = new DateTime(2025, 7, 8, 11, 15, 0),
+                    Text = "Zaproponowała zastąpienie ręcznego scalania arkuszy prostym skryptem. Wypróbowała go na jednym raporcie, porównała wyniki z wersją ręczną i poprawiła skrypt po uwagach zespołu.",
+                },
+                new EvaluationNote
+                {
+                    Id = 23, EvaluationId = 17, Criterion = Criterion.KnowledgeAndDevelopment, Tone = NoteTone.Positive, CreatedAt = new DateTime(2025, 10, 21, 9, 40, 0),
+                    Text = "Do zestawienia o zatrudnieniu porównała dane z dwóch systemów kadrowych, wyjaśniła rozbieżności i wybrała źródło zgodne z zasadami ochrony danych.",
+                },
+                new EvaluationNote
+                {
+                    Id = 24, EvaluationId = 17, Criterion = Criterion.Cooperation, Tone = NoteTone.Positive, CreatedAt = new DateTime(2026, 1, 15, 14, 20, 0),
+                    Text = "W podsumowaniu raportu rocznego wymieniła osoby z Wydziału Budżetu, które przygotowały dane źródłowe, i opisała, dlaczego ich praca była ważna dla wyniku.",
+                },
+                new EvaluationNote
+                {
+                    Id = 25, EvaluationId = 17, Criterion = Criterion.Reliability, Tone = NoteTone.Neutral, CreatedAt = new DateTime(2026, 3, 18, 15, 0, 0),
+                    Text = "Kolejne zestawienia przekazywała w terminie, ale o zagrożeniu terminu raportu półrocznego poinformowała dopiero w dniu wysyłki.",
+                },
+                new EvaluationNote
+                {
+                    Id = 26, EvaluationId = 17, Criterion = Criterion.Creativity, Tone = NoteTone.Negative, CreatedAt = new DateTime(2026, 7, 1, 10, 30, 0),
+                    Text = "W raporcie o skargach trzymała się dotychczasowego podziału na kategorie, mimo że nowe rodzaje skarg do nich nie pasowały. Zmieniła podział dopiero po sugestii naczelnika.",
                 });
         });
 
@@ -596,6 +553,21 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
                 .WithMany()
                 .HasForeignKey(p => p.IndicatorId)
                 .OnDelete(DeleteBehavior.NoAction);
+
+            r.HasData(
+                DemoRatings(15, Criterion.KnowledgeAndDevelopment, 4, 4, 3)
+                    .Concat(DemoRatings(15, Criterion.Reliability, 4, 2))
+                    .Concat(DemoRatings(15, Criterion.WorkOrganization, 3, 4, null, 2, 3))
+                    .Concat(DemoRatings(15, Criterion.Cooperation, 4, 3, 4, 4, 3, 5))
+                    .Concat(DemoRatings(15, Criterion.Communication, 3, 3, 3, 4))
+                    .Concat(DemoRatings(15, Criterion.AnalyticalThinking, 4, 4, 3))
+                    .Concat(DemoRatings(17, Criterion.KnowledgeAndDevelopment, 3, 4, 4))
+                    .Concat(DemoRatings(17, Criterion.Reliability, 4, 2))
+                    .Concat(DemoRatings(17, Criterion.WorkOrganization, 4, 3, null, 3, 3))
+                    .Concat(DemoRatings(17, Criterion.Cooperation, 3, 3, 3, 4, 3, 3))
+                    .Concat(DemoRatings(17, Criterion.Communication, 4, 3, 4, 3))
+                    .Concat(DemoRatings(17, Criterion.AnalyticalThinking, 4, 4, 3))
+                    .Concat(DemoRatings(17, Criterion.Creativity, 4, 2)));
         });
 
         modelBuilder.Entity<CriterionDecision>(d =>
@@ -669,9 +641,26 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
                 new CriterionDecision { EvaluationId = 16, Criterion = Criterion.WorkOrganization, SuggestedLevel = 3, Level = 3, DecidedAt = new DateTime(2024, 12, 5, 9, 0, 0) },
                 new CriterionDecision { EvaluationId = 16, Criterion = Criterion.Cooperation, SuggestedLevel = 4, Level = 4, DecidedAt = new DateTime(2024, 12, 5, 9, 0, 0) },
                 new CriterionDecision { EvaluationId = 16, Criterion = Criterion.Communication, SuggestedLevel = 4, Level = 4, DecidedAt = new DateTime(2024, 12, 5, 9, 0, 0) },
-                new CriterionDecision { EvaluationId = 16, Criterion = Criterion.AnalyticalThinking, SuggestedLevel = 4, Level = 4, DecidedAt = new DateTime(2024, 12, 5, 9, 0, 0) });
+                new CriterionDecision { EvaluationId = 16, Criterion = Criterion.AnalyticalThinking, SuggestedLevel = 4, Level = 4, DecidedAt = new DateTime(2024, 12, 5, 9, 0, 0) },
+                new CriterionDecision { EvaluationId = 17, Criterion = Criterion.KnowledgeAndDevelopment, SuggestedLevel = 4, Level = 4, DecidedAt = new DateTime(2026, 11, 20, 10, 0, 0) },
+                new CriterionDecision { EvaluationId = 17, Criterion = Criterion.Reliability, SuggestedLevel = 3, Level = 3, DecidedAt = new DateTime(2026, 11, 20, 10, 0, 0) },
+                new CriterionDecision { EvaluationId = 17, Criterion = Criterion.WorkOrganization, SuggestedLevel = 3, Level = 3, DecidedAt = new DateTime(2026, 11, 20, 10, 0, 0) },
+                new CriterionDecision { EvaluationId = 17, Criterion = Criterion.Cooperation, SuggestedLevel = 3, Level = 3, DecidedAt = new DateTime(2026, 11, 20, 10, 0, 0) },
+                new CriterionDecision { EvaluationId = 17, Criterion = Criterion.Communication, SuggestedLevel = 4, Level = 4, DecidedAt = new DateTime(2026, 11, 20, 10, 0, 0) },
+                new CriterionDecision { EvaluationId = 17, Criterion = Criterion.AnalyticalThinking, SuggestedLevel = 4, Level = 4, DecidedAt = new DateTime(2026, 11, 20, 10, 0, 0) },
+                new CriterionDecision { EvaluationId = 17, Criterion = Criterion.Creativity, SuggestedLevel = 3, Level = 3, DecidedAt = new DateTime(2026, 11, 20, 10, 0, 0) });
         });
     }
 
     private static string Lines(params string[] lines) => string.Join('\n', lines);
+
+    private static IEnumerable<IndicatorRating> DemoRatings(int evaluationId, Criterion criterion, params int?[] levels)
+    {
+        var indicators = CompetencyModelSource.Indicators.Where(i => i.Criterion == criterion).OrderBy(i => i.Number).ToList();
+        if (indicators.Count != levels.Length)
+        {
+            throw new InvalidOperationException($"Kryterium {criterion} ma {indicators.Count} wskaźników, a dane demo podają {levels.Length} odpowiedzi.");
+        }
+        return indicators.Zip(levels, (indicator, level) => new IndicatorRating { EvaluationId = evaluationId, IndicatorId = indicator.Id, Level = level });
+    }
 }

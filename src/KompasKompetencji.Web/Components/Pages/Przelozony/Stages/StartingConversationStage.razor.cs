@@ -63,6 +63,14 @@ public partial class StartingConversationStage
         acquaintedOn = IsReadyToConfirm ? ConversationDay : null;
     }
 
+    private string SuggestionSummary => View.JobPosition switch
+    {
+        null => "Pracownik nie ma opisu stanowiska pracy, więc nie ma podpowiedzi kryteriów.",
+        { } position when View.SuggestedCriteria.Count == 0 =>
+            $"Kompetencje wymagane w OSP {position.Symbol} pokrywają się z kryteriami obowiązkowymi, więc nie ma podpowiedzi kryteriów dodatkowych.",
+        { } position => $"Podpowiedzi pochodzą z kompetencji wymaganych w OSP {position.Symbol}.",
+    };
+
     private bool IsOptionDisabled(Criterion criterion) =>
         additionalCriteria.Count() >= EvaluationCriteria.MaxAdditional && !additionalCriteria.Contains(criterion);
 
@@ -81,6 +89,10 @@ public partial class StartingConversationStage
         }
 
         NotificationService.Notify(NotificationSeverity.Success, "Propozycja zapisana", View.Employee.FullName);
+        if (Conversation is null)
+        {
+            await ScheduleConversationAsync();
+        }
         await OnChanged.InvokeAsync();
     }
 
@@ -125,11 +137,21 @@ public partial class StartingConversationStage
 
     private async Task EditConversationAsync()
     {
-        if (await ConversationDialog.OpenAsync(DialogService, View.Task, ConversationType.Starting, SupervisorId, Today))
+        if (await ScheduleConversationAsync())
         {
-            NotificationService.Notify(NotificationSeverity.Success, "Zapisano termin rozmowy", $"{View.Employee.FullName} · {EvaluationText.ConversationTypeName(ConversationType.Starting)}");
             await OnChanged.InvokeAsync();
         }
+    }
+
+    private async Task<bool> ScheduleConversationAsync()
+    {
+        if (!await ConversationDialog.OpenAsync(DialogService, View.Task, ConversationType.Starting, SupervisorId, Today))
+        {
+            return false;
+        }
+
+        NotificationService.Notify(NotificationSeverity.Success, "Zapisano termin rozmowy", $"{View.Employee.FullName} · {EvaluationText.ConversationTypeName(ConversationType.Starting)}");
+        return true;
     }
 
     private async Task MarkHeldAsync()

@@ -29,7 +29,7 @@ public static class AppRoles
     public static string HomePath(string? role) => role switch
     {
         Supervisor => "/przelozony",
-        Hr => "/hr",
+        Hr => "/hr/etapy-ocen",
         Admin => "/admin",
         _ => "/brak-dostepu",
     };

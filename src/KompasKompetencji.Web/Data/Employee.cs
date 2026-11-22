@@ -20,7 +20,9 @@ public class Employee
 
     public ICollection<EmployeeSupervisor> SubordinateLinks { get; set; } = [];
 
-    public JobDescription? JobDescription { get; set; }
+    public int? JobPositionId { get; set; }
+
+    public JobPosition? JobPosition { get; set; }
 
     public string FullName => $"{FirstName} {LastName}";
 }

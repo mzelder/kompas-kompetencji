@@ -27,9 +27,8 @@ public static class RoleNavigation
         ],
         AppRoles.Hr =>
         [
-            new("Procesy",
+            new("Oceny",
             [
-                new("Procesy ocen", "/hr", "fact_check", NavLinkMatch.All),
                 new("Etapy ocen", "/hr/etapy-ocen", "timeline"),
             ]),
             new("Organizacja", [new("Pracownicy i przełożeni", "/hr/pracownicy", "account_tree")]),

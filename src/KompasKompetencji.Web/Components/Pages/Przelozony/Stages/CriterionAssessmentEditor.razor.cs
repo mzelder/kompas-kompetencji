@@ -40,6 +40,7 @@ public partial class CriterionAssessmentEditor
     ];
 
     private readonly HashSet<int> expandedIndicators = [];
+    private readonly HashSet<int> resolvedSuggestions = [];
     private IndicatorSuggestions? suggestions;
     private bool suggesting;
 
@@ -66,11 +67,13 @@ public partial class CriterionAssessmentEditor
     private Task SelectBehaviorAsync(IndicatorAssessment indicator, int level) =>
         ReadOnly ? Task.CompletedTask : RateAsync(indicator, level.ToString());
 
-    private async Task RateAsync(IndicatorAssessment indicator, string? value)
+    private Task RateAsync(IndicatorAssessment indicator, string? value) => SaveRatingAsync(indicator, value);
+
+    private async Task<bool> SaveRatingAsync(IndicatorAssessment indicator, string? value)
     {
         if (ReadOnly || value is null)
         {
-            return;
+            return false;
         }
 
         int? level = value == NoBasisValue ? null : int.Parse(value);
@@ -78,15 +81,27 @@ public partial class CriterionAssessmentEditor
         if (!result.Succeeded)
         {
             NotificationService.Notify(NotificationSeverity.Error, "Nie udało się zapisać wskaźnika", result.Error ?? string.Empty);
-            return;
+            return false;
         }
         await OnChanged.InvokeAsync();
+        return true;
     }
+
+    private async Task ApplySuggestionAsync(IndicatorAssessment indicator, IndicatorSuggestion suggestion)
+    {
+        if (await SaveRatingAsync(indicator, suggestion.Level?.ToString() ?? NoBasisValue))
+        {
+            DismissSuggestion(indicator.Indicator.Id);
+        }
+    }
+
+    private void DismissSuggestion(int indicatorId) => resolvedSuggestions.Add(indicatorId);
 
     private async Task SuggestAsync()
     {
         suggesting = true;
         suggestions = await WrittenEvaluations.SuggestFromNotesAsync(SupervisorId, EmployeeId, Assessment.Criterion);
+        resolvedSuggestions.Clear();
         suggesting = false;
         if (!suggestions.IsAvailable)
         {

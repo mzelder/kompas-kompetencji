@@ -50,7 +50,7 @@ public sealed record CompletionView(
 
 public sealed record EmployeeEvaluationView(
     Employee Employee,
-    JobDescription? JobDescription,
+    JobPosition? JobPosition,
     EvaluationTask Task,
     Evaluation? OpenEvaluation,
     EvaluationStage CurrentStage,
@@ -287,7 +287,9 @@ public sealed class EvaluationService(IDbContextFactory<AppDbContext> dbFactory,
             return null;
         }
 
-        var jobDescription = await db.JobDescriptions.AsNoTracking().SingleOrDefaultAsync(j => j.EmployeeId == employeeId, ct);
+        var jobPosition = employee.JobPositionId is int jobPositionId
+            ? await db.JobPositions.AsNoTracking().SingleOrDefaultAsync(j => j.Id == jobPositionId, ct)
+            : null;
         var evaluations = await db.Evaluations.AsNoTracking()
             .Include(v => v.Conversations)
             .Include(v => v.AdditionalCriteria)
@@ -296,7 +298,7 @@ public sealed class EvaluationService(IDbContextFactory<AppDbContext> dbFactory,
         var open = EvaluationSchedule.OpenEvaluation(evaluations);
         var task = EvaluationSchedule.Describe(employee, evaluations, today);
         var cycleStart = EvaluationSchedule.CycleStart(employee, evaluations);
-        var suggestedCriteria = CriteriaSuggestion.Suggest(task.Sheet, jobDescription);
+        var suggestedCriteria = CriteriaSuggestion.Suggest(task.Sheet, jobPosition);
         var additionalCriteria = open is not null && HasPartIDraft(open)
             ? open.AdditionalCriteria.Select(a => a.Criterion).OrderBy(c => c).ToList()
             : suggestedCriteria.Select(s => s.Criterion).ToList();
@@ -310,7 +312,7 @@ public sealed class EvaluationService(IDbContextFactory<AppDbContext> dbFactory,
 
         return new EmployeeEvaluationView(
             employee,
-            jobDescription,
+            jobPosition,
             task,
             open,
             EvaluationStages.Current(open),
@@ -398,7 +400,26 @@ public sealed class EvaluationService(IDbContextFactory<AppDbContext> dbFactory,
 
         var isPrintable = evaluation.Status == EvaluationStatus.Completed
             || EvaluationStages.Current(evaluation) == EvaluationStage.Completion;
-        return isPrintable ? EvaluationSheetData.From(evaluation) : null;
+        if (!isPrintable)
+        {
+            return null;
+        }
+
+        var previous = await db.Evaluations.AsNoTracking()
+            .Include(v => v.AdditionalCriteria)
+            .Where(v => v.EmployeeId == evaluation.EmployeeId && v.Id != evaluation.Id
+                && v.Status == EvaluationStatus.Completed && v.PreparedOn != null && v.DueDate < evaluation.DueDate)
+            .OrderByDescending(v => v.DueDate)
+            .FirstOrDefaultAsync(ct);
+        var evaluationIds = previous is null ? [evaluation.Id] : new[] { evaluation.Id, previous.Id };
+        var decisions = await db.CriterionDecisions.AsNoTracking()
+            .Where(d => evaluationIds.Contains(d.EvaluationId))
+            .ToListAsync(ct);
+
+        var previousSheet = previous is not null && EvaluationSheetData.Summarize(previous, decisions) is WrittenEvaluationSummary summary
+            ? new SheetPreviousEvaluation(summary.IsPositive, summary.OverallLevel, previous.PreparedOn!.Value)
+            : null;
+        return EvaluationSheetData.From(evaluation, decisions, previousSheet);
     }
 
     private static CompletionView DescribeCompletion(Evaluation open, DateOnly today) => new(

@@ -23,23 +23,42 @@
             </RadzenColumn>
         </RadzenRow>
 
-        <RadzenFormField Text="Stanowisko" Variant="Variant.Outlined" class="rz-w-100">
+        <RadzenFormField Text="Stanowisko pracy" Variant="Variant.Outlined" class="rz-w-100">
             <ChildContent>
-                <RadzenTextBox Name="Position" @bind-Value="form.Position" MaxLength="200" />
+                <RadzenDropDown TValue="int?" Name="JobPosition" @bind-Value="form.JobPositionId" Data="@positions"
+                                ValueProperty="Id" TextProperty="Label" AllowFiltering="true"
+                                FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" FilterOperator="StringFilterOperator.Contains"
+                                Placeholder="Wybierz stanowisko z opisu stanowiska pracy" PopupStyle="max-height: 22rem;">
+                    <Template Context="item">
+                        <RadzenStack Gap="0">
+                            <RadzenText TextStyle="TextStyle.Body1" class="rz-m-0">@(((PositionItem)item).Label)</RadzenText>
+                            <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">@(((PositionItem)item).Details)</RadzenText>
+                        </RadzenStack>
+                    </Template>
+                </RadzenDropDown>
             </ChildContent>
             <Helper>
-                <RadzenRequiredValidator Component="Position" Text="Podaj stanowisko." />
+                <RadzenRequiredValidator Component="JobPosition" Text="Wybierz stanowisko pracy." />
             </Helper>
         </RadzenFormField>
 
-        <RadzenFormField Text="Komórka organizacyjna" Variant="Variant.Outlined" class="rz-w-100">
-            <ChildContent>
-                <RadzenTextBox Name="Department" @bind-Value="form.Department" MaxLength="200" />
-            </ChildContent>
-            <Helper>
-                <RadzenRequiredValidator Component="Department" Text="Podaj komórkę organizacyjną." />
-            </Helper>
-        </RadzenFormField>
+        @if (SelectedPosition is PositionItem selected)
+        {
+            <RadzenCard Variant="Variant.Filled" class="rz-p-3">
+                <RadzenStack Gap="0.75rem">
+                    <RadzenText TextStyle="TextStyle.Body2" class="rz-m-0">@selected.Position.Purpose</RadzenText>
+                    <RadzenStack Orientation="Orientation.Horizontal" Gap="1.5rem" Wrap="FlexWrap.Wrap">
+                        <DetailItem Label="Komórka organizacyjna" Value="@selected.Position.OrganizationalUnit" />
+                        <DetailItem Label="Podlegli pracownicy" Value="@EvaluationText.Subordinates(selected.Position.Subordinates)" />
+                    </RadzenStack>
+                    <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">
+                        @(selected.Position.ManagesTeam
+                            ? "Stanowisko kieruje zespołem, więc pracownik będzie mógł być przełożonym."
+                            : "Stanowisko nie kieruje zespołem.")
+                    </RadzenText>
+                </RadzenStack>
+            </RadzenCard>
+        }
 
         <RadzenFormField Text="Data zatrudnienia" Variant="Variant.Outlined" class="rz-w-100">
             <ChildContent>
@@ -51,11 +70,6 @@
                 </RadzenText>
             </Helper>
         </RadzenFormField>
-
-        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.5rem">
-            <RadzenCheckBox TValue="bool" Name="IsSupervisor" @bind-Value="form.IsSupervisor" />
-            <RadzenLabel Component="IsSupervisor" Text="Pełni funkcję przełożonego" />
-        </RadzenStack>
 
         <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End" Gap="0.5rem">
             <RadzenButton Text="Anuluj" Variant="Variant.Text" ButtonStyle="ButtonStyle.Base" Disabled="@busy"

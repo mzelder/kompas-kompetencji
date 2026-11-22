@@ -1,14 +1,21 @@
+using System.Globalization;
 using KompasKompetencji.Web.Data;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
+using static KompasKompetencji.Web.Evaluations.Pdf.EvaluationSheetFootnotes;
 
 namespace KompasKompetencji.Web.Evaluations.Pdf;
 
 public sealed class EvaluationSheetDocument(EvaluationSheetData data) : IDocument
 {
     private const float BorderWidth = 0.75f;
+    private const float SmallText = 7.5f;
+    private const float FootnoteText = 6.5f;
     private const string Blank = "";
+    private const string Mark = "X";
+
+    private static readonly CultureInfo Polish = CultureInfo.GetCultureInfo("pl-PL");
 
     private static readonly string[] ScoreLevels =
         ["Znacznie poniżej oczekiwań", "Poniżej oczekiwań", "Na poziomie oczekiwań", "Powyżej oczekiwań", "Znacznie powyżej oczekiwań"];
@@ -41,11 +48,13 @@ public sealed class EvaluationSheetDocument(EvaluationSheetData data) : IDocumen
             page.DefaultTextStyle(style => style.FontSize(9));
             page.Content().Column(column =>
             {
-                column.Spacing(8);
+                column.Spacing(6);
                 ComposeTitle(column);
                 ComposePartI(column);
+                Footnotes(column, PartI);
                 column.Item().PageBreak();
                 ComposePartII(column);
+                Footnotes(column, PartII);
             });
             page.Footer().AlignCenter().Text(text =>
             {
@@ -60,12 +69,14 @@ public sealed class EvaluationSheetDocument(EvaluationSheetData data) : IDocumen
 
     private void ComposeTitle(ColumnDescriptor column)
     {
+        column.Item().AlignRight().Text($"Załącznik nr {Annex(data.Sheet)}").FontSize(8).FontColor(Colors.Grey.Darken2);
         column.Item().AlignCenter().Text($"ARKUSZ {data.Sheet}").Bold().FontSize(14);
         column.Item().AlignCenter().Text(text =>
         {
             text.AlignCenter();
             text.Line("OCENA OKRESOWA").Bold().FontSize(11);
-            text.Line("URZĘDNIKA SŁUŻBY CYWILNEJ LUB PRACOWNIKA SŁUŻBY CYWILNEJ").Bold();
+            text.Span("URZĘDNIKA SŁUŻBY CYWILNEJ LUB PRACOWNIKA SŁUŻBY CYWILNEJ").Bold();
+            Note(text, SheetPurpose);
         });
     }
 
@@ -80,12 +91,12 @@ public sealed class EvaluationSheetDocument(EvaluationSheetData data) : IDocumen
                 c.RelativeColumn(1);
                 c.RelativeColumn(2);
             });
-            HeaderCell(table.Cell()).Text("NAZWA URZĘDU").Bold();
+            Label(HeaderCell(table.Cell()), "NAZWA URZĘDU");
             Cell(table.Cell()).MinHeight(22).Text(Blank);
         });
 
-        ComposePerson(column, "DANE OCENIANEGO", data.Employee);
-        ComposePerson(column, "DANE OCENIAJĄCEGO", data.Evaluator);
+        ComposePerson(column, "DANE OCENIANEGO", data.Employee, Position);
+        ComposePerson(column, "DANE OCENIAJĄCEGO", data.Evaluator, null);
 
         Heading(column, "KRYTERIA OCENY I TERMIN SPORZĄDZENIA OCENY");
         column.Item().Table(table =>
@@ -96,19 +107,19 @@ public sealed class EvaluationSheetDocument(EvaluationSheetData data) : IDocumen
                 c.RelativeColumn(2);
                 c.RelativeColumn(2);
             });
-            HeaderCell(table.Cell()).Text("Kryteria obowiązkowe").Bold();
-            HeaderCell(table.Cell().ColumnSpan(2)).Text("Kryteria dodatkowe wybrane przez oceniającego (nie więcej niż 3)").Bold();
+            Label(HeaderCell(table.Cell()), "Kryteria obowiązkowe");
+            Label(HeaderCell(table.Cell().ColumnSpan(2)), "Kryteria dodatkowe wybrane przez oceniającego (nie więcej niż 3)", AdditionalCriteria);
 
             for (var i = 0; i < data.MandatoryCriteria.Count; i++)
             {
-                Cell(table.Cell()).Text(data.MandatoryCriteria[i]);
+                Cell(table.Cell()).Text(data.MandatoryCriteria[i].Name);
                 if (i < EvaluationCriteria.MaxAdditional)
                 {
-                    Cell(table.Cell().ColumnSpan(2)).Text(i < data.AdditionalCriteria.Count ? data.AdditionalCriteria[i] : Blank);
+                    Cell(table.Cell().ColumnSpan(2)).Text(i < data.AdditionalCriteria.Count ? data.AdditionalCriteria[i].Name : Blank);
                 }
                 else if (i == EvaluationCriteria.MaxAdditional)
                 {
-                    HeaderCell(table.Cell().RowSpan(2)).AlignMiddle().Text("Termin sporządzenia oceny").Bold();
+                    Label(HeaderCell(table.Cell().RowSpan(2)).AlignMiddle(), "Termin sporządzenia oceny");
                     Cell(table.Cell().RowSpan(2)).AlignMiddle().AlignCenter().Text(Date(data.DueDate));
                 }
             }
@@ -118,10 +129,15 @@ public sealed class EvaluationSheetDocument(EvaluationSheetData data) : IDocumen
         {
             box.Spacing(4);
             box.Item().Text("Potwierdzamy:").Bold();
-            box.Item().Text(
-                "– przeprowadzenie rozmowy, o której mowa w § 5 ust. 1 rozporządzenia Prezesa Rady Ministrów z dnia 4 kwietnia 2016 r. "
-                + "w sprawie warunków i sposobu przeprowadzania ocen okresowych urzędników służby cywilnej i pracowników służby cywilnej "
-                + "(Dz. U. poz. 470), i omówienie w trakcie tej rozmowy wszystkich wymaganych zagadnień,");
+            box.Item().Text(text =>
+            {
+                text.Span(
+                    "– przeprowadzenie rozmowy, o której mowa w § 5 ust. 1 rozporządzenia Prezesa Rady Ministrów z dnia 4 kwietnia 2016 r. "
+                    + "w sprawie warunków i sposobu przeprowadzania ocen okresowych urzędników służby cywilnej i pracowników służby cywilnej "
+                    + "(Dz. U. poz. 470), i omówienie w trakcie tej rozmowy wszystkich wymaganych zagadnień");
+                Note(text, StartingConversation);
+                text.Span(",");
+            });
             box.Item().Text("– zapoznanie ocenianego z kryteriami oceny oraz terminem sporządzenia oceny.");
             box.Item().PaddingTop(10).Element(e => Signatures(e, (Blank, "miejscowość"), (Date(data.PartIConfirmedOn), "data (dd.mm.rrrr)"), (Blank, "podpis oceniającego")));
             box.Item().PaddingTop(6).Element(e => Signatures(e, (Blank, "miejscowość"), (Date(data.EmployeeAcquaintedOn), "data (dd.mm.rrrr)"), (Blank, "podpis ocenianego")));
@@ -142,12 +158,12 @@ public sealed class EvaluationSheetDocument(EvaluationSheetData data) : IDocumen
                 c.RelativeColumn(1);
                 c.RelativeColumn(2);
             });
-            HeaderCell(table.Cell()).Text("DATA PRZEPROWADZENIA ROZMOWY OCENIAJĄCEJ").Bold();
-            Cell(table.Cell().ColumnSpan(4)).AlignCenter().Text(Date(data.AssessmentConversationOn));
-            HeaderCell(table.Cell()).Text("OKRES, W KTÓRYM OCENIANY PODLEGAŁ OCENIE").Bold();
-            HeaderCell(table.Cell()).AlignMiddle().Text("OD:").Bold();
+            Label(HeaderCell(table.Cell()), "DATA PRZEPROWADZENIA ROZMOWY OCENIAJĄCEJ", AssessmentConversation);
+            Cell(table.Cell().ColumnSpan(4)).AlignMiddle().AlignCenter().Text(Date(data.AssessmentConversationOn));
+            Label(HeaderCell(table.Cell()), "OKRES, W KTÓRYM OCENIANY PODLEGAŁ OCENIE");
+            Label(HeaderCell(table.Cell()).AlignMiddle(), "OD", PeriodFrom, ":");
             Cell(table.Cell()).AlignMiddle().AlignCenter().Text(Date(data.PeriodStart));
-            HeaderCell(table.Cell()).AlignMiddle().Text("DO:").Bold();
+            Label(HeaderCell(table.Cell()).AlignMiddle(), "DO", PeriodTo, ":");
             Cell(table.Cell()).AlignMiddle().AlignCenter().Text(Date(data.PreparedOn));
         });
 
@@ -162,24 +178,24 @@ public sealed class EvaluationSheetDocument(EvaluationSheetData data) : IDocumen
                 }
             });
 
-            ScoreHeader(table, "KRYTERIA OBOWIĄZKOWE", withLevels: true);
+            ScoreHeader(table, "KRYTERIA OBOWIĄZKOWE", null, withLevels: true);
             foreach (var criterion in data.MandatoryCriteria)
             {
                 ScoreRow(table, criterion);
             }
 
-            ScoreHeader(table, "KRYTERIA DODATKOWE WYBRANE PRZEZ OCENIAJĄCEGO", withLevels: false);
+            ScoreHeader(table, "KRYTERIA DODATKOWE WYBRANE PRZEZ OCENIAJĄCEGO", AdditionalCriteriaScores, withLevels: false);
             for (var i = 0; i < EvaluationCriteria.MaxAdditional; i++)
             {
-                ScoreRow(table, i < data.AdditionalCriteria.Count ? data.AdditionalCriteria[i] : Blank);
+                ScoreRow(table, i < data.AdditionalCriteria.Count ? data.AdditionalCriteria[i] : null);
             }
 
-            HeaderCell(table.Cell()).Text("Średnia arytmetyczna z ocen cząstkowych przyznanych za poszczególne kryteria oceny:").Bold();
-            Cell(table.Cell().ColumnSpan((uint)ScoreLevels.Length)).Text(Blank);
+            Label(HeaderCell(table.Cell().ColumnSpan(4)).AlignMiddle(), "Średnia arytmetyczna z ocen cząstkowych przyznanych za poszczególne kryteria oceny:");
+            Cell(table.Cell().ColumnSpan(2)).AlignMiddle().AlignCenter()
+                .Text(data.Summary is { } summary ? $"{summary.AveragePoints.ToString("0.00", Polish)} pkt" : Blank).Bold();
         });
 
-        Heading(column, "PRZYZNANIE OCENY");
-        column.Item().Table(table =>
+        Section(column, "PRZYZNANIE OCENY", null, body => body.Table(table =>
         {
             table.ColumnsDefinition(c =>
             {
@@ -187,16 +203,16 @@ public sealed class EvaluationSheetDocument(EvaluationSheetData data) : IDocumen
                 c.RelativeColumn(3);
                 c.RelativeColumn(3);
             });
-            HeaderCell(table.Cell()).Text("Należy wstawić znak „X” w odpowiednie pole").Bold();
-            HeaderCell(table.Cell()).Text("Liczba punktów stanowiąca średnią arytmetyczną ze wszystkich ocen cząstkowych").Bold();
-            HeaderCell(table.Cell()).Text("Ogólny poziom spełnienia kryteriów oceny").Bold();
+            Label(HeaderCell(table.Cell()), "Należy wstawić znak „X” w odpowiednie pole");
+            Label(HeaderCell(table.Cell()), "Liczba punktów stanowiąca średnią arytmetyczną ze wszystkich ocen cząstkowych");
+            Label(HeaderCell(table.Cell()), "Ogólny poziom spełnienia kryteriów oceny");
             foreach (var (points, level) in AverageLevels)
             {
-                Cell(table.Cell()).Text(Blank);
+                MarkCell(table.Cell(), string.Equals(data.Summary?.OverallLevel, level, StringComparison.OrdinalIgnoreCase));
                 Cell(table.Cell()).Text(points);
                 Cell(table.Cell()).Text(level);
             }
-        });
+        }));
 
         column.Item().Table(table =>
         {
@@ -208,21 +224,18 @@ public sealed class EvaluationSheetDocument(EvaluationSheetData data) : IDocumen
                 c.RelativeColumn(2);
                 c.RelativeColumn(1);
             });
-            HeaderCell(table.Cell()).Text("OCENA OKRESOWA W SŁUŻBIE CYWILNEJ").Bold();
-            HeaderCell(table.Cell()).Text("POZYTYWNA").Bold();
-            Cell(table.Cell()).Text(Blank);
-            HeaderCell(table.Cell()).Text("NEGATYWNA").Bold();
-            Cell(table.Cell()).Text(Blank);
+            Label(HeaderCell(table.Cell()), "OCENA OKRESOWA W SŁUŻBIE CYWILNEJ");
+            Label(HeaderCell(table.Cell()), "POZYTYWNA", Positive);
+            MarkCell(table.Cell(), data.Summary?.IsPositive == true);
+            Label(HeaderCell(table.Cell()), "NEGATYWNA", Negative);
+            MarkCell(table.Cell(), data.Summary?.IsPositive == false);
         });
 
-        Heading(column, "UZASADNIENIE PRZYZNANEJ OCENY OKRESOWEJ");
-        column.Item().Border(BorderWidth).MinHeight(90).Text(Blank);
+        Section(column, "UZASADNIENIE PRZYZNANEJ OCENY OKRESOWEJ", Justification, body => body.Border(BorderWidth).MinHeight(90).Text(Blank));
 
-        Heading(column, "WNIOSKI DOTYCZĄCE INDYWIDUALNEGO PROGRAMU ROZWOJU ZAWODOWEGO");
-        column.Item().Border(BorderWidth).MinHeight(90).Text(Blank);
+        Section(column, "WNIOSKI DOTYCZĄCE INDYWIDUALNEGO PROGRAMU ROZWOJU ZAWODOWEGO", DevelopmentProgram, body => body.Border(BorderWidth).MinHeight(90).Text(Blank));
 
-        Heading(column, "DANE DOTYCZĄCE POPRZEDNIEJ OCENY OKRESOWEJ URZĘDNIKA SŁUŻBY CYWILNEJ");
-        column.Item().Table(table =>
+        Section(column, "DANE DOTYCZĄCE POPRZEDNIEJ OCENY OKRESOWEJ URZĘDNIKA SŁUŻBY CYWILNEJ", null, body => body.Table(table =>
         {
             table.ColumnsDefinition(c =>
             {
@@ -233,16 +246,15 @@ public sealed class EvaluationSheetDocument(EvaluationSheetData data) : IDocumen
                 c.RelativeColumn(2);
                 c.RelativeColumn(2);
             });
-            HeaderCell(table.Cell()).Text("Ocena").Bold();
-            Cell(table.Cell()).Text(Blank);
-            HeaderCell(table.Cell()).Text("Poziom").Bold();
-            Cell(table.Cell()).Text(Blank);
-            HeaderCell(table.Cell()).Text("Data sporządzenia").Bold();
-            Cell(table.Cell()).Text(Blank);
-        });
+            Label(HeaderCell(table.Cell()), "Ocena", PreviousResult);
+            Cell(table.Cell()).Text(data.Previous is { } result ? (result.IsPositive ? "pozytywna" : "negatywna") : Blank);
+            Label(HeaderCell(table.Cell()), "Poziom", PreviousLevel);
+            Cell(table.Cell()).Text(data.Previous?.OverallLevel.ToLower(Polish) ?? Blank);
+            Label(HeaderCell(table.Cell()), "Data sporządzenia");
+            Cell(table.Cell()).Text(Date(data.Previous?.PreparedOn));
+        }));
 
-        Heading(column, "CZY DO OCENY OKRESOWEJ DOŁĄCZONO WNIOSEK O PRZYZNANIE KOLEJNEGO STOPNIA SŁUŻBOWEGO?");
-        column.Item().Table(table =>
+        Section(column, "CZY DO OCENY OKRESOWEJ DOŁĄCZONO WNIOSEK O PRZYZNANIE KOLEJNEGO STOPNIA SŁUŻBOWEGO?", PromotionRequest, body => body.Table(table =>
         {
             table.ColumnsDefinition(c =>
             {
@@ -253,18 +265,18 @@ public sealed class EvaluationSheetDocument(EvaluationSheetData data) : IDocumen
                 c.RelativeColumn(4);
                 c.RelativeColumn(1);
             });
-            HeaderCell(table.Cell()).Text("TAK").Bold();
+            Label(HeaderCell(table.Cell()), "TAK");
             Cell(table.Cell()).Text(Blank);
-            HeaderCell(table.Cell()).Text("NIE").Bold();
+            Label(HeaderCell(table.Cell()), "NIE");
             Cell(table.Cell()).Text(Blank);
-            HeaderCell(table.Cell()).Text("NIE DOTYCZY (oceniany jest pracownikiem służby cywilnej)").Bold();
+            Label(HeaderCell(table.Cell()), "NIE DOTYCZY (oceniany jest pracownikiem służby cywilnej)");
             Cell(table.Cell()).Text(Blank);
-        });
+        }));
 
         column.Item().ShowEntire().Column(evaluator =>
         {
             evaluator.Spacing(8);
-            ComposePerson(evaluator, "DANE OCENIAJĄCEGO", data.Evaluator);
+            ComposePerson(evaluator, "DANE OCENIAJĄCEGO", data.Evaluator, null);
             evaluator.Item().Element(e => Signatures(e, (Blank, "miejscowość"), (Date(data.PreparedOn), "data (dd.mm.rrrr)"), (Blank, "podpis oceniającego")));
         });
 
@@ -285,13 +297,34 @@ public sealed class EvaluationSheetDocument(EvaluationSheetData data) : IDocumen
         {
             box.Spacing(4);
             box.Item().Text("Pouczenie").Bold();
-            box.Item().Text(
-                "Zgodnie z art. 83 ust. 1 ustawy z dnia 21 listopada 2008 r. o służbie cywilnej od oceny okresowej służy, "
-                + "w terminie 7 dni od dnia zapoznania się z oceną, sprzeciw do dyrektora generalnego urzędu.");
+            box.Item().Text(text =>
+            {
+                text.Span(
+                    "Zgodnie z art. 83 ust. 1 ustawy z dnia 21 listopada 2008 r. o służbie cywilnej od oceny okresowej służy, "
+                    + "w terminie 7 dni od dnia zapoznania się z oceną, sprzeciw do dyrektora generalnego urzędu");
+                Note(text, Objection);
+                text.Span(".");
+            });
         });
     }
 
-    private static void ComposePerson(ColumnDescriptor column, string title, SheetPerson person)
+    private void Footnotes(ColumnDescriptor column, IReadOnlyList<int> numbers) =>
+        column.Item().ExtendVertical().AlignBottom().ShowEntire().PaddingTop(6).PaddingBottom(4).Column(notes =>
+        {
+            notes.Spacing(1);
+            notes.Item().Width(5, Unit.Centimetre).LineHorizontal(BorderWidth).LineColor(Colors.Grey.Darken1);
+            foreach (var number in numbers)
+            {
+                notes.Item().Text(text =>
+                {
+                    text.DefaultTextStyle(style => style.FontSize(FootnoteText).FontColor(Colors.Grey.Darken3));
+                    text.Span($"{number}) ");
+                    text.Span(EvaluationSheetFootnotes.Text(number, data.Sheet));
+                });
+            }
+        });
+
+    private static void ComposePerson(ColumnDescriptor column, string title, SheetPerson person, int? positionNote)
     {
         Heading(column, title);
         column.Item().Table(table =>
@@ -301,25 +334,25 @@ public sealed class EvaluationSheetDocument(EvaluationSheetData data) : IDocumen
                 c.RelativeColumn(1);
                 c.RelativeColumn(2);
             });
-            foreach (var (label, value) in new[]
+            foreach (var (label, value, note) in new (string, string, int?)[]
             {
-                ("Imię", person.FirstName),
-                ("Nazwisko", person.LastName),
-                ("Komórka organizacyjna", person.Department),
-                ("Stanowisko pracy", person.Position),
+                ("Imię", person.FirstName, null),
+                ("Nazwisko", person.LastName, null),
+                ("Komórka organizacyjna", person.Department, null),
+                ("Stanowisko pracy", person.Position, positionNote),
             })
             {
-                HeaderCell(table.Cell()).Text(label).Bold();
+                Label(HeaderCell(table.Cell()), label, note);
                 Cell(table.Cell()).Text(value);
             }
         });
     }
 
-    private static void ScoreHeader(TableDescriptor table, string title, bool withLevels)
+    private static void ScoreHeader(TableDescriptor table, string title, int? titleNote, bool withLevels)
     {
         var rows = withLevels ? 3u : 1u;
-        HeaderCell(table.Cell().RowSpan(rows)).AlignMiddle().Text(title).Bold();
-        HeaderCell(table.Cell().ColumnSpan((uint)ScoreLevels.Length)).AlignCenter().Text("OCENA CZĄSTKOWA").Bold();
+        Label(HeaderCell(table.Cell().RowSpan(rows)).AlignMiddle(), title, titleNote);
+        Label(HeaderCell(table.Cell().ColumnSpan((uint)ScoreLevels.Length)).AlignCenter(), "OCENA CZĄSTKOWA", PartialScore);
         if (!withLevels)
         {
             return;
@@ -327,22 +360,25 @@ public sealed class EvaluationSheetDocument(EvaluationSheetData data) : IDocumen
 
         foreach (var level in ScoreLevels)
         {
-            HeaderCell(table.Cell()).AlignCenter().AlignMiddle().Text(level).FontSize(7.5f);
+            HeaderCell(table.Cell()).AlignCenter().AlignMiddle().Text(level).FontSize(SmallText);
         }
         foreach (var points in ScorePoints)
         {
-            HeaderCell(table.Cell()).AlignCenter().Text(points).FontSize(7.5f).Bold();
+            HeaderCell(table.Cell()).AlignCenter().Text(points).FontSize(SmallText).Bold();
         }
     }
 
-    private static void ScoreRow(TableDescriptor table, string criterion)
+    private static void ScoreRow(TableDescriptor table, SheetCriterion? criterion)
     {
-        Cell(table.Cell()).MinHeight(18).Text(criterion);
-        for (var i = 0; i < ScoreLevels.Length; i++)
+        Cell(table.Cell()).MinHeight(18).AlignMiddle().Text(criterion?.Name ?? Blank);
+        foreach (var level in CompetencyLevels.All)
         {
-            Cell(table.Cell()).Text(Blank);
+            MarkCell(table.Cell(), criterion?.Level == level);
         }
     }
+
+    private static void MarkCell(IContainer container, bool marked) =>
+        Cell(container).AlignMiddle().AlignCenter().Text(marked ? Mark : Blank).Bold();
 
     private static void Signatures(IContainer container, params (string Value, string Caption)[] fields)
     {
@@ -354,7 +390,7 @@ public sealed class EvaluationSheetDocument(EvaluationSheetData data) : IDocumen
                 row.RelativeItem().Column(field =>
                 {
                     field.Item().BorderBottom(BorderWidth).BorderColor(Colors.Grey.Darken1).MinHeight(16).AlignBottom().AlignCenter().Text(value);
-                    field.Item().AlignCenter().Text(caption).FontSize(7.5f).FontColor(Colors.Grey.Darken2);
+                    field.Item().AlignCenter().Text(caption).FontSize(SmallText).FontColor(Colors.Grey.Darken2);
                 });
             }
         });
@@ -363,8 +399,29 @@ public sealed class EvaluationSheetDocument(EvaluationSheetData data) : IDocumen
     private static void SectionTitle(ColumnDescriptor column, string title) =>
         column.Item().PaddingTop(6).AlignCenter().Text(title).Bold().FontSize(12);
 
-    private static void Heading(ColumnDescriptor column, string title) =>
-        column.Item().PaddingTop(4).Text(title).Bold();
+    private static void Heading(ColumnDescriptor column, string title, int? note = null) =>
+        Label(column.Item().PaddingTop(4), title, note);
+
+    private static void Section(ColumnDescriptor column, string title, int? note, Action<IContainer> body) =>
+        column.Item().ShowEntire().Column(section =>
+        {
+            section.Spacing(8);
+            Heading(section, title, note);
+            body(section.Item());
+        });
+
+    private static void Label(IContainer container, string label, int? note = null, string suffix = Blank) =>
+        container.Text(text =>
+        {
+            text.Span(label).Bold();
+            if (note is int number)
+            {
+                Note(text, number);
+            }
+            text.Span(suffix).Bold();
+        });
+
+    private static void Note(TextDescriptor text, int number) => text.Span($"{number})").Superscript();
 
     private static IContainer Cell(IContainer container) =>
         container.Border(BorderWidth).PaddingVertical(3).PaddingHorizontal(4);

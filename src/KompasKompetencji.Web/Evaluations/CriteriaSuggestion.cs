@@ -9,16 +9,16 @@ public static class CriteriaSuggestion
 {
     private static readonly IReadOnlyDictionary<string, Criterion> CompetencyToCriterion = BuildMapping();
 
-    public static IReadOnlyList<SuggestedCriterion> Suggest(EvaluationSheet sheet, JobDescription? jobDescription)
+    public static IReadOnlyList<SuggestedCriterion> Suggest(EvaluationSheet sheet, JobPosition? jobPosition)
     {
-        if (jobDescription is null)
+        if (jobPosition is null)
         {
             return [];
         }
 
         var mandatory = EvaluationCriteria.Mandatory(sheet);
         var suggestions = new List<SuggestedCriterion>();
-        foreach (var competency in jobDescription.RequiredCompetencyList)
+        foreach (var competency in jobPosition.RequiredCompetencyList)
         {
             if (!CompetencyToCriterion.TryGetValue(TextNormalizer.Normalize(competency), out var criterion)
                 || mandatory.Contains(criterion)

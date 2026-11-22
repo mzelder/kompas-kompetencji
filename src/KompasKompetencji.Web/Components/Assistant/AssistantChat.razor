@@ -1,43 +1,19 @@
-<div class="assistant-window @(open ? "is-open" : "")" role="dialog" aria-label="Asystent oceny" aria-hidden="@(open ? "false" : "true")">
+<div class="assistant-window @(open ? "is-open" : "")" role="dialog" aria-label="Asystent Formalny" aria-hidden="@(open ? "false" : "true")">
     <RadzenCard Variant="Variant.Outlined" class="assistant-card rz-p-0 rz-shadow-6">
-        <RadzenAIChat @ref="chat" Title="Asystent oceny" Placeholder="Zadaj pytanie o zasady oceny…"
+        <RadzenAIChat @ref="chat" Title="Asystent Formalny" Placeholder="Zapytaj o przepisy, terminy albo procedurę oceny…"
                       SystemPrompt="@SystemPrompt" ShowClearButton="true" ShowAvatars="false" AllowHtml="false"
-                      ShowDateSeparator="false" class="assistant-chat">
-            <EmptyTemplate>
-                <RadzenStack Gap="0.75rem" class="rz-p-4">
-                    <RadzenText TextStyle="TextStyle.Body2" class="rz-m-0">
-                        Odpowiadam na pytania o zasady pierwszej i okresowej oceny na podstawie przepisów,
-                        modelu kompetencji i poradników KPRM. Przy każdej odpowiedzi podaję źródło.
-                    </RadzenText>
-                    <RadzenText TextStyle="TextStyle.Body2" class="rz-color-base-300 rz-m-0">
-                        Pomagam też przygotować się do rozmowy z pracownikiem.
-                    </RadzenText>
-                    <RadzenText TextStyle="TextStyle.Caption" class="rz-color-base-300 rz-mt-2 rz-mb-0">Na przykład</RadzenText>
-                    <RadzenStack Gap="0.5rem">
-                        @foreach (var suggestion in Suggestions)
-                        {
-                            <RadzenButton Text="@suggestion" Variant="Variant.Outlined" ButtonStyle="ButtonStyle.Base"
-                                          Size="ButtonSize.Small" class="assistant-suggestion"
-                                          Click="@(() => chat!.SendMessage(suggestion))" />
-                        }
-                    </RadzenStack>
-                </RadzenStack>
-            </EmptyTemplate>
+                      ShowDateSeparator="false" class="assistant-chat"
+                      ChatCleared="@ShowGreeting">
             <CitationTemplate Context="citation">
                 <span class="rz-chat-citation" title="@citation.Snippet">
                     <span class="rz-chat-citation-index">@citation.FileId</span>
                     <span class="rz-chat-citation-title">@citation.Title</span>
                 </span>
             </CitationTemplate>
-            <InputFooterTemplate>
-                <RadzenText TextStyle="TextStyle.Caption" class="rz-color-base-300 rz-m-0">
-                    Asystent tylko doradza i nie decyduje o poziomie oceny. Nie wpisuj imion ani nazwisk pracowników.
-                </RadzenText>
-            </InputFooterTemplate>
         </RadzenAIChat>
     </RadzenCard>
 </div>
 
-<RadzenButton Icon="@(open ? "close" : "forum")" ButtonStyle="ButtonStyle.Primary" Size="ButtonSize.Large"
-              class="assistant-bubble rz-shadow-6" title="@(open ? "Zamknij asystenta" : "Otwórz asystenta")"
+<RadzenButton Icon="@(open ? "close" : "smart_toy")" ButtonStyle="ButtonStyle.Primary" Size="ButtonSize.Large"
+              class="assistant-bubble rz-shadow-6" title="@(open ? "Zamknij asystenta" : "Zapytaj o przepisy")"
               aria-expanded="@(open ? "true" : "false")" Click="@(() => open = !open)" />

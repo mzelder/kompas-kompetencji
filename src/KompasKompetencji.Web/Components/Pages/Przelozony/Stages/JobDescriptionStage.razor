@@ -5,18 +5,18 @@
                 <RadzenStack Gap="0">
                     <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H2" class="rz-m-0">Opis stanowiska</RadzenText>
                     <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">
-                        @View.Employee.Position · @View.Employee.Department
+                        @PositionCaption
                     </RadzenText>
                 </RadzenStack>
 
-                @if (View.JobDescription is JobDescription jobDescription)
+                @if (View.JobPosition is JobPosition jobPosition)
                 {
-                    <RadzenText TextStyle="TextStyle.Body1" class="rz-m-0">@jobDescription.Purpose</RadzenText>
+                    <RadzenText TextStyle="TextStyle.Body1" class="rz-m-0">@jobPosition.Purpose</RadzenText>
 
                     <RadzenStack Gap="0.25rem">
                         <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">Główne zadania</RadzenText>
                         <ul class="rz-m-0">
-                            @foreach (var task in jobDescription.TaskList)
+                            @foreach (var task in jobPosition.TaskList)
                             {
                                 <li><RadzenText TextStyle="TextStyle.Body2" class="rz-m-0">@task</RadzenText></li>
                             }
@@ -26,17 +26,20 @@
                     <RadzenStack Gap="0.5rem">
                         <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">Wymagane kompetencje</RadzenText>
                         <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" Wrap="FlexWrap.Wrap">
-                            @foreach (var competency in jobDescription.RequiredCompetencyList)
+                            @foreach (var competency in jobPosition.RequiredCompetencyList)
                             {
                                 <RadzenBadge BadgeStyle="BadgeStyle.Primary" Variant="Variant.Flat" Shade="Shade.Lighter" IsPill="true" Text="@competency" />
                             }
                         </RadzenStack>
                     </RadzenStack>
 
-                    @if (jobDescription.SubordinatesCount is int subordinates)
-                    {
-                        <DetailItem Label="Liczba podległych osób" Value="@subordinates.ToString()" />
-                    }
+                    <RadzenStack Orientation="Orientation.Horizontal" Gap="2rem" Wrap="FlexWrap.Wrap">
+                        <DetailItem Label="Podlegli pracownicy" Value="@EvaluationText.Subordinates(jobPosition.Subordinates)" />
+                        @if (jobPosition.DirectSupervisorTitle is string supervisorTitle)
+                        {
+                            <DetailItem Label="Stanowisko nadzorujące" Value="@supervisorTitle" />
+                        }
+                    </RadzenStack>
                 }
                 else
                 {

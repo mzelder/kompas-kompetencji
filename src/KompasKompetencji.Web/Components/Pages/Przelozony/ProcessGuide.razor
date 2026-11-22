@@ -5,7 +5,10 @@
 <PageHeader Title="Przebieg oceny" Subtitle="Co robisz na każdym etapie oceny okresowej i kiedy." />
 
 <RadzenAlert AlertStyle="AlertStyle.Info" Variant="Variant.Flat" Shade="Shade.Lighter" AllowClose="false" Icon="event_repeat" class="rz-mb-6">
-    @EvaluationProcessGuide.CycleSummary
+    <RadzenStack Gap="0.5rem">
+        <RadzenText TextStyle="TextStyle.Body1" class="rz-m-0">@EvaluationProcessGuide.CycleSummary</RadzenText>
+        <RadzenText TextStyle="TextStyle.Body1" class="rz-m-0">@EvaluationProcessGuide.MappingSummary</RadzenText>
+    </RadzenStack>
 </RadzenAlert>
 
 <RadzenCard Variant="Variant.Outlined">
@@ -18,7 +21,7 @@
                         <RadzenIcon Icon="@guide.Icon" />
                     </PointContent>
                     <ChildContent>
-                        <RadzenStack Gap="0.5rem" class="rz-pb-6">
+                        <RadzenStack Gap="0.75rem" class="rz-pb-6">
                             <RadzenStack Gap="0">
                                 <RadzenText TextStyle="TextStyle.Overline" class="rz-m-0 rz-color-base-300">
                                     Etap @EvaluationText.StageNumber(guide.Stage) · @guide.When
@@ -26,16 +29,49 @@
                                 <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H2" class="rz-m-0">@EvaluationText.Stage(guide.Stage)</RadzenText>
                                 <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">Kto: @guide.Who</RadzenText>
                             </RadzenStack>
+                            <RadzenStack Gap="0.25rem">
+                                <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.Center" Wrap="FlexWrap.Wrap">
+                                    <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">W procedurze:</RadzenText>
+                                    @foreach (var procedureStep in guide.ProcedureSteps)
+                                    {
+                                        <RadzenBadge BadgeStyle="BadgeStyle.Info" Variant="Variant.Flat" Shade="Shade.Lighter" IsPill="true" Text="@procedureStep" />
+                                    }
+                                </RadzenStack>
+                                <RadzenText TextStyle="TextStyle.Body2" class="rz-m-0 rz-color-base-300">@guide.MergeNote</RadzenText>
+                            </RadzenStack>
                             <ul class="process-points">
                                 @foreach (var step in guide.Steps)
                                 {
                                     <li><RadzenText TextStyle="TextStyle.Body1" class="rz-m-0">@step</RadzenText></li>
                                 }
                             </ul>
+                            <RadzenText TextStyle="TextStyle.Body2" class="rz-m-0">
+                                <strong>Etap kończy:</strong> @guide.EndsWith
+                            </RadzenText>
                         </RadzenStack>
                     </ChildContent>
                 </RadzenTimelineItem>
             }
+            <RadzenTimelineItem PointStyle="PointStyle.Base" PointVariant="Variant.Outlined" PointSize="PointSize.Large">
+                <PointContent>
+                    <RadzenIcon Icon="@EvaluationProcessGuide.AfterCompletion.Icon" />
+                </PointContent>
+                <ChildContent>
+                    <RadzenStack Gap="0.75rem">
+                        <RadzenStack Gap="0">
+                            <RadzenText TextStyle="TextStyle.Overline" class="rz-m-0 rz-color-base-300">@EvaluationProcessGuide.AfterCompletion.When</RadzenText>
+                            <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H2" class="rz-m-0">@EvaluationProcessGuide.AfterCompletion.Title</RadzenText>
+                            <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">Kto: @EvaluationProcessGuide.AfterCompletion.Who</RadzenText>
+                        </RadzenStack>
+                        <ul class="process-points">
+                            @foreach (var step in EvaluationProcessGuide.AfterCompletion.Steps)
+                            {
+                                <li><RadzenText TextStyle="TextStyle.Body1" class="rz-m-0">@step</RadzenText></li>
+                            }
+                        </ul>
+                    </RadzenStack>
+                </ChildContent>
+            </RadzenTimelineItem>
         </Items>
     </RadzenTimeline>
 </RadzenCard>

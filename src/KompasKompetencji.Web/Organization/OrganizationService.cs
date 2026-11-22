@@ -3,7 +3,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace KompasKompetencji.Web.Organization;
 
-public sealed record NewEmployee(string FirstName, string LastName, string Position, string Department, bool IsSupervisor, DateOnly EmployedSince);
+public sealed record NewEmployee(string FirstName, string LastName, int JobPositionId, DateOnly EmployedSince);
+
+public sealed record JobPositionOption(JobPosition Position, IReadOnlyList<string> Occupants);
 
 public sealed record OperationResult(string? Error)
 {
@@ -27,19 +29,33 @@ public sealed class OrganizationService(IDbContextFactory<AppDbContext> dbFactor
         return new OrganizationChart(employees, links, accountLogins);
     }
 
+    public async Task<IReadOnlyList<JobPositionOption>> GetJobPositionsAsync(CancellationToken ct = default)
+    {
+        await using var db = await dbFactory.CreateDbContextAsync(ct);
+        var positions = await db.JobPositions.AsNoTracking()
+            .Include(p => p.Employees)
+            .OrderBy(p => p.Department).ThenBy(p => p.Unit).ThenBy(p => p.Symbol)
+            .ToListAsync(ct);
+        return positions
+            .Select(p => new JobPositionOption(p, p.Employees.OrderBy(e => e.LastName).Select(e => e.FullName).ToList()))
+            .ToList();
+    }
+
     public async Task<Employee> AddEmployeeAsync(NewEmployee input, CancellationToken ct = default)
     {
+        await using var db = await dbFactory.CreateDbContextAsync(ct);
+        var position = await db.JobPositions.SingleAsync(p => p.Id == input.JobPositionId, ct);
         var employee = new Employee
         {
             FirstName = input.FirstName.Trim(),
             LastName = input.LastName.Trim(),
-            Position = input.Position.Trim(),
-            Department = input.Department.Trim(),
-            IsSupervisor = input.IsSupervisor,
+            Position = position.Title,
+            Department = position.OrganizationalUnit,
+            IsSupervisor = position.ManagesTeam,
             EmployedSince = input.EmployedSince,
+            JobPositionId = position.Id,
         };
 
-        await using var db = await dbFactory.CreateDbContextAsync(ct);
         db.Employees.Add(employee);
         await db.SaveChangesAsync(ct);
         return employee;
