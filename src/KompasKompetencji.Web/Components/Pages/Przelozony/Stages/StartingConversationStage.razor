@@ -1,7 +1,7 @@
 <RadzenStack Gap="1.5rem">
     @if (!ReadOnly)
     {
-        <StartingConversationTopics JobDescription="@View.JobDescription" />
+        <StartingConversationTopics JobPosition="@View.JobPosition" />
     }
 
     <RadzenCard Variant="Variant.Outlined">
@@ -126,6 +126,7 @@
                                     <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">
                                         Możesz wybrać najwyżej @EvaluationCriteria.MaxAdditional kryteria dodatkowe. Nie musisz wybierać żadnego.
                                     </RadzenText>
+                                    <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">@SuggestionSummary</RadzenText>
                                 }
                             </RadzenStack>
                         </RadzenStack>

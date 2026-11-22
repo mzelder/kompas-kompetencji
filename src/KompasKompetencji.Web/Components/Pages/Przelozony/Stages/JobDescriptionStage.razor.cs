@@ -22,6 +22,10 @@ public partial class JobDescriptionStage
     private bool busy;
     private string? errorMessage;
 
+    private string PositionCaption => View.JobPosition is JobPosition position
+        ? $"{position.Title} · {position.Symbol} · {position.OrganizationalUnit}"
+        : $"{View.Employee.Position} · {View.Employee.Department}";
+
     private EvaluationSheet ConfirmedSheet => View.OpenEvaluation?.Sheet ?? View.Task.Sheet;
 
     protected override void OnInitialized()

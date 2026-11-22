@@ -18,7 +18,7 @@ public partial class StartingConversationTopics
     private bool tasksExpanded;
     private bool collapsed = true;
 
-    [Parameter] public JobDescription? JobDescription { get; set; }
+    [Parameter] public JobPosition? JobPosition { get; set; }
 
     private void ToggleCollapsed() => collapsed = !collapsed;
 
