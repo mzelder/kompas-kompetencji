@@ -24,6 +24,7 @@ src/KompasKompetencji.Web/
   Assistant/                        asystent AI: klient modelu, RAG, odmowa, pseudonimizacja
 tests/KompasKompetencji.Tests/      testy xUnit (wyszukiwarka, asystent)
 knowledge-base/                     baza wiedzy asystenta: źródła, skrypt, knowledge-base.json
+competency-model/                   model kompetencji: skrypt i competency-model.json (z Model_kompetencji.xlsx)
 ```
 
 ## Uruchomienie krok po kroku
@@ -87,6 +88,8 @@ dotnet run --project src/KompasKompetencji.Web --launch-profile https
 ```
 
 Przy pierwszym uruchomieniu w trybie Development aplikacja **sama tworzy bazę `KompasKompetencji` i stosuje migracje** (wraz z danymi demo). Nie trzeba ręcznie uruchamiać `database update`.
+
+Kolejne uruchomienia **nie kasują danych**: aplikacja tylko stosuje nowe migracje. Żeby wrócić do danych testowych, użyj przycisku **„Zresetuj bazę z danymi testowymi”** na ekranie logowania (karta „Konta testowe”). Po zmianie danych demo w kodzie też trzeba go użyć.
 
 Jeśli przeglądarka ostrzega o certyfikacie, zaufaj certyfikatowi deweloperskiemu (jednorazowo):
 
@@ -173,11 +176,10 @@ dotnet ef database drop --project src/KompasKompetencji.Web --force
 
 Układ: App Service (Linux, plan B1, WebSockety włączone) i Azure SQL Database w darmowej ofercie (serverless, auto-pauza po wyczerpaniu limitu).
 
-Aplikacja działa w środowisku `Demo` (`appsettings.Demo.json`):
-- `Demo:ResetDatabaseOnStartup`: przy każdym starcie usuwa wszystkie tabele i wgrywa migracje z danymi demo. Bazy nie usuwa, bo na Azure SQL `EnsureDeleted` skasowałby darmową bazę.
-- `Demo:ShowTestAccounts`: przyciski szybkiego logowania kontami testowymi na stronie logowania.
-
-Te same flagi są włączone w `appsettings.Development.json`.
+Aplikacja jest tylko testowa i działa tak samo lokalnie i na Azure (środowisko `Demo` w kontenerze zmienia tylko poziom logowania, `appsettings.Demo.json`):
+- przy starcie stosuje nowe migracje i zakłada brakujące konta testowe, **bez kasowania danych**; gdy baza ma migracje nieznane w kodzie (np. po wygenerowaniu migracji od nowa), usuwa wszystkie tabele i wgrywa migracje z danymi demo,
+- karta „Konta testowe” z szybkim logowaniem i przyciskiem „Zresetuj bazę z danymi testowymi” jest zawsze widoczna na stronie logowania,
+- reset usuwa wszystkie tabele, a nie całą bazę, bo na Azure SQL `EnsureDeleted` skasowałby darmową bazę (`Demo/DemoDatabase.cs`).
 
 **Automatycznie:** każdy push na branch `test` uruchamia `.github/workflows/deploy-test.yml` (testy, publikacja, wdrożenie na App Service `kompas-kompetencji-demo`). GitHub loguje się do Azure tożsamością `oidc-msi-b83b` przez OIDC (federacja tylko dla brancha `test`), bez sekretów w repozytorium. Ręcznie: zakładka Actions → „Run workflow”.
 

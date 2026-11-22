@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace KompasKompetencji.Web.Data.Migrations;
 
 /// <inheritdoc />
-public partial class _20261122011309_Initial : Migration
+public partial class _20261122004512_Initial : Migration
 {
     /// <inheritdoc />
     protected override void Up(MigrationBuilder migrationBuilder)

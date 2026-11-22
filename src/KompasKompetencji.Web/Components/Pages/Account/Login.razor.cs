@@ -1,7 +1,6 @@
 using KompasKompetencji.Web.Auth;
 using KompasKompetencji.Web.Demo;
 using Microsoft.AspNetCore.Components;
-using Microsoft.Extensions.Options;
 using Radzen;
 
 namespace KompasKompetencji.Web.Components.Pages.Account;
@@ -11,9 +10,9 @@ public partial class Login
     [Inject] private UserService Users { get; set; } = default!;
     [Inject] private LoginTicketStore Tickets { get; set; } = default!;
     [Inject] private NavigationManager Navigation { get; set; } = default!;
-    [Inject] private IOptions<DemoOptions> Demo { get; set; } = default!;
-
-    private bool ShowTestAccounts => Demo.Value.ShowTestAccounts;
+    [Inject] private DemoDatabase DemoDatabase { get; set; } = default!;
+    [Inject] private DialogService DialogService { get; set; } = default!;
+    [Inject] private NotificationService NotificationService { get; set; } = default!;
 
     [SupplyParameterFromQuery] public string? ReturnUrl { get; set; }
 
@@ -26,6 +25,7 @@ public partial class Login
 
     private int selectedTab;
     private bool busy;
+    private bool resetting;
     private string? errorMessage;
 
     protected override void OnInitialized()
@@ -68,11 +68,6 @@ public partial class Login
 
     private async Task SignInAsTestAccountAsync(TestAccount account)
     {
-        if (!ShowTestAccounts)
-        {
-            return;
-        }
-
         errorMessage = null;
         busy = true;
         var user = await Users.FindByLoginAsync(account.Login);
@@ -80,10 +75,38 @@ public partial class Login
 
         if (user is null)
         {
-            errorMessage = $"Konto testowe „{account.Login}” nie istnieje w bazie. Uruchom aplikację ponownie, aby je utworzyć.";
+            errorMessage = $"Konto testowe „{account.Login}” nie istnieje w bazie. Zresetuj bazę z danymi testowymi, aby je utworzyć.";
             return;
         }
         CompleteSignIn(user.Id, returnUrl: null);
+    }
+
+    private async Task ResetDatabaseAsync()
+    {
+        var confirmed = await DialogService.Confirm(
+            "Baza zostanie usunięta i utworzona od nowa z danymi testowymi. Wszystkie zmiany wprowadzone w aplikacji przepadną.",
+            "Zresetować bazę?",
+            new ConfirmOptions { OkButtonText = "Zresetuj bazę", CancelButtonText = "Anuluj" });
+        if (confirmed is not true)
+        {
+            return;
+        }
+
+        errorMessage = null;
+        resetting = true;
+        try
+        {
+            await DemoDatabase.ResetAsync();
+            NotificationService.Notify(NotificationSeverity.Success, "Baza zresetowana", "Przywrócono dane testowe.");
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Nie udało się zresetować bazy: {ex.Message}";
+        }
+        finally
+        {
+            resetting = false;
+        }
     }
 
     private void CompleteSignIn(int userId, string? returnUrl)

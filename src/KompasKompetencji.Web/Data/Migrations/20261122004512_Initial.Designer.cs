@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace KompasKompetencji.Web.Data.Migrations;
 
 [DbContext(typeof(AppDbContext))]
-[Migration("20261122011309_Initial")]
-partial class _20261122011309_Initial
+[Migration("20261122004512_Initial")]
+partial class _20261122004512_Initial
 {
     /// <inheritdoc />
     protected override void BuildTargetModel(ModelBuilder modelBuilder)

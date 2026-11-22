@@ -10,4 +10,7 @@ public static class TestAccounts
         new("hr", "haslo123", AppRoles.Hr),
         new("admin", "haslo123", AppRoles.Admin),
     ];
+
+    public static IReadOnlyList<TestAccount> QuickLogin { get; } =
+        All.Where(a => a.Role != AppRoles.Admin).ToList();
 }

@@ -1,14 +1,26 @@
 <RadzenCard Variant="Variant.Outlined" class="rz-mb-6">
-    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween" Gap="1rem">
-        <RadzenStack Gap="0" class="card-heading">
+    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween" Gap="1rem" Wrap="FlexWrap.Wrap">
+        <RadzenStack Gap="0.25rem" class="card-heading">
             <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H2" class="rz-m-0">Rozmowa oceniająca</RadzenText>
             <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">@ConversationHint</RadzenText>
+            @if (IsConversationHeld)
+            {
+                <RadzenBadge BadgeStyle="BadgeStyle.Success" Variant="Variant.Flat" Shade="Shade.Lighter" IsPill="true"
+                             Text="@EvaluationText.Conversation(ConversationStatus.Held)" class="align-self-start" />
+            }
         </RadzenStack>
         @if (!ReadOnly)
         {
-            <RadzenButton Text="@(View.Task.ConversationAt is null ? "Wyznacz termin" : "Zmień termin")" Icon="edit_calendar"
-                          ButtonStyle="ButtonStyle.Primary" Size="ButtonSize.Small" class="no-shrink"
-                          Disabled="@(!View.Task.CanScheduleConversation)" Click="@ScheduleConversationAsync" />
+            <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" Wrap="FlexWrap.Wrap" class="no-shrink">
+                <RadzenButton Text="@(View.Task.ConversationAt is null ? "Wyznacz termin" : "Zmień termin")" Icon="edit_calendar"
+                              ButtonStyle="@(View.Task.ConversationAt is null ? ButtonStyle.Primary : ButtonStyle.Secondary)" Size="ButtonSize.Small"
+                              Disabled="@(!View.Task.CanScheduleConversation)" Click="@ScheduleConversationAsync" />
+                @if (IsConversationPastDue)
+                {
+                    <RadzenButton Text="Oznacz jako odbytą" Icon="task_alt" ButtonStyle="ButtonStyle.Primary" Size="ButtonSize.Small"
+                                  IsBusy="@markingHeld" BusyText="Zapisywanie..." Click="@MarkConversationHeldAsync" />
+                }
+            </RadzenStack>
         }
     </RadzenStack>
 </RadzenCard>
@@ -124,3 +136,5 @@
         }
     </RadzenStack>
 </RadzenCard>
+
+<WrittenEvaluationCard View="@View" SupervisorId="@SupervisorId" OnChanged="@OnChanged" />

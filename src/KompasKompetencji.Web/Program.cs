@@ -7,6 +7,7 @@ using KompasKompetencji.Web.Data;
 using KompasKompetencji.Web.Demo;
 using KompasKompetencji.Web.Evaluations;
 using KompasKompetencji.Web.Evaluations.Pdf;
+using KompasKompetencji.Web.Materials;
 using Microsoft.Extensions.AI;
 using KompasKompetencji.Web.Organization;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -23,8 +24,6 @@ builder.Services.AddDbContextFactory<AppDbContext>(options =>
     options.UseSqlServer(connectionString, sql => sql
         .EnableRetryOnFailure(maxRetryCount: 10, maxRetryDelay: TimeSpan.FromSeconds(15), errorNumbersToAdd: null)
         .CommandTimeout(120)));
-
-builder.Services.Configure<DemoOptions>(builder.Configuration.GetSection(DemoOptions.SectionName));
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
@@ -65,6 +64,11 @@ builder.Services.AddKeyedChatClient(NoteCriterionClassifier.ClientKey, Assistant
     .Use((inner, services) => new PseudonymizingChatClient(inner, services.GetRequiredService<EmployeeNameSource>().GetAsync))
     .UseLogging();
 builder.Services.AddScoped<NoteCriterionClassifier>();
+builder.Services.AddScoped<IndicatorSuggester>();
+builder.Services.AddScoped<WrittenEvaluationService>();
+builder.Services.AddScoped<CompetencyModelService>();
+builder.Services.AddScoped<EvaluationListService>();
+builder.Services.AddScoped<DemoDatabase>();
 builder.Services.AddSingleton<ILocalizer, PolishRadzenLocalizer>();
 builder.Services.AddAIChatService();
 
@@ -72,11 +76,9 @@ var app = builder.Build();
 
 app.Services.GetRequiredService<Bm25Retriever>();
 
-if (app.Configuration.GetSection(DemoOptions.SectionName).Get<DemoOptions>()?.ResetDatabaseOnStartup == true)
+using (var scope = app.Services.CreateScope())
 {
-    using var scope = app.Services.CreateScope();
-    await DemoDatabase.ResetAsync(scope.ServiceProvider.GetRequiredService<IDbContextFactory<AppDbContext>>());
-    await scope.ServiceProvider.GetRequiredService<UserService>().EnsureTestAccountsAsync();
+    await scope.ServiceProvider.GetRequiredService<DemoDatabase>().EnsureReadyAsync();
 }
 
 if (!app.Environment.IsDevelopment())
@@ -98,6 +100,7 @@ app.UseAntiforgery();
 app.MapStaticAssets();
 app.MapAuthEndpoints();
 app.MapEvaluationPdfEndpoints();
+app.MapMaterialEndpoints();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 

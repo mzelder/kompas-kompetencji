@@ -6,6 +6,7 @@ namespace KompasKompetencji.Web.Components.Pages;
 
 public partial class Home
 {
+
     [Inject] private NavigationManager Navigation { get; set; } = default!;
 
     [CascadingParameter] private Task<AuthenticationState> AuthState { get; set; } = default!;
@@ -13,6 +14,7 @@ public partial class Home
     protected override async Task OnInitializedAsync()
     {
         var user = (await AuthState).User;
-        Navigation.NavigateTo(AppRoles.HomePath(user.GetRole()), replace: true);
+        var target = user.Identity?.IsAuthenticated == true ? AppRoles.HomePath(user.GetRole()) : AuthEndpoints.LoginPagePath;
+        Navigation.NavigateTo(target, replace: true);
     }
 }

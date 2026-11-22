@@ -24,14 +24,45 @@ public partial class AssessmentStage
     private bool busy;
     private string? errorMessage;
 
+    private bool markingHeld;
+
+    private bool IsConversationHeld => View.Task.ConversationStatus == ConversationStatus.Held;
+
+    private bool IsConversationPastDue => ConversationRules.IsPastDue(View.Task.ConversationAt, View.Task.ConversationStatus, DateTime.Now);
+
     private string ConversationHint => View.Task switch
     {
+        { ConversationStatus: ConversationStatus.Held, ConversationAt: DateTime heldAt } =>
+            $"Rozmowa odbyła się {EvaluationText.Date(heldAt)}. Możesz uzupełnić ocenę kryteriów poniżej.",
+        { ConversationAt: DateTime conversationAt } when IsConversationPastDue =>
+            $"Termin rozmowy minął {EvaluationText.Date(conversationAt)}. Oznacz ją jako odbytą albo zmień termin.",
         { ConversationAt: DateTime conversationAt } => $"Wyznaczona na {EvaluationText.Date(conversationAt)}.",
         { CanScheduleConversation: false } task =>
             $"Termin wyznaczysz od {EvaluationText.Date(task.ConversationWindowOpensOn)}, czyli 2 miesiące przed terminem oceny ({EvaluationText.Date(task.DueDate)}).",
         { Urgency: EvaluationUrgency.Overdue } => "Termin oceny minął. Wyznacz rozmowę jak najszybciej.",
         var task => $"Wyznacz termin rozmowy, najpóźniej {EvaluationText.Date(task.DueDate)}.",
     };
+
+    private async Task MarkConversationHeldAsync()
+    {
+        if (View.Task.ConversationAt is not DateTime conversationAt)
+        {
+            return;
+        }
+
+        markingHeld = true;
+        var result = await EvaluationService.SaveConversationAsync(
+            SupervisorId, View.Employee.Id, ConversationType.Assessment, conversationAt, ConversationStatus.Held, DateTime.Now);
+        markingHeld = false;
+        if (!result.Succeeded)
+        {
+            NotificationService.Notify(NotificationSeverity.Error, "Nie udało się zapisać", result.Error ?? string.Empty);
+            return;
+        }
+
+        NotificationService.Notify(NotificationSeverity.Success, "Rozmowa oznaczona jako odbyta", View.Employee.FullName);
+        await OnChanged.InvokeAsync();
+    }
 
     private async Task ScheduleConversationAsync()
     {

@@ -1,9 +1,13 @@
+using KompasKompetencji.Web.Auth;
 using KompasKompetencji.Web.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace KompasKompetencji.Web.Demo;
 
-public static class DemoDatabase
+public sealed class DemoDatabase(
+    IDbContextFactory<AppDbContext> dbFactory,
+    UserService users,
+    ILogger<DemoDatabase> logger)
 {
     private const string DropAllTablesSql = """
         DECLARE @sql nvarchar(max) = N'';
@@ -17,13 +21,36 @@ public static class DemoDatabase
         EXEC sp_executesql @sql;
         """;
 
-    public static async Task ResetAsync(IDbContextFactory<AppDbContext> factory)
+    public async Task EnsureReadyAsync(CancellationToken ct = default)
     {
-        await using var db = await factory.CreateDbContextAsync();
-        if (await db.Database.CanConnectAsync())
+        await using (var db = await dbFactory.CreateDbContextAsync(ct))
         {
-            await db.Database.ExecuteSqlRawAsync(DropAllTablesSql);
+            if (await db.Database.CanConnectAsync(ct))
+            {
+                var known = db.Database.GetMigrations().ToHashSet();
+                var unknown = (await db.Database.GetAppliedMigrationsAsync(ct)).Where(m => !known.Contains(m)).ToList();
+                if (unknown.Count > 0)
+                {
+                    logger.LogWarning("Baza ma migracje nieznane w kodzie ({Migrations}). Tworzę tabele od nowa z danymi testowymi.", string.Join(", ", unknown));
+                    await db.Database.ExecuteSqlRawAsync(DropAllTablesSql, ct);
+                }
+            }
+            await db.Database.MigrateAsync(ct);
         }
-        await db.Database.MigrateAsync();
+        await users.EnsureTestAccountsAsync(ct);
+    }
+
+    public async Task ResetAsync(CancellationToken ct = default)
+    {
+        await using (var db = await dbFactory.CreateDbContextAsync(ct))
+        {
+            if (await db.Database.CanConnectAsync(ct))
+            {
+                await db.Database.ExecuteSqlRawAsync(DropAllTablesSql, ct);
+            }
+            await db.Database.MigrateAsync(ct);
+        }
+        await users.EnsureTestAccountsAsync(ct);
+        logger.LogInformation("Baza została zresetowana do danych testowych.");
     }
 }

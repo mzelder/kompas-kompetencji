@@ -100,36 +100,40 @@
         </RadzenStack>
     </RadzenCard>
 
-    @if (ShowTestAccounts)
-    {
-        <RadzenCard Variant="Variant.Outlined" class="login-card">
-            <RadzenStack Gap="1rem">
-                <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.5rem">
-                    <RadzenIcon Icon="bug_report" IconColor="@Colors.Warning" class="icon-md" />
-                    <RadzenText TextStyle="TextStyle.H6" class="rz-m-0">Konta testowe</RadzenText>
-                </RadzenStack>
-
-                @foreach (var account in TestAccounts.All)
-                {
-                    <RadzenCard Variant="Variant.Filled" class="rz-p-3">
-                        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center"
-                                     JustifyContent="JustifyContent.SpaceBetween">
-                            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.75rem">
-                                <RadzenIcon Icon="@AppRoles.Icon(account.Role)" />
-                                <RadzenStack Gap="0">
-                                    <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-m-0">@AppRoles.DisplayName(account.Role)</RadzenText>
-                                    <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0">
-                                        <code>@account.Login</code> / <code>@account.Password</code>
-                                    </RadzenText>
-                                </RadzenStack>
-                            </RadzenStack>
-                            <RadzenButton Text="Zaloguj" Icon="bolt" Size="ButtonSize.Small" Variant="Variant.Flat"
-                                          ButtonStyle="ButtonStyle.Secondary" Disabled="@busy"
-                                          Click="@(() => SignInAsTestAccountAsync(account))" />
-                        </RadzenStack>
-                    </RadzenCard>
-                }
+    <RadzenCard Variant="Variant.Outlined" class="login-card">
+        <RadzenStack Gap="1rem">
+            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.5rem">
+                <RadzenIcon Icon="bug_report" IconColor="@Colors.Warning" class="icon-md" />
+                <RadzenText TextStyle="TextStyle.H6" class="rz-m-0">Konta testowe</RadzenText>
             </RadzenStack>
-        </RadzenCard>
-    }
+
+            @foreach (var account in TestAccounts.QuickLogin)
+            {
+                <RadzenCard Variant="Variant.Filled" class="rz-p-3">
+                    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center"
+                                 JustifyContent="JustifyContent.SpaceBetween">
+                        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.75rem">
+                            <RadzenIcon Icon="@AppRoles.Icon(account.Role)" />
+                            <RadzenStack Gap="0">
+                                <RadzenText TextStyle="TextStyle.Subtitle2" class="rz-m-0">@AppRoles.DisplayName(account.Role)</RadzenText>
+                                <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0">
+                                    <code>@account.Login</code> / <code>@account.Password</code>
+                                </RadzenText>
+                            </RadzenStack>
+                        </RadzenStack>
+                        <RadzenButton Text="Zaloguj" Icon="bolt" Size="ButtonSize.Small" Variant="Variant.Flat"
+                                      ButtonStyle="ButtonStyle.Secondary" Disabled="@(busy || resetting)"
+                                      Click="@(() => SignInAsTestAccountAsync(account))" />
+                    </RadzenStack>
+                </RadzenCard>
+            }
+
+            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween"
+                         Gap="1rem" Wrap="FlexWrap.Wrap" class="conversation-row">
+                <RadzenButton Text="Zresetuj bazę z danymi testowymi" Icon="restart_alt" Size="ButtonSize.Small" Variant="Variant.Outlined"
+                              ButtonStyle="ButtonStyle.Warning" class="no-shrink" Disabled="@busy"
+                              IsBusy="@resetting" BusyText="Resetowanie…" Click="@ResetDatabaseAsync" />
+            </RadzenStack>
+        </RadzenStack>
+    </RadzenCard>
 </RadzenStack>

@@ -1,0 +1,92 @@
+<RadzenCard Variant="Variant.Outlined" class="rz-mt-6">
+    <RadzenStack Gap="1rem">
+        <div class="collapsible-heading" role="button" tabindex="0" aria-expanded="@(!collapsed)"
+             title="@(collapsed ? "Rozwiń ocenę kryteriów" : "Zwiń ocenę kryteriów")" @onclick="@ToggleCollapsed" @onkeydown="@OnHeadingKeyDown">
+            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween" Gap="1rem">
+                <RadzenStack Gap="0" class="card-heading">
+                    <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H2" class="rz-m-0">@Title</RadzenText>
+                    <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">@Subtitle</RadzenText>
+                </RadzenStack>
+                <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.75rem" class="no-shrink">
+                    <AiAssistBadge Description="Asystent AI może podpowiedzieć opisy zachowań na podstawie notatek. Opisy wybierasz Ty, a poziom kryterium wylicza z nich jawna reguła." />
+                    <RadzenIcon Icon="@(collapsed ? "expand_more" : "expand_less")" />
+                </RadzenStack>
+            </RadzenStack>
+        </div>
+
+        @if (collapsed)
+        {
+        }
+        else if (loading)
+        {
+            <RadzenProgressBarCircular ShowValue="false" Mode="ProgressBarMode.Indeterminate" Size="ProgressBarCircularSize.Small" />
+        }
+        else if (loadError is not null)
+        {
+            <RadzenAlert AlertStyle="AlertStyle.Danger" Variant="Variant.Flat" Shade="Shade.Lighter" AllowClose="false" class="rz-m-0">
+                Nie udało się wczytać oceny kryteriów: @loadError
+            </RadzenAlert>
+        }
+        else if (form is { IsUnlocked: false })
+        {
+            <RadzenAlert AlertStyle="AlertStyle.Info" Variant="Variant.Flat" Shade="Shade.Lighter" AllowClose="false" class="rz-m-0">
+                @form.LockReason
+            </RadzenAlert>
+        }
+        else if (form is not null && Current is CriterionAssessment current)
+        {
+            <RadzenRow Gap="1.5rem">
+                <RadzenColumn Size="12" SizeMD="4">
+                    <RadzenListBox TValue="Criterion" Value="@current.Criterion" ValueChanged="@Select" Data="@form.Criteria"
+                                   ValueProperty="@nameof(CriterionAssessment.Criterion)" Style="height: auto; width: 100%;">
+                        <Template Context="item">
+                            @{ var assessment = (CriterionAssessment)item; }
+                            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.5rem" class="min-w-0">
+                                <RadzenIcon Icon="@StatusIcon(assessment)" IconColor="@StatusColor(assessment)" class="no-shrink" title="@StatusText(assessment)" />
+                                <RadzenStack Gap="0" class="min-w-0">
+                                    <RadzenText TextStyle="TextStyle.Body2" class="rz-m-0 criterion-list-name">@EvaluationCriteria.Name(assessment.Criterion)</RadzenText>
+                                    <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">
+                                        @StatusText(assessment) · notatki: @NotesFor(assessment.Criterion).Count
+                                    </RadzenText>
+                                </RadzenStack>
+                            </RadzenStack>
+                        </Template>
+                    </RadzenListBox>
+                </RadzenColumn>
+                <RadzenColumn Size="12" SizeMD="8">
+                    <CriterionAssessmentEditor @key="@current.Criterion" Assessment="@current" Notes="@NotesFor(current.Criterion)"
+                                               ReadOnly="@form.IsReadOnly" SupervisorId="@SupervisorId" EmployeeId="@View.Employee.Id"
+                                               OnChanged="@OnCriterionChangedAsync" HasNext="@(NextUndecided() is not null)" OnNext="@SelectNext" />
+                </RadzenColumn>
+            </RadzenRow>
+
+            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween"
+                         Gap="1rem" Wrap="FlexWrap.Wrap" class="conversation-row">
+                <RadzenStack Gap="0" class="min-w-0">
+                    @if (form.Summary is WrittenEvaluationSummary summary)
+                    {
+                        <RadzenText TextStyle="TextStyle.Body2" class="rz-m-0">
+                            Średnia: <strong>@summary.AveragePoints.ToString("0.##") pkt</strong> · Ogólny poziom: <strong>@summary.OverallLevel</strong> ·
+                            <strong class="@(summary.IsPositive ? "rz-color-success" : "rz-color-danger")">@(summary.IsPositive ? "ocena pozytywna" : "ocena negatywna")</strong>
+                        </RadzenText>
+                        <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">
+                            Wynik liczy reguła z arkusza: ocena jest negatywna przy średniej do 4 pkt albo gdy któreś kryterium ma 1 pkt.
+                        </RadzenText>
+                    }
+                    else
+                    {
+                        <RadzenText TextStyle="TextStyle.Body2" class="rz-m-0">Ocenione kryteria: @form.DecidedCount z @form.Criteria.Count</RadzenText>
+                        <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">
+                            Gdy ocenisz wskaźniki wszystkich kryteriów, przejdziesz do zakończenia oceny.
+                        </RadzenText>
+                    }
+                </RadzenStack>
+                @if (!form.IsReadOnly)
+                {
+                    <RadzenButton Text="Przejdź do zakończenia" Icon="task_alt" ButtonStyle="ButtonStyle.Primary" class="no-shrink"
+                                  Disabled="@(!form.AllDecided)" IsBusy="@finishing" BusyText="Zapisywanie…" Click="@FinishAsync" />
+                }
+            </RadzenStack>
+        }
+    </RadzenStack>
+</RadzenCard>

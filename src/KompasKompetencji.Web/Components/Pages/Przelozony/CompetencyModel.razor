@@ -2,6 +2,98 @@
 
 <PageTitle>Model kompetencji – Kompas kompetencji</PageTitle>
 
-<PageHeader Title="Model kompetencji" Subtitle="Kompetencje, wskaźniki behawioralne i opisy poziomów spełniania." />
+<PageHeader Title="Model kompetencji" Subtitle="@Subtitle" />
 
-<StatusMessage Icon="psychology" Title="Brak danych modelu kompetencji" Text="Model kompetencji nie został jeszcze wczytany." />
+@if (loadError is not null)
+{
+    <RadzenAlert AlertStyle="AlertStyle.Danger" Variant="Variant.Flat" Shade="Shade.Lighter" AllowClose="false" class="rz-mb-4">
+        Nie udało się wczytać modelu kompetencji: @loadError
+    </RadzenAlert>
+}
+else if (loading)
+{
+    <RadzenProgressBarCircular ShowValue="false" Mode="ProgressBarMode.Indeterminate" />
+}
+else if (competencies.Count == 0)
+{
+    <StatusMessage Icon="psychology" Title="Brak danych modelu kompetencji" Text="Model kompetencji nie został jeszcze wczytany do bazy." />
+}
+else
+{
+    <RadzenRow Gap="1.5rem">
+        <RadzenColumn Size="12" SizeMD="4">
+            <RadzenCard Variant="Variant.Outlined">
+                <RadzenStack Gap="1rem">
+                    <RadzenStack Gap="0">
+                        <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H2" class="rz-m-0">Kompetencje</RadzenText>
+                        <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">@CountCaption</RadzenText>
+                    </RadzenStack>
+
+                    <SearchBox Value="@search" ValueChanged="@OnSearchChanged" Placeholder="Szukaj: kompetencja, wskaźnik" />
+
+                    @if (filtered.Count == 0)
+                    {
+                        <RadzenText TextStyle="TextStyle.Body2" class="rz-m-0 rz-color-base-300">Nic nie pasuje do wyszukiwania.</RadzenText>
+                    }
+                    else
+                    {
+                        <RadzenListBox TValue="Criterion" Value="@(Current?.Criterion ?? default)" ValueChanged="@Select" Data="@filtered"
+                                       ValueProperty="@nameof(CompetencyView.Criterion)" Style="height: auto; width: 100%;">
+                            <Template Context="item">
+                                @{ var competency = (CompetencyView)item; }
+                                <RadzenStack Gap="0" class="min-w-0">
+                                    <RadzenText TextStyle="TextStyle.Body2" class="rz-m-0 criterion-list-name">@competency.Name</RadzenText>
+                                    <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">
+                                        Wskaźniki: @competency.Indicators.Count · @SheetRole(competency)
+                                    </RadzenText>
+                                </RadzenStack>
+                            </Template>
+                        </RadzenListBox>
+                    }
+                </RadzenStack>
+            </RadzenCard>
+        </RadzenColumn>
+
+        <RadzenColumn Size="12" SizeMD="8">
+            @if (Current is CompetencyView current)
+            {
+                <RadzenCard Variant="Variant.Outlined">
+                    <RadzenStack Gap="1rem">
+                        <RadzenStack Gap="0.5rem">
+                            <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H2" class="rz-m-0">@current.Name</RadzenText>
+                            <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" Wrap="FlexWrap.Wrap">
+                                @foreach (var sheet in Enum.GetValues<EvaluationSheet>())
+                                {
+                                    <RadzenBadge BadgeStyle="@(current.IsMandatoryIn(sheet) ? BadgeStyle.Primary : BadgeStyle.Base)" Variant="Variant.Flat"
+                                                 Shade="Shade.Lighter" IsPill="true"
+                                                 Text="@($"{EvaluationText.Sheet(sheet)}: {(current.IsMandatoryIn(sheet) ? "obowiązkowe" : "dodatkowe")}")" />
+                                }
+                            </RadzenStack>
+                            <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">
+                                Punkt wyjścia to „Na poziomie oczekiwań” (5 pkt). Ocena ma wynikać z konkretnych zachowań w okresie oceny, a gdy nie było okazji ich zaobserwować, zaznacza się brak podstaw do oceny.
+                            </RadzenText>
+                        </RadzenStack>
+
+                        @foreach (var indicator in current.Indicators)
+                        {
+                            <RadzenCard Variant="Variant.Filled" class="rz-p-3">
+                                <RadzenStack Gap="0.75rem">
+                                    <RadzenText TextStyle="TextStyle.Body1" class="rz-m-0">@indicator.Number. @indicator.Text</RadzenText>
+                                    <RadzenStack Gap="0.5rem">
+                                        @foreach (var behavior in indicator.Behaviors.OrderBy(b => b.Level))
+                                        {
+                                            <div class="behavior-option readonly">
+                                                <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">@CompetencyLevels.NameWithPoints(behavior.Level)</RadzenText>
+                                                <RadzenText TextStyle="TextStyle.Body2" class="rz-m-0">@behavior.Description</RadzenText>
+                                            </div>
+                                        }
+                                    </RadzenStack>
+                                </RadzenStack>
+                            </RadzenCard>
+                        }
+                    </RadzenStack>
+                </RadzenCard>
+            }
+        </RadzenColumn>
+    </RadzenRow>
+}

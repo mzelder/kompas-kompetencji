@@ -21,6 +21,14 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
 
     public DbSet<AppUser> Users => Set<AppUser>();
 
+    public DbSet<CompetencyIndicator> CompetencyIndicators => Set<CompetencyIndicator>();
+
+    public DbSet<IndicatorBehavior> IndicatorBehaviors => Set<IndicatorBehavior>();
+
+    public DbSet<IndicatorRating> IndicatorRatings => Set<IndicatorRating>();
+
+    public DbSet<CriterionDecision> CriterionDecisions => Set<CriterionDecision>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<AppUser>(u =>
@@ -61,7 +69,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
                 new Employee { Id = 13, FirstName = "Łukasz", LastName = "Grabowski", Position = "Specjalista", Department = "Wydział Analiz Danych", EmployedSince = new DateOnly(2024, 12, 10) },
                 new Employee { Id = 14, FirstName = "Natalia", LastName = "Krawczyk", Position = "Główny specjalista", Department = "Wydział Analiz Danych", EmployedSince = new DateOnly(2023, 4, 3) },
                 new Employee { Id = 15, FirstName = "Bartosz", LastName = "Wróbel", Position = "Starszy specjalista", Department = "Wydział Analiz Danych", EmployedSince = new DateOnly(2022, 1, 17) },
-                new Employee { Id = 16, FirstName = "Monika", LastName = "Sikora", Position = "Specjalista", Department = "Wydział Analiz Danych", EmployedSince = new DateOnly(2019, 11, 28) });
+                new Employee { Id = 16, FirstName = "Monika", LastName = "Sikora", Position = "Specjalista", Department = "Wydział Analiz Danych", EmployedSince = new DateOnly(2019, 11, 28) },
+                new Employee { Id = 17, FirstName = "Joanna", LastName = "Pawlak", Position = "Główny specjalista", Department = "Wydział Analiz Danych", EmployedSince = new DateOnly(2020, 12, 7) });
         });
 
         modelBuilder.Entity<EmployeeSupervisor>(l =>
@@ -94,7 +103,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
                 new EmployeeSupervisor { EmployeeId = 13, SupervisorId = 3 },
                 new EmployeeSupervisor { EmployeeId = 14, SupervisorId = 3 },
                 new EmployeeSupervisor { EmployeeId = 15, SupervisorId = 3 },
-                new EmployeeSupervisor { EmployeeId = 16, SupervisorId = 3 });
+                new EmployeeSupervisor { EmployeeId = 16, SupervisorId = 3 },
+                new EmployeeSupervisor { EmployeeId = 17, SupervisorId = 3 });
         });
 
         modelBuilder.Entity<JobDescription>(j =>
@@ -229,6 +239,18 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
                         "Prowadzenie rejestru udostępnionych danych",
                         "Współpraca z działem prawnym przy odpowiedziach na wnioski"),
                     RequiredCompetencies = Lines("Rzetelność", "Komunikacja pisemna", "Współpraca"),
+                },
+                new JobDescription
+                {
+                    EmployeeId = 17,
+                    Purpose = "Przygotowywanie raportów i analiz danych o wnioskach obsługiwanych przez departament oraz dbanie o jakość danych źródłowych.",
+                    Tasks = Lines(
+                        "Przygotowywanie raportów kwartalnych i rocznych o wnioskach",
+                        "Analiza trendów i przyczyn zmian w liczbie wniosków",
+                        "Weryfikacja zgodności danych z rejestrami źródłowymi",
+                        "Przygotowywanie notatek informacyjnych dla kierownictwa",
+                        "Wsparcie nowych pracowników w pracy z danymi"),
+                    RequiredCompetencies = Lines("Myślenie analityczne", "Rzetelność", "Komunikacja pisemna", "Kreatywność"),
                 });
         });
 
@@ -376,6 +398,23 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
                     PartIConfirmedAt = new DateTime(2024, 12, 16, 10, 0, 0), EmployeeAcquaintedOn = new DateOnly(2024, 12, 16),
                     WrittenEvaluationAt = new DateTime(2026, 11, 19, 14, 30, 0),
                     StartedAt = new DateTime(2026, 10, 1, 9, 0, 0),
+                },
+                new Evaluation
+                {
+                    Id = 16, EmployeeId = 17, EvaluatorId = 3, Sheet = EvaluationSheet.C, Status = EvaluationStatus.Completed, SheetConfirmedAt = new DateTime(2022, 12, 10, 9, 0, 0),
+                    PeriodStart = new DateOnly(2022, 12, 20), PeriodEnd = new DateOnly(2024, 12, 5), DueDate = new DateOnly(2024, 12, 7),
+                    Expectations = "Raporty kwartalne przekazywane w terminie, z danymi sprawdzonymi z rejestrami źródłowymi.",
+                    PartIConfirmedAt = new DateTime(2022, 12, 20, 10, 0, 0), EmployeeAcquaintedOn = new DateOnly(2022, 12, 20),
+                    StartedAt = new DateTime(2024, 10, 14, 9, 0, 0), CompletedAt = new DateTime(2024, 12, 5, 12, 0, 0),
+                    PreparedOn = new DateOnly(2024, 12, 5), PartIIAcquaintedOn = new DateOnly(2024, 12, 5),
+                },
+                new Evaluation
+                {
+                    Id = 17, EmployeeId = 17, EvaluatorId = 3, Sheet = EvaluationSheet.C, Status = EvaluationStatus.InProgress, SheetConfirmedAt = new DateTime(2024, 12, 10, 9, 0, 0),
+                    PeriodStart = new DateOnly(2024, 12, 18), DueDate = new DateOnly(2026, 12, 7),
+                    Expectations = "Dane w raportach sprawdzone z rejestrami przed wysłaniem. Notatki dla kierownictwa z wyraźnie oddzielonymi ustaleniami i kwestiami otwartymi.",
+                    PartIConfirmedAt = new DateTime(2024, 12, 18, 10, 0, 0), EmployeeAcquaintedOn = new DateOnly(2024, 12, 18),
+                    StartedAt = new DateTime(2026, 10, 12, 9, 0, 0),
                 });
         });
 
@@ -401,6 +440,41 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
                 {
                     Id = 2, EvaluationId = 11, Criterion = Criterion.Reliability, Tone = NoteTone.Negative, CreatedAt = new DateTime(2026, 10, 14, 13, 20, 0),
                     Text = "Przekazała kierownictwu zestawienie kwartalne z błędnymi sumami w dwóch tabelach. Poprawioną wersję trzeba było rozesłać ponownie.",
+                },
+                new EvaluationNote
+                {
+                    Id = 3, EvaluationId = 17, Criterion = Criterion.Reliability, Tone = NoteTone.Positive, CreatedAt = new DateTime(2025, 3, 12, 10, 15, 0),
+                    Text = "Przed wysłaniem raportu rocznego samodzielnie sprawdziła dane z rejestrem źródłowym i wykryła dwie rozbieżności, które poprawiła przed publikacją.",
+                },
+                new EvaluationNote
+                {
+                    Id = 4, EvaluationId = 17, Criterion = Criterion.Reliability, Tone = NoteTone.Negative, CreatedAt = new DateTime(2025, 9, 3, 15, 40, 0),
+                    Text = "Przekazała zestawienie dla departamentu dwa dni po uzgodnionym terminie i nie uprzedziła wcześniej o opóźnieniu.",
+                },
+                new EvaluationNote
+                {
+                    Id = 5, EvaluationId = 17, Criterion = Criterion.Communication, Tone = NoteTone.Positive, CreatedAt = new DateTime(2025, 6, 17, 11, 0, 0),
+                    Text = "Przygotowała notatkę dla dyrektora, w której jasno oddzieliła ustalenia od kwestii otwartych. Dyrektor przyjął ją bez dopytywania.",
+                },
+                new EvaluationNote
+                {
+                    Id = 6, EvaluationId = 17, Criterion = Criterion.Cooperation, Tone = NoteTone.Positive, CreatedAt = new DateTime(2025, 11, 5, 9, 20, 0),
+                    Text = "Pomogła nowej osobie w wydziale przygotować pierwsze zestawienie i wyjaśniła jej zasady weryfikacji danych.",
+                },
+                new EvaluationNote
+                {
+                    Id = 7, EvaluationId = 17, Criterion = Criterion.AnalyticalThinking, Tone = NoteTone.Positive, CreatedAt = new DateTime(2026, 2, 24, 14, 5, 0),
+                    Text = "Zauważyła, że spadek liczby wniosków wynika ze zmiany formularza, a nie z mniejszego zainteresowania, i pokazała to na danych z trzech kwartałów.",
+                },
+                new EvaluationNote
+                {
+                    Id = 8, EvaluationId = 17, Criterion = Criterion.WorkOrganization, Tone = NoteTone.Neutral, CreatedAt = new DateTime(2026, 5, 14, 16, 30, 0),
+                    Text = "Zrealizowała plan kwartalny, ale dwa zadania wymagały przesunięcia terminu po uzgodnieniu z naczelnikiem.",
+                },
+                new EvaluationNote
+                {
+                    Id = 9, EvaluationId = 17, Criterion = Criterion.KnowledgeAndDevelopment, Tone = NoteTone.Positive, CreatedAt = new DateTime(2026, 9, 30, 10, 0, 0),
+                    Text = "Ukończyła szkolenie z analizy danych i zastosowała nową metodę w raporcie kwartalnym. Pokazała ją też zespołowi na spotkaniu wydziału.",
                 });
         });
 
@@ -442,7 +516,11 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
                 new Conversation { Id = 24, EvaluationId = 14, Type = ConversationType.Starting, At = new DateTime(2022, 12, 17, 9, 0, 0), Status = ConversationStatus.Held },
                 new Conversation { Id = 25, EvaluationId = 14, Type = ConversationType.Assessment, At = new DateTime(2024, 11, 17, 10, 0, 0), Status = ConversationStatus.Held },
                 new Conversation { Id = 26, EvaluationId = 15, Type = ConversationType.Starting, At = new DateTime(2024, 12, 16, 9, 0, 0), Status = ConversationStatus.Held },
-                new Conversation { Id = 27, EvaluationId = 15, Type = ConversationType.Assessment, At = new DateTime(2026, 11, 16, 11, 0, 0), Status = ConversationStatus.Held });
+                new Conversation { Id = 27, EvaluationId = 15, Type = ConversationType.Assessment, At = new DateTime(2026, 11, 16, 11, 0, 0), Status = ConversationStatus.Held },
+                new Conversation { Id = 28, EvaluationId = 16, Type = ConversationType.Starting, At = new DateTime(2022, 12, 20, 9, 0, 0), Status = ConversationStatus.Held },
+                new Conversation { Id = 29, EvaluationId = 16, Type = ConversationType.Assessment, At = new DateTime(2024, 11, 28, 10, 0, 0), Status = ConversationStatus.Held },
+                new Conversation { Id = 30, EvaluationId = 17, Type = ConversationType.Starting, At = new DateTime(2024, 12, 18, 9, 0, 0), Status = ConversationStatus.Held },
+                new Conversation { Id = 31, EvaluationId = 17, Type = ConversationType.Assessment, At = new DateTime(2026, 11, 19, 10, 0, 0), Status = ConversationStatus.Held });
         });
 
         modelBuilder.Entity<EvaluationAdditionalCriterion>(a =>
@@ -473,7 +551,125 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
                 new EvaluationAdditionalCriterion { EvaluationId = 12, Criterion = Criterion.AnalyticalThinking },
                 new EvaluationAdditionalCriterion { EvaluationId = 13, Criterion = Criterion.AnalyticalThinking },
                 new EvaluationAdditionalCriterion { EvaluationId = 14, Criterion = Criterion.AnalyticalThinking },
-                new EvaluationAdditionalCriterion { EvaluationId = 15, Criterion = Criterion.AnalyticalThinking });
+                new EvaluationAdditionalCriterion { EvaluationId = 15, Criterion = Criterion.AnalyticalThinking },
+                new EvaluationAdditionalCriterion { EvaluationId = 16, Criterion = Criterion.AnalyticalThinking },
+                new EvaluationAdditionalCriterion { EvaluationId = 17, Criterion = Criterion.AnalyticalThinking },
+                new EvaluationAdditionalCriterion { EvaluationId = 17, Criterion = Criterion.Creativity });
+        });
+
+        modelBuilder.Entity<CompetencyIndicator>(i =>
+        {
+            i.ToTable("CompetencyIndicators");
+            i.Property(p => p.Criterion).HasConversion<string>().HasMaxLength(40);
+            i.Property(p => p.Text).HasMaxLength(1000);
+            i.HasIndex(p => new { p.Criterion, p.Number }).IsUnique();
+            i.HasData(CompetencyModelSource.Indicators.Select(x => new CompetencyIndicator
+            {
+                Id = x.Id, Criterion = x.Criterion, Number = x.Number, Text = x.Text,
+            }));
+        });
+
+        modelBuilder.Entity<IndicatorBehavior>(b =>
+        {
+            b.ToTable("IndicatorBehaviors");
+            b.HasKey(p => new { p.IndicatorId, p.Level });
+            b.Property(p => p.Description).HasMaxLength(1000);
+            b.HasOne(p => p.Indicator)
+                .WithMany(p => p.Behaviors)
+                .HasForeignKey(p => p.IndicatorId)
+                .OnDelete(DeleteBehavior.Cascade);
+            b.HasData(CompetencyModelSource.Behaviors.Select(x => new IndicatorBehavior
+            {
+                IndicatorId = x.IndicatorId, Level = x.Level, Description = x.Description,
+            }));
+        });
+
+        modelBuilder.Entity<IndicatorRating>(r =>
+        {
+            r.ToTable("IndicatorRatings");
+            r.HasKey(p => new { p.EvaluationId, p.IndicatorId });
+            r.HasOne(p => p.Evaluation)
+                .WithMany()
+                .HasForeignKey(p => p.EvaluationId)
+                .OnDelete(DeleteBehavior.Cascade);
+            r.HasOne(p => p.Indicator)
+                .WithMany()
+                .HasForeignKey(p => p.IndicatorId)
+                .OnDelete(DeleteBehavior.NoAction);
+        });
+
+        modelBuilder.Entity<CriterionDecision>(d =>
+        {
+            d.ToTable("CriterionDecisions");
+            d.HasKey(p => new { p.EvaluationId, p.Criterion });
+            d.Property(p => p.Criterion).HasConversion<string>().HasMaxLength(40);
+            d.Property(p => p.Justification).HasMaxLength(CriterionDecision.MaxJustificationLength);
+            d.HasOne(p => p.Evaluation)
+                .WithMany()
+                .HasForeignKey(p => p.EvaluationId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            d.HasData(
+                new CriterionDecision { EvaluationId = 1, Criterion = Criterion.KnowledgeAndDevelopment, SuggestedLevel = 4, Level = 4, DecidedAt = new DateTime(2024, 12, 10, 9, 0, 0) },
+                new CriterionDecision { EvaluationId = 1, Criterion = Criterion.Reliability, SuggestedLevel = 4, Level = 4, DecidedAt = new DateTime(2024, 12, 10, 9, 0, 0) },
+                new CriterionDecision { EvaluationId = 1, Criterion = Criterion.WorkOrganization, SuggestedLevel = 3, Level = 3, DecidedAt = new DateTime(2024, 12, 10, 9, 0, 0) },
+                new CriterionDecision { EvaluationId = 1, Criterion = Criterion.Cooperation, SuggestedLevel = 3, Level = 3, DecidedAt = new DateTime(2024, 12, 10, 9, 0, 0) },
+                new CriterionDecision { EvaluationId = 1, Criterion = Criterion.Communication, SuggestedLevel = 4, Level = 4, DecidedAt = new DateTime(2024, 12, 10, 9, 0, 0) },
+                new CriterionDecision { EvaluationId = 1, Criterion = Criterion.AnalyticalThinking, SuggestedLevel = 4, Level = 4, DecidedAt = new DateTime(2024, 12, 10, 9, 0, 0) },
+                new CriterionDecision { EvaluationId = 3, Criterion = Criterion.KnowledgeAndDevelopment, SuggestedLevel = 3, Level = 3, DecidedAt = new DateTime(2024, 10, 28, 9, 0, 0) },
+                new CriterionDecision { EvaluationId = 3, Criterion = Criterion.Reliability, SuggestedLevel = 3, Level = 3, DecidedAt = new DateTime(2024, 10, 28, 9, 0, 0) },
+                new CriterionDecision { EvaluationId = 3, Criterion = Criterion.WorkOrganization, SuggestedLevel = 3, Level = 3, DecidedAt = new DateTime(2024, 10, 28, 9, 0, 0) },
+                new CriterionDecision { EvaluationId = 3, Criterion = Criterion.Cooperation, SuggestedLevel = 3, Level = 3, DecidedAt = new DateTime(2024, 10, 28, 9, 0, 0) },
+                new CriterionDecision { EvaluationId = 3, Criterion = Criterion.Communication, SuggestedLevel = 3, Level = 3, DecidedAt = new DateTime(2024, 10, 28, 9, 0, 0) },
+                new CriterionDecision { EvaluationId = 3, Criterion = Criterion.AnalyticalThinking, SuggestedLevel = 3, Level = 3, DecidedAt = new DateTime(2024, 10, 28, 9, 0, 0) },
+                new CriterionDecision { EvaluationId = 4, Criterion = Criterion.KnowledgeAndDevelopment, SuggestedLevel = 3, Level = 3, DecidedAt = new DateTime(2025, 1, 8, 9, 0, 0) },
+                new CriterionDecision { EvaluationId = 4, Criterion = Criterion.Reliability, SuggestedLevel = 4, Level = 4, DecidedAt = new DateTime(2025, 1, 8, 9, 0, 0) },
+                new CriterionDecision { EvaluationId = 4, Criterion = Criterion.WorkOrganization, SuggestedLevel = 3, Level = 3, DecidedAt = new DateTime(2025, 1, 8, 9, 0, 0) },
+                new CriterionDecision { EvaluationId = 4, Criterion = Criterion.Cooperation, SuggestedLevel = 3, Level = 3, DecidedAt = new DateTime(2025, 1, 8, 9, 0, 0) },
+                new CriterionDecision { EvaluationId = 4, Criterion = Criterion.Communication, SuggestedLevel = 3, Level = 3, DecidedAt = new DateTime(2025, 1, 8, 9, 0, 0) },
+                new CriterionDecision { EvaluationId = 4, Criterion = Criterion.CustomerOrientation, SuggestedLevel = 4, Level = 4, DecidedAt = new DateTime(2025, 1, 8, 9, 0, 0) },
+                new CriterionDecision { EvaluationId = 5, Criterion = Criterion.KnowledgeAndDevelopment, SuggestedLevel = 4, Level = 4, DecidedAt = new DateTime(2026, 11, 6, 9, 0, 0) },
+                new CriterionDecision { EvaluationId = 5, Criterion = Criterion.Reliability, SuggestedLevel = 3, Level = 3, DecidedAt = new DateTime(2026, 11, 6, 9, 0, 0) },
+                new CriterionDecision { EvaluationId = 5, Criterion = Criterion.WorkOrganization, SuggestedLevel = 4, Level = 4, DecidedAt = new DateTime(2026, 11, 6, 9, 0, 0) },
+                new CriterionDecision { EvaluationId = 5, Criterion = Criterion.Cooperation, SuggestedLevel = 4, Level = 4, DecidedAt = new DateTime(2026, 11, 6, 9, 0, 0) },
+                new CriterionDecision { EvaluationId = 5, Criterion = Criterion.Communication, SuggestedLevel = 3, Level = 3, DecidedAt = new DateTime(2026, 11, 6, 9, 0, 0) },
+                new CriterionDecision { EvaluationId = 5, Criterion = Criterion.AnalyticalThinking, SuggestedLevel = 5, Level = 5, DecidedAt = new DateTime(2026, 11, 6, 9, 0, 0) },
+                new CriterionDecision { EvaluationId = 7, Criterion = Criterion.KnowledgeAndDevelopment, SuggestedLevel = 3, Level = 3, DecidedAt = new DateTime(2024, 12, 18, 9, 0, 0) },
+                new CriterionDecision { EvaluationId = 7, Criterion = Criterion.Reliability, SuggestedLevel = 2, Level = 2, DecidedAt = new DateTime(2024, 12, 18, 9, 0, 0) },
+                new CriterionDecision { EvaluationId = 7, Criterion = Criterion.WorkOrganization, SuggestedLevel = 3, Level = 3, DecidedAt = new DateTime(2024, 12, 18, 9, 0, 0) },
+                new CriterionDecision { EvaluationId = 7, Criterion = Criterion.Cooperation, SuggestedLevel = 3, Level = 3, DecidedAt = new DateTime(2024, 12, 18, 9, 0, 0) },
+                new CriterionDecision { EvaluationId = 7, Criterion = Criterion.Communication, SuggestedLevel = 3, Level = 3, DecidedAt = new DateTime(2024, 12, 18, 9, 0, 0) },
+                new CriterionDecision { EvaluationId = 7, Criterion = Criterion.AnalyticalThinking, SuggestedLevel = 3, Level = 3, DecidedAt = new DateTime(2024, 12, 18, 9, 0, 0) },
+                new CriterionDecision { EvaluationId = 10, Criterion = Criterion.KnowledgeAndDevelopment, SuggestedLevel = 4, Level = 4, DecidedAt = new DateTime(2025, 3, 30, 9, 0, 0) },
+                new CriterionDecision { EvaluationId = 10, Criterion = Criterion.Reliability, SuggestedLevel = 3, Level = 3, DecidedAt = new DateTime(2025, 3, 30, 9, 0, 0) },
+                new CriterionDecision { EvaluationId = 10, Criterion = Criterion.WorkOrganization, SuggestedLevel = 3, Level = 3, DecidedAt = new DateTime(2025, 3, 30, 9, 0, 0) },
+                new CriterionDecision { EvaluationId = 10, Criterion = Criterion.Cooperation, SuggestedLevel = 4, Level = 4, DecidedAt = new DateTime(2025, 3, 30, 9, 0, 0) },
+                new CriterionDecision { EvaluationId = 10, Criterion = Criterion.Communication, SuggestedLevel = 3, Level = 3, DecidedAt = new DateTime(2025, 3, 30, 9, 0, 0) },
+                new CriterionDecision { EvaluationId = 10, Criterion = Criterion.AnalyticalThinking, SuggestedLevel = 4, Level = 4, DecidedAt = new DateTime(2025, 3, 30, 9, 0, 0) },
+                new CriterionDecision { EvaluationId = 12, Criterion = Criterion.KnowledgeAndDevelopment, SuggestedLevel = 3, Level = 3, DecidedAt = new DateTime(2025, 1, 14, 9, 0, 0) },
+                new CriterionDecision { EvaluationId = 12, Criterion = Criterion.Reliability, SuggestedLevel = 3, Level = 3, DecidedAt = new DateTime(2025, 1, 14, 9, 0, 0) },
+                new CriterionDecision { EvaluationId = 12, Criterion = Criterion.WorkOrganization, SuggestedLevel = 2, Level = 2, DecidedAt = new DateTime(2025, 1, 14, 9, 0, 0) },
+                new CriterionDecision { EvaluationId = 12, Criterion = Criterion.Cooperation, SuggestedLevel = 3, Level = 3, DecidedAt = new DateTime(2025, 1, 14, 9, 0, 0) },
+                new CriterionDecision { EvaluationId = 12, Criterion = Criterion.Communication, SuggestedLevel = 3, Level = 3, DecidedAt = new DateTime(2025, 1, 14, 9, 0, 0) },
+                new CriterionDecision { EvaluationId = 12, Criterion = Criterion.AnalyticalThinking, SuggestedLevel = 4, Level = 4, DecidedAt = new DateTime(2025, 1, 14, 9, 0, 0) },
+                new CriterionDecision { EvaluationId = 14, Criterion = Criterion.KnowledgeAndDevelopment, SuggestedLevel = 3, Level = 3, DecidedAt = new DateTime(2024, 11, 28, 9, 0, 0) },
+                new CriterionDecision { EvaluationId = 14, Criterion = Criterion.Reliability, SuggestedLevel = 4, Level = 4, DecidedAt = new DateTime(2024, 11, 28, 9, 0, 0) },
+                new CriterionDecision { EvaluationId = 14, Criterion = Criterion.WorkOrganization, SuggestedLevel = 3, Level = 3, DecidedAt = new DateTime(2024, 11, 28, 9, 0, 0) },
+                new CriterionDecision { EvaluationId = 14, Criterion = Criterion.Cooperation, SuggestedLevel = 3, Level = 3, DecidedAt = new DateTime(2024, 11, 28, 9, 0, 0) },
+                new CriterionDecision { EvaluationId = 14, Criterion = Criterion.Communication, SuggestedLevel = 4, Level = 4, DecidedAt = new DateTime(2024, 11, 28, 9, 0, 0) },
+                new CriterionDecision { EvaluationId = 14, Criterion = Criterion.AnalyticalThinking, SuggestedLevel = 3, Level = 3, DecidedAt = new DateTime(2024, 11, 28, 9, 0, 0) },
+                new CriterionDecision { EvaluationId = 15, Criterion = Criterion.KnowledgeAndDevelopment, SuggestedLevel = 4, Level = 4, DecidedAt = new DateTime(2026, 11, 19, 9, 0, 0) },
+                new CriterionDecision { EvaluationId = 15, Criterion = Criterion.Reliability, SuggestedLevel = 3, Level = 3, DecidedAt = new DateTime(2026, 11, 19, 9, 0, 0) },
+                new CriterionDecision { EvaluationId = 15, Criterion = Criterion.WorkOrganization, SuggestedLevel = 3, Level = 3, DecidedAt = new DateTime(2026, 11, 19, 9, 0, 0) },
+                new CriterionDecision { EvaluationId = 15, Criterion = Criterion.Cooperation, SuggestedLevel = 4, Level = 4, DecidedAt = new DateTime(2026, 11, 19, 9, 0, 0) },
+                new CriterionDecision { EvaluationId = 15, Criterion = Criterion.Communication, SuggestedLevel = 3, Level = 3, DecidedAt = new DateTime(2026, 11, 19, 9, 0, 0) },
+                new CriterionDecision { EvaluationId = 15, Criterion = Criterion.AnalyticalThinking, SuggestedLevel = 4, Level = 4, DecidedAt = new DateTime(2026, 11, 19, 9, 0, 0) },
+                new CriterionDecision { EvaluationId = 16, Criterion = Criterion.KnowledgeAndDevelopment, SuggestedLevel = 4, Level = 4, DecidedAt = new DateTime(2024, 12, 5, 9, 0, 0) },
+                new CriterionDecision { EvaluationId = 16, Criterion = Criterion.Reliability, SuggestedLevel = 3, Level = 3, DecidedAt = new DateTime(2024, 12, 5, 9, 0, 0) },
+                new CriterionDecision { EvaluationId = 16, Criterion = Criterion.WorkOrganization, SuggestedLevel = 3, Level = 3, DecidedAt = new DateTime(2024, 12, 5, 9, 0, 0) },
+                new CriterionDecision { EvaluationId = 16, Criterion = Criterion.Cooperation, SuggestedLevel = 4, Level = 4, DecidedAt = new DateTime(2024, 12, 5, 9, 0, 0) },
+                new CriterionDecision { EvaluationId = 16, Criterion = Criterion.Communication, SuggestedLevel = 4, Level = 4, DecidedAt = new DateTime(2024, 12, 5, 9, 0, 0) },
+                new CriterionDecision { EvaluationId = 16, Criterion = Criterion.AnalyticalThinking, SuggestedLevel = 4, Level = 4, DecidedAt = new DateTime(2024, 12, 5, 9, 0, 0) });
         });
     }
 
