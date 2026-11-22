@@ -5,6 +5,7 @@ using KompasKompetencji.Web.Assistant.Privacy;
 using KompasKompetencji.Web.Components;
 using KompasKompetencji.Web.Data;
 using KompasKompetencji.Web.Evaluations;
+using KompasKompetencji.Web.Evaluations.Pdf;
 using Microsoft.Extensions.AI;
 using KompasKompetencji.Web.Organization;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -45,6 +46,8 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
 builder.Services.AddRadzenComponents();
+
+QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;
 
 builder.Services.AddSingleton(_ => KnowledgeBaseStore.Load(KnowledgeBaseStore.DefaultPath));
 builder.Services.AddSingleton<Bm25Retriever>();
@@ -90,6 +93,7 @@ app.UseAntiforgery();
 
 app.MapStaticAssets();
 app.MapAuthEndpoints();
+app.MapEvaluationPdfEndpoints();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 

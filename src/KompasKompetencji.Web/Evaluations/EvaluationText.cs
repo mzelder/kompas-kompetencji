@@ -80,7 +80,7 @@ public static class EvaluationText
         EvaluationStage.JobDescriptionReview => "Przejrzyj opis stanowiska pracownika i zatwierdź arkusz oceny.",
         EvaluationStage.StartingConversation => "Przygotuj propozycję kryteriów, odbądź rozmowę rozpoczynającą w ciągu 30 dni od początku cyklu, a po rozmowie zatwierdź część I arkusza.",
         EvaluationStage.Assessment => "Przez cały okres oceny zapisuj notatki. Około 2 miesiące przed terminem oceny przeprowadź rozmowę oceniającą, najpóźniej w dniu oceny, i uzupełnij część II arkusza: poziomy kryteriów, uzasadnienie i wnioski do IPRZ.",
-        EvaluationStage.Completion => "Zapoznaj pracownika z oceną i zamknij cykl. Od tego dnia zaczyna się nowy cykl oceny.",
+        EvaluationStage.Completion => "Wpisz datę sporządzenia oceny, wręcz pracownikowi arkusz do podpisu i zamknij ocenę. Od daty sporządzenia zaczyna się nowy cykl.",
         _ => string.Empty,
     };
 

@@ -37,7 +37,7 @@ public class Evaluation
 
     public DateOnly PeriodStart { get; set; }
 
-    public DateOnly PeriodEnd { get; set; }
+    public DateOnly? PeriodEnd { get; set; }
 
     public DateOnly DueDate { get; set; }
 
@@ -52,6 +52,10 @@ public class Evaluation
     public DateTime? StartedAt { get; set; }
 
     public DateTime? CompletedAt { get; set; }
+
+    public DateOnly? PreparedOn { get; set; }
+
+    public DateOnly? PartIIAcquaintedOn { get; set; }
 
     public List<Conversation> Conversations { get; set; } = [];
 

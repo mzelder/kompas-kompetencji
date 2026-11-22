@@ -18,7 +18,7 @@ public static class EvaluationProcessGuide
             "Wybierzcie kryteria oceny: 5 obowiązkowych i do 3 dodatkowych.",
             "Ustalcie, czego oczekujesz. Pracownik potwierdza, że to zna.",
         ]),
-        new(EvaluationStage.Assessment, "przez cały rok, do terminu oceny", "Ty i pracownik", "visibility",
+        new(EvaluationStage.Assessment, "przez cały okres oceny, do terminu oceny", "Ty i pracownik", "visibility",
         [
             "Obserwuj pracę i zapisuj konkretne przykłady w notatkach.",
             "Na bieżąco mów pracownikowi, co idzie dobrze, a co poprawić.",
@@ -28,11 +28,13 @@ public static class EvaluationProcessGuide
             "Ocena jest negatywna, gdy średnia to 4 pkt lub mniej albo któreś kryterium ma 1 pkt.",
             "Dopisz uzasadnienie i wnioski do rozwoju pracownika.",
         ]),
-        new(EvaluationStage.Completion, "w dniu oceny", "Ty i pracownik", "task_alt",
+        new(EvaluationStage.Completion, "po rozmowie oceniającej", "Ty i pracownik", "task_alt",
         [
-            "Pokaż pracownikowi ocenę. Pracownik potwierdza, że się z nią zapoznał.",
+            "Wpisz datę sporządzenia oceny i pobierz arkusz w PDF. Podpisz go.",
+            "Pokaż pracownikowi ocenę. Pracownik podpisuje arkusz, że się z nią zapoznał.",
             "Powiedz, że w ciągu 7 dni może złożyć sprzeciw.",
-            "Od tego dnia zaczyna się nowy cykl oceny.",
+            "Wpisz datę zapoznania pracownika z oceną i zamknij ocenę.",
+            "Od daty sporządzenia oceny zaczyna się nowy cykl. Kolejna ocena za 24 miesiące.",
         ]),
     ];
 }

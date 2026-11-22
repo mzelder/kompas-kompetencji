@@ -68,8 +68,9 @@ public partial class MyEmployees
         EvaluationStage.StartingConversation => new(
             "Rozmowa rozpoczynająca", "Ustal z pracownikiem kryteria oceny", false, null),
         EvaluationStage.Assessment => AssessmentConversationStep(row.Task),
-        EvaluationStage.Completion => new(
-            "Zakończenie", $"Zapoznaj pracownika z oceną do {EvaluationText.Date(row.DueDate)}", false, null),
+        EvaluationStage.Completion => row.Task.PreparedOn is DateOnly preparedOn
+            ? new("Zakończenie", $"Zapoznaj pracownika z oceną, sporządzona {EvaluationText.Date(preparedOn)}", false, null)
+            : new("Zakończenie", "Wpisz datę sporządzenia oceny", false, null),
         _ => null,
     };
 

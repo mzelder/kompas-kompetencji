@@ -16,6 +16,7 @@
     </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="11.0.0" />
     <PackageReference Include="Microsoft.Extensions.AI" Version="11.0.1" />
+    <PackageReference Include="QuestPDF" Version="2026.9.2" />
     <PackageReference Include="Radzen.Blazor" Version="13.2.1" />
   </ItemGroup>
 

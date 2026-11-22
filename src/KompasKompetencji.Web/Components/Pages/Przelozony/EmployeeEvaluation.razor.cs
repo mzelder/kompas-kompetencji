@@ -1,5 +1,6 @@
 using KompasKompetencji.Web.Auth;
 using KompasKompetencji.Web.Evaluations;
+using KompasKompetencji.Web.Evaluations.Pdf;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 
@@ -54,4 +55,7 @@ public partial class EmployeeEvaluation
     }
 
     private void BackToList() => Navigation.NavigateTo(ListPath);
+
+    private void DownloadSheet(int evaluationId) =>
+        Navigation.NavigateTo(EvaluationPdfEndpoints.SheetUrl(evaluationId), forceLoad: true);
 }

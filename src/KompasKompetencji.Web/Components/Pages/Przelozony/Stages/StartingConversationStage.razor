@@ -76,35 +76,59 @@
                         </RadzenAlert>
                     }
 
-                    <RadzenStack Gap="0.25rem">
+                    <RadzenStack Gap="0.5rem">
                         <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">Kryteria obowiązkowe (arkusz @Sheet)</RadzenText>
-                        <ul class="rz-m-0">
-                            @foreach (var criterion in View.MandatoryCriteria)
-                            {
-                                <li><RadzenText TextStyle="TextStyle.Body2" class="rz-m-0">@EvaluationCriteria.Name(criterion)</RadzenText></li>
-                            }
-                        </ul>
+                        <RadzenCheckBoxList TValue="Criterion" Value="@View.MandatoryCriteria" Disabled="true" Orientation="Orientation.Vertical" Gap="0.75rem">
+                            <Items>
+                                @foreach (var criterion in View.MandatoryCriteria)
+                                {
+                                    <RadzenCheckBoxListItem TValue="Criterion" Value="@criterion" Text="@EvaluationCriteria.Name(criterion)">
+                                        <Template Context="item">
+                                            <RadzenText TextStyle="TextStyle.Body1" class="rz-m-0">@EvaluationCriteria.Name(criterion)</RadzenText>
+                                        </Template>
+                                    </RadzenCheckBoxListItem>
+                                }
+                            </Items>
+                        </RadzenCheckBoxList>
+                        @if (!ReadOnly)
+                        {
+                            <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">
+                                Kryteria obowiązkowe wynikają z arkusza i nie można ich odznaczyć.
+                            </RadzenText>
+                        }
+                    </RadzenStack>
+
+                    <RadzenStack Gap="0.5rem">
+                        <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">@(ReadOnly ? "Kryteria dodatkowe" : $"Kryteria dodatkowe (do {EvaluationCriteria.MaxAdditional})")</RadzenText>
+                        <RadzenCheckBoxList TValue="Criterion" @bind-Value="additionalCriteria" Disabled="@ReadOnly" Orientation="Orientation.Vertical" Gap="0.75rem">
+                            <Items>
+                                @foreach (var criterion in EvaluationCriteria.AvailableAdditional(Sheet))
+                                {
+                                    <RadzenCheckBoxListItem TValue="Criterion" Value="@criterion" Text="@EvaluationCriteria.Name(criterion)"
+                                                            Disabled="@IsOptionDisabled(criterion)">
+                                        <Template Context="item">
+                                            <RadzenStack Gap="0">
+                                                <RadzenText TextStyle="TextStyle.Body1" class="rz-m-0">@EvaluationCriteria.Name(criterion)</RadzenText>
+                                                @if (!ReadOnly && CriteriaSuggestion.CompetencyFor(View.SuggestedCriteria, criterion) is string competency)
+                                                {
+                                                    <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">podpowiedź z OSP: @competency</RadzenText>
+                                                }
+                                            </RadzenStack>
+                                        </Template>
+                                    </RadzenCheckBoxListItem>
+                                }
+                            </Items>
+                        </RadzenCheckBoxList>
+                        @if (!ReadOnly)
+                        {
+                            <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">
+                                Możesz wybrać najwyżej @EvaluationCriteria.MaxAdditional kryteria dodatkowe. Nie musisz wybierać żadnego.
+                            </RadzenText>
+                        }
                     </RadzenStack>
 
                     @if (ReadOnly)
                     {
-                        <RadzenStack Gap="0.25rem">
-                            <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">Kryteria dodatkowe</RadzenText>
-                            @if (View.AdditionalCriteria.Count == 0)
-                            {
-                                <RadzenText TextStyle="TextStyle.Body2" class="rz-m-0">Brak kryteriów dodatkowych</RadzenText>
-                            }
-                            else
-                            {
-                                <ul class="rz-m-0">
-                                    @foreach (var criterion in View.AdditionalCriteria)
-                                    {
-                                        <li><RadzenText TextStyle="TextStyle.Body2" class="rz-m-0">@EvaluationCriteria.Name(criterion)</RadzenText></li>
-                                    }
-                                </ul>
-                            }
-                        </RadzenStack>
-
                         <RadzenStack Gap="0.25rem">
                             <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">Oczekiwania</RadzenText>
                             <RadzenText TextStyle="TextStyle.Body2" class="rz-m-0 pre-line">@View.Expectations</RadzenText>
@@ -131,32 +155,6 @@
                     }
                     else
                     {
-                        <RadzenStack Gap="0.5rem">
-                            <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">Kryteria dodatkowe (do @EvaluationCriteria.MaxAdditional)</RadzenText>
-                            <RadzenCheckBoxList TValue="Criterion" @bind-Value="additionalCriteria" Orientation="Orientation.Vertical" Gap="0.75rem">
-                                <Items>
-                                    @foreach (var criterion in EvaluationCriteria.AvailableAdditional(Sheet))
-                                    {
-                                        <RadzenCheckBoxListItem TValue="Criterion" Value="@criterion" Text="@EvaluationCriteria.Name(criterion)"
-                                                                Disabled="@IsOptionDisabled(criterion)">
-                                            <Template Context="item">
-                                                <RadzenStack Gap="0">
-                                                    <RadzenText TextStyle="TextStyle.Body1" class="rz-m-0">@EvaluationCriteria.Name(criterion)</RadzenText>
-                                                    @if (CriteriaSuggestion.CompetencyFor(View.SuggestedCriteria, criterion) is string competency)
-                                                    {
-                                                        <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">podpowiedź z OSP: @competency</RadzenText>
-                                                    }
-                                                </RadzenStack>
-                                            </Template>
-                                        </RadzenCheckBoxListItem>
-                                    }
-                                </Items>
-                            </RadzenCheckBoxList>
-                            <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">
-                                Możesz wybrać najwyżej @EvaluationCriteria.MaxAdditional kryteria dodatkowe. Nie musisz wybierać żadnego.
-                            </RadzenText>
-                        </RadzenStack>
-
                         <RadzenFormField Text="Oczekiwania" Variant="Variant.Outlined">
                             <ChildContent>
                                 <RadzenTextArea @bind-Value="expectations" Rows="5" MaxLength="@EvaluationService.MaxPartITextLength" />

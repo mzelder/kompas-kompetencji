@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace KompasKompetencji.Web.Data.Migrations;
 
 /// <inheritdoc />
-public partial class _20261121231852_Initial : Migration
+public partial class _20261122002754_Initial : Migration
 {
     /// <inheritdoc />
     protected override void Up(MigrationBuilder migrationBuilder)
@@ -68,14 +68,16 @@ public partial class _20261121231852_Initial : Migration
                 WrittenEvaluationAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                 Status = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
                 PeriodStart = table.Column<DateOnly>(type: "date", nullable: false),
-                PeriodEnd = table.Column<DateOnly>(type: "date", nullable: false),
+                PeriodEnd = table.Column<DateOnly>(type: "date", nullable: true),
                 DueDate = table.Column<DateOnly>(type: "date", nullable: false),
                 Expectations = table.Column<string>(type: "nvarchar(4000)", maxLength: 4000, nullable: true),
                 Goals = table.Column<string>(type: "nvarchar(4000)", maxLength: 4000, nullable: true),
                 PartIConfirmedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                 EmployeeAcquaintedOn = table.Column<DateOnly>(type: "date", nullable: true),
                 StartedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                CompletedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                CompletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                PreparedOn = table.Column<DateOnly>(type: "date", nullable: true),
+                PartIIAcquaintedOn = table.Column<DateOnly>(type: "date", nullable: true)
             },
             constraints: table =>
             {
@@ -215,7 +217,7 @@ public partial class _20261121231852_Initial : Migration
                 { 10, "Wydział Analiz Danych", new DateOnly(2020, 6, 1), "Agnieszka", false, "Woźniak", "Starszy specjalista" },
                 { 11, "Wydział Analiz Danych", new DateOnly(2026, 11, 5), "Paweł", false, "Kozłowski", "Starszy specjalista" },
                 { 12, "Wydział Analiz Danych", new DateOnly(2021, 12, 20), "Karolina", false, "Mazur", "Specjalista" },
-                { 13, "Wydział Analiz Danych", new DateOnly(2020, 12, 10), "Łukasz", false, "Grabowski", "Specjalista" },
+                { 13, "Wydział Analiz Danych", new DateOnly(2024, 12, 10), "Łukasz", false, "Grabowski", "Specjalista" },
                 { 14, "Wydział Analiz Danych", new DateOnly(2023, 4, 3), "Natalia", false, "Krawczyk", "Główny specjalista" },
                 { 15, "Wydział Analiz Danych", new DateOnly(2022, 1, 17), "Bartosz", false, "Wróbel", "Starszy specjalista" },
                 { 16, "Wydział Analiz Danych", new DateOnly(2019, 11, 28), "Monika", false, "Sikora", "Specjalista" }
@@ -246,24 +248,24 @@ public partial class _20261121231852_Initial : Migration
 
         migrationBuilder.InsertData(
             table: "Evaluations",
-            columns: new[] { "Id", "CompletedAt", "DueDate", "EmployeeAcquaintedOn", "EmployeeId", "EvaluatorId", "Expectations", "Goals", "PartIConfirmedAt", "PeriodEnd", "PeriodStart", "Sheet", "SheetConfirmedAt", "StartedAt", "Status", "WrittenEvaluationAt" },
+            columns: new[] { "Id", "CompletedAt", "DueDate", "EmployeeAcquaintedOn", "EmployeeId", "EvaluatorId", "Expectations", "Goals", "PartIConfirmedAt", "PartIIAcquaintedOn", "PeriodEnd", "PeriodStart", "PreparedOn", "Sheet", "SheetConfirmedAt", "StartedAt", "Status", "WrittenEvaluationAt" },
             values: new object[,]
             {
-                { 1, new DateTime(2025, 12, 10, 14, 0, 0, 0, DateTimeKind.Unspecified), new DateOnly(2025, 12, 15), new DateOnly(2024, 12, 16), 1, 3, "Samodzielne przygotowywanie analiz dla kierownictwa w uzgodnionych terminach, z opisem źródeł i ograniczeń danych.", null, new DateTime(2024, 12, 16, 15, 0, 0, 0, DateTimeKind.Unspecified), new DateOnly(2025, 12, 14), new DateOnly(2024, 12, 16), "C", new DateTime(2024, 12, 11, 9, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2025, 11, 20, 9, 0, 0, 0, DateTimeKind.Unspecified), "Completed", null },
-                { 2, null, new DateOnly(2026, 12, 15), new DateOnly(2025, 12, 16), 1, 3, "Analizy dla kierownictwa oddawane w terminie i bez poprawek merytorycznych. Propozycje nowych wskaźników zgłaszane z własnej inicjatywy, co najmniej raz na kwartał.", "Opracowanie zestawu wskaźników realizacji zadań departamentu do końca II kwartału 2026 r.", new DateTime(2025, 12, 16, 15, 0, 0, 0, DateTimeKind.Unspecified), new DateOnly(2026, 12, 14), new DateOnly(2025, 12, 16), "C", new DateTime(2025, 12, 11, 9, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2026, 11, 12, 10, 30, 0, 0, DateTimeKind.Unspecified), "InProgress", null },
-                { 3, new DateTime(2025, 10, 28, 12, 0, 0, 0, DateTimeKind.Unspecified), new DateOnly(2025, 11, 2), new DateOnly(2024, 11, 7), 2, 3, "Zestawienia danych przygotowywane według przyjętego wzoru i sprawdzone przed przekazaniem.", null, new DateTime(2024, 11, 7, 14, 0, 0, 0, DateTimeKind.Unspecified), new DateOnly(2025, 11, 1), new DateOnly(2024, 11, 7), "C", new DateTime(2024, 11, 5, 9, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2025, 10, 6, 9, 0, 0, 0, DateTimeKind.Unspecified), "Completed", null },
-                { 4, new DateTime(2026, 1, 8, 11, 0, 0, 0, DateTimeKind.Unspecified), new DateOnly(2026, 1, 10), new DateOnly(2025, 1, 16), 9, 3, "Korespondencja wydziału rejestrowana na bieżąco, odpowiedzi na proste pytania udzielane w ciągu dwóch dni.", null, new DateTime(2025, 1, 16, 14, 0, 0, 0, DateTimeKind.Unspecified), new DateOnly(2026, 1, 9), new DateOnly(2025, 1, 16), "C", new DateTime(2025, 1, 14, 9, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2025, 12, 15, 9, 0, 0, 0, DateTimeKind.Unspecified), "Completed", null },
-                { 5, new DateTime(2026, 11, 6, 13, 0, 0, 0, DateTimeKind.Unspecified), new DateOnly(2026, 11, 10), new DateOnly(2025, 11, 17), 10, 3, "Opinie do projektów dokumentów przygotowywane w terminie, z konkretnymi propozycjami zmian wskaźników.", null, new DateTime(2025, 11, 17, 14, 0, 0, 0, DateTimeKind.Unspecified), new DateOnly(2026, 11, 9), new DateOnly(2025, 11, 17), "C", new DateTime(2025, 11, 12, 9, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2026, 10, 12, 9, 0, 0, 0, DateTimeKind.Unspecified), "Completed", null },
-                { 6, null, new DateOnly(2027, 1, 10), new DateOnly(2026, 1, 15), 9, 3, "Rejestr korespondencji prowadzony bez zaległości. Zestawienia danych przygotowywane samodzielnie według wskazówek, bez konieczności poprawek.", null, new DateTime(2026, 1, 15, 14, 0, 0, 0, DateTimeKind.Unspecified), new DateOnly(2027, 1, 9), new DateOnly(2026, 1, 15), "C", new DateTime(2026, 1, 13, 9, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2026, 11, 16, 14, 0, 0, 0, DateTimeKind.Unspecified), "CriteriaSet", null },
-                { 7, new DateTime(2025, 12, 18, 10, 0, 0, 0, DateTimeKind.Unspecified), new DateOnly(2025, 12, 20), new DateOnly(2025, 1, 8), 12, 3, "Cykliczne raporty przekazywane w terminie, z krótkim omówieniem najważniejszych zmian w danych.", null, new DateTime(2025, 1, 8, 14, 0, 0, 0, DateTimeKind.Unspecified), new DateOnly(2025, 12, 19), new DateOnly(2025, 1, 8), "C", new DateTime(2024, 12, 23, 9, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2025, 11, 24, 9, 0, 0, 0, DateTimeKind.Unspecified), "Completed", null },
-                { 8, null, new DateOnly(2026, 12, 10), new DateOnly(2025, 12, 17), 13, 3, "Analizy danych przygotowywane samodzielnie, z wnioskami zrozumiałymi dla odbiorców spoza wydziału.", null, new DateTime(2025, 12, 17, 15, 0, 0, 0, DateTimeKind.Unspecified), new DateOnly(2026, 12, 9), new DateOnly(2025, 12, 17), "C", new DateTime(2025, 12, 12, 9, 0, 0, 0, DateTimeKind.Unspecified), null, "NotStarted", null },
-                { 9, null, new DateOnly(2027, 11, 10), null, 10, 3, "Analizy wpływu zmian na usługi cyfrowe z rekomendacją i oceną ryzyka. Samodzielne przedstawianie stanowiska wydziału na posiedzeniach zespołów międzyresortowych.", null, null, new DateOnly(2027, 11, 9), new DateOnly(2026, 11, 6), "C", new DateTime(2026, 11, 12, 9, 0, 0, 0, DateTimeKind.Unspecified), null, "NotStarted", null },
-                { 10, new DateTime(2026, 3, 30, 12, 0, 0, 0, DateTimeKind.Unspecified), new DateOnly(2026, 4, 3), new DateOnly(2025, 4, 22), 14, 3, "Zestawy wskaźników przygotowywane z opisem metody pomiaru i źródeł danych, uzgodnione z komórkami merytorycznymi.", null, new DateTime(2025, 4, 22, 10, 0, 0, 0, DateTimeKind.Unspecified), new DateOnly(2026, 4, 2), new DateOnly(2025, 4, 22), "C", new DateTime(2025, 4, 8, 9, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2026, 3, 2, 9, 0, 0, 0, DateTimeKind.Unspecified), "Completed", null },
-                { 11, null, new DateOnly(2027, 4, 3), new DateOnly(2026, 4, 21), 14, 3, "Analizy porównawcze dla kierownictwa przekazywane w uzgodnionych terminach. Koordynowanie prac analitycznych kilku osób wydziału bez opóźnień.", "Opracowanie standardu opisu i weryfikacji źródeł danych dla wydziału do końca 2026 r.", new DateTime(2026, 4, 21, 10, 0, 0, 0, DateTimeKind.Unspecified), new DateOnly(2027, 4, 2), new DateOnly(2026, 4, 21), "C", new DateTime(2026, 4, 7, 9, 0, 0, 0, DateTimeKind.Unspecified), null, "CriteriaSet", null },
-                { 12, new DateTime(2026, 1, 14, 12, 0, 0, 0, DateTimeKind.Unspecified), new DateOnly(2026, 1, 17), new DateOnly(2025, 2, 4), 15, 3, "Prognozy i analizy trendów przygotowywane w terminie, z opisem założeń i ograniczeń.", null, new DateTime(2025, 2, 4, 10, 0, 0, 0, DateTimeKind.Unspecified), new DateOnly(2026, 1, 16), new DateOnly(2025, 2, 4), "C", new DateTime(2025, 1, 21, 9, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2025, 12, 1, 9, 0, 0, 0, DateTimeKind.Unspecified), "Completed", null },
-                { 13, null, new DateOnly(2027, 1, 17), new DateOnly(2026, 2, 3), 15, 3, "Obliczenia w raportach wydziału sprawdzane przed wysłaniem. Wyjaśnienia metod analizy dla innych komórek udzielane w ciągu tygodnia.", null, new DateTime(2026, 2, 3, 10, 0, 0, 0, DateTimeKind.Unspecified), new DateOnly(2027, 1, 16), new DateOnly(2026, 2, 3), "C", new DateTime(2026, 1, 20, 9, 0, 0, 0, DateTimeKind.Unspecified), null, "CriteriaSet", null },
-                { 14, new DateTime(2025, 11, 28, 12, 0, 0, 0, DateTimeKind.Unspecified), new DateOnly(2025, 11, 28), new DateOnly(2024, 12, 17), 16, 3, "Udostępnianie danych publicznych na wnioski w ustawowym terminie, z kompletnym uzasadnieniem odmowy.", null, new DateTime(2024, 12, 17, 10, 0, 0, 0, DateTimeKind.Unspecified), new DateOnly(2025, 11, 27), new DateOnly(2024, 12, 17), "C", new DateTime(2024, 12, 3, 9, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2025, 10, 1, 9, 0, 0, 0, DateTimeKind.Unspecified), "Completed", new DateTime(2025, 11, 20, 13, 0, 0, 0, DateTimeKind.Unspecified) },
-                { 15, null, new DateOnly(2026, 11, 28), new DateOnly(2025, 12, 16), 16, 3, "Wnioski o udostępnienie danych rozpatrywane w terminie, także te wymagające uzgodnień z innymi komórkami. Rejestr udostępnionych danych prowadzony na bieżąco.", null, new DateTime(2025, 12, 16, 10, 0, 0, 0, DateTimeKind.Unspecified), new DateOnly(2026, 11, 27), new DateOnly(2025, 12, 16), "C", new DateTime(2025, 12, 2, 9, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2026, 10, 1, 9, 0, 0, 0, DateTimeKind.Unspecified), "InProgress", new DateTime(2026, 11, 19, 14, 30, 0, 0, DateTimeKind.Unspecified) }
+                { 1, new DateTime(2024, 12, 10, 14, 0, 0, 0, DateTimeKind.Unspecified), new DateOnly(2024, 12, 15), new DateOnly(2022, 12, 16), 1, 3, "Samodzielne przygotowywanie analiz dla kierownictwa w uzgodnionych terminach, z opisem źródeł i ograniczeń danych.", null, new DateTime(2022, 12, 16, 15, 0, 0, 0, DateTimeKind.Unspecified), new DateOnly(2024, 12, 10), new DateOnly(2024, 12, 10), new DateOnly(2022, 12, 16), new DateOnly(2024, 12, 10), "C", new DateTime(2022, 12, 11, 9, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 11, 20, 9, 0, 0, 0, DateTimeKind.Unspecified), "Completed", null },
+                { 2, null, new DateOnly(2026, 12, 15), new DateOnly(2024, 12, 16), 1, 3, "Analizy dla kierownictwa oddawane w terminie i bez poprawek merytorycznych. Propozycje nowych wskaźników zgłaszane z własnej inicjatywy, co najmniej raz na kwartał.", "Opracowanie zestawu wskaźników realizacji zadań departamentu do końca II kwartału 2026 r.", new DateTime(2024, 12, 16, 15, 0, 0, 0, DateTimeKind.Unspecified), null, null, new DateOnly(2024, 12, 16), null, "C", new DateTime(2024, 12, 11, 9, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2026, 11, 12, 10, 30, 0, 0, DateTimeKind.Unspecified), "InProgress", null },
+                { 3, new DateTime(2024, 10, 28, 12, 0, 0, 0, DateTimeKind.Unspecified), new DateOnly(2024, 11, 2), new DateOnly(2022, 11, 7), 2, 3, "Zestawienia danych przygotowywane według przyjętego wzoru i sprawdzone przed przekazaniem.", null, new DateTime(2022, 11, 7, 14, 0, 0, 0, DateTimeKind.Unspecified), new DateOnly(2024, 10, 28), new DateOnly(2024, 10, 28), new DateOnly(2022, 11, 7), new DateOnly(2024, 10, 28), "C", new DateTime(2022, 11, 5, 9, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 10, 6, 9, 0, 0, 0, DateTimeKind.Unspecified), "Completed", null },
+                { 4, new DateTime(2025, 1, 8, 11, 0, 0, 0, DateTimeKind.Unspecified), new DateOnly(2025, 1, 10), new DateOnly(2023, 1, 16), 9, 3, "Korespondencja wydziału rejestrowana na bieżąco, odpowiedzi na proste pytania udzielane w ciągu dwóch dni.", null, new DateTime(2023, 1, 16, 14, 0, 0, 0, DateTimeKind.Unspecified), new DateOnly(2025, 1, 8), new DateOnly(2025, 1, 8), new DateOnly(2023, 1, 16), new DateOnly(2025, 1, 8), "C", new DateTime(2023, 1, 14, 9, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 12, 15, 9, 0, 0, 0, DateTimeKind.Unspecified), "Completed", null },
+                { 5, new DateTime(2026, 11, 6, 13, 0, 0, 0, DateTimeKind.Unspecified), new DateOnly(2026, 11, 10), new DateOnly(2024, 11, 17), 10, 3, "Opinie do projektów dokumentów przygotowywane w terminie, z konkretnymi propozycjami zmian wskaźników.", null, new DateTime(2024, 11, 17, 14, 0, 0, 0, DateTimeKind.Unspecified), new DateOnly(2026, 11, 6), new DateOnly(2026, 11, 6), new DateOnly(2024, 11, 17), new DateOnly(2026, 11, 6), "C", new DateTime(2024, 11, 12, 9, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2026, 10, 12, 9, 0, 0, 0, DateTimeKind.Unspecified), "Completed", null },
+                { 6, null, new DateOnly(2027, 1, 10), new DateOnly(2025, 1, 15), 9, 3, "Rejestr korespondencji prowadzony bez zaległości. Zestawienia danych przygotowywane samodzielnie według wskazówek, bez konieczności poprawek.", null, new DateTime(2025, 1, 15, 14, 0, 0, 0, DateTimeKind.Unspecified), null, null, new DateOnly(2025, 1, 15), null, "C", new DateTime(2025, 1, 13, 9, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2026, 11, 16, 14, 0, 0, 0, DateTimeKind.Unspecified), "CriteriaSet", null },
+                { 7, new DateTime(2024, 12, 18, 10, 0, 0, 0, DateTimeKind.Unspecified), new DateOnly(2024, 12, 20), new DateOnly(2023, 1, 8), 12, 3, "Cykliczne raporty przekazywane w terminie, z krótkim omówieniem najważniejszych zmian w danych.", null, new DateTime(2023, 1, 8, 14, 0, 0, 0, DateTimeKind.Unspecified), new DateOnly(2024, 12, 18), new DateOnly(2024, 12, 18), new DateOnly(2023, 1, 8), new DateOnly(2024, 12, 18), "C", new DateTime(2022, 12, 23, 9, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 11, 24, 9, 0, 0, 0, DateTimeKind.Unspecified), "Completed", null },
+                { 8, null, new DateOnly(2026, 12, 10), new DateOnly(2024, 12, 17), 13, 3, "Analizy danych przygotowywane samodzielnie, z wnioskami zrozumiałymi dla odbiorców spoza wydziału.", null, new DateTime(2024, 12, 17, 15, 0, 0, 0, DateTimeKind.Unspecified), null, null, new DateOnly(2024, 12, 17), null, "C", new DateTime(2024, 12, 12, 9, 0, 0, 0, DateTimeKind.Unspecified), null, "NotStarted", null },
+                { 9, null, new DateOnly(2028, 11, 6), null, 10, 3, "Analizy wpływu zmian na usługi cyfrowe z rekomendacją i oceną ryzyka. Samodzielne przedstawianie stanowiska wydziału na posiedzeniach zespołów międzyresortowych.", null, null, null, null, new DateOnly(2026, 11, 6), null, "C", new DateTime(2026, 11, 12, 9, 0, 0, 0, DateTimeKind.Unspecified), null, "NotStarted", null },
+                { 10, new DateTime(2025, 3, 30, 12, 0, 0, 0, DateTimeKind.Unspecified), new DateOnly(2025, 4, 3), new DateOnly(2023, 4, 22), 14, 3, "Zestawy wskaźników przygotowywane z opisem metody pomiaru i źródeł danych, uzgodnione z komórkami merytorycznymi.", null, new DateTime(2023, 4, 22, 10, 0, 0, 0, DateTimeKind.Unspecified), new DateOnly(2025, 3, 30), new DateOnly(2025, 3, 30), new DateOnly(2023, 4, 22), new DateOnly(2025, 3, 30), "C", new DateTime(2023, 4, 8, 9, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2025, 3, 2, 9, 0, 0, 0, DateTimeKind.Unspecified), "Completed", null },
+                { 11, null, new DateOnly(2027, 4, 3), new DateOnly(2025, 4, 21), 14, 3, "Analizy porównawcze dla kierownictwa przekazywane w uzgodnionych terminach. Koordynowanie prac analitycznych kilku osób wydziału bez opóźnień.", "Opracowanie standardu opisu i weryfikacji źródeł danych dla wydziału do końca 2026 r.", new DateTime(2025, 4, 21, 10, 0, 0, 0, DateTimeKind.Unspecified), null, null, new DateOnly(2025, 4, 21), null, "C", new DateTime(2025, 4, 7, 9, 0, 0, 0, DateTimeKind.Unspecified), null, "CriteriaSet", null },
+                { 12, new DateTime(2025, 1, 14, 12, 0, 0, 0, DateTimeKind.Unspecified), new DateOnly(2025, 1, 17), new DateOnly(2023, 2, 4), 15, 3, "Prognozy i analizy trendów przygotowywane w terminie, z opisem założeń i ograniczeń.", null, new DateTime(2023, 2, 4, 10, 0, 0, 0, DateTimeKind.Unspecified), new DateOnly(2025, 1, 14), new DateOnly(2025, 1, 14), new DateOnly(2023, 2, 4), new DateOnly(2025, 1, 14), "C", new DateTime(2023, 1, 21, 9, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 12, 1, 9, 0, 0, 0, DateTimeKind.Unspecified), "Completed", null },
+                { 13, null, new DateOnly(2027, 1, 17), new DateOnly(2025, 2, 3), 15, 3, "Obliczenia w raportach wydziału sprawdzane przed wysłaniem. Wyjaśnienia metod analizy dla innych komórek udzielane w ciągu tygodnia.", null, new DateTime(2025, 2, 3, 10, 0, 0, 0, DateTimeKind.Unspecified), null, null, new DateOnly(2025, 2, 3), null, "C", new DateTime(2025, 1, 20, 9, 0, 0, 0, DateTimeKind.Unspecified), null, "CriteriaSet", null },
+                { 14, new DateTime(2024, 11, 28, 12, 0, 0, 0, DateTimeKind.Unspecified), new DateOnly(2024, 11, 28), new DateOnly(2022, 12, 17), 16, 3, "Udostępnianie danych publicznych na wnioski w ustawowym terminie, z kompletnym uzasadnieniem odmowy.", null, new DateTime(2022, 12, 17, 10, 0, 0, 0, DateTimeKind.Unspecified), new DateOnly(2024, 11, 28), new DateOnly(2024, 11, 28), new DateOnly(2022, 12, 17), new DateOnly(2024, 11, 28), "C", new DateTime(2022, 12, 3, 9, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2024, 10, 1, 9, 0, 0, 0, DateTimeKind.Unspecified), "Completed", new DateTime(2024, 11, 20, 13, 0, 0, 0, DateTimeKind.Unspecified) },
+                { 15, null, new DateOnly(2026, 11, 28), new DateOnly(2024, 12, 16), 16, 3, "Wnioski o udostępnienie danych rozpatrywane w terminie, także te wymagające uzgodnień z innymi komórkami. Rejestr udostępnionych danych prowadzony na bieżąco.", null, new DateTime(2024, 12, 16, 10, 0, 0, 0, DateTimeKind.Unspecified), null, null, new DateOnly(2024, 12, 16), null, "C", new DateTime(2024, 12, 2, 9, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2026, 10, 1, 9, 0, 0, 0, DateTimeKind.Unspecified), "InProgress", new DateTime(2026, 11, 19, 14, 30, 0, 0, DateTimeKind.Unspecified) }
             });
 
         migrationBuilder.InsertData(
@@ -288,32 +290,32 @@ public partial class _20261121231852_Initial : Migration
             columns: new[] { "Id", "At", "EvaluationId", "Status", "Type" },
             values: new object[,]
             {
-                { 1, new DateTime(2024, 12, 16, 10, 0, 0, 0, DateTimeKind.Unspecified), 1, "Held", "Starting" },
-                { 2, new DateTime(2025, 12, 8, 10, 0, 0, 0, DateTimeKind.Unspecified), 1, "Held", "Assessment" },
-                { 3, new DateTime(2025, 12, 16, 10, 0, 0, 0, DateTimeKind.Unspecified), 2, "Held", "Starting" },
+                { 1, new DateTime(2022, 12, 16, 10, 0, 0, 0, DateTimeKind.Unspecified), 1, "Held", "Starting" },
+                { 2, new DateTime(2024, 12, 8, 10, 0, 0, 0, DateTimeKind.Unspecified), 1, "Held", "Assessment" },
+                { 3, new DateTime(2024, 12, 16, 10, 0, 0, 0, DateTimeKind.Unspecified), 2, "Held", "Starting" },
                 { 4, new DateTime(2026, 11, 27, 10, 0, 0, 0, DateTimeKind.Unspecified), 2, "Scheduled", "Assessment" },
-                { 5, new DateTime(2024, 11, 7, 10, 0, 0, 0, DateTimeKind.Unspecified), 3, "Held", "Starting" },
-                { 6, new DateTime(2025, 10, 27, 11, 0, 0, 0, DateTimeKind.Unspecified), 3, "Held", "Assessment" },
-                { 7, new DateTime(2025, 1, 16, 10, 0, 0, 0, DateTimeKind.Unspecified), 4, "Held", "Starting" },
-                { 8, new DateTime(2026, 1, 7, 9, 30, 0, 0, DateTimeKind.Unspecified), 4, "Held", "Assessment" },
-                { 9, new DateTime(2025, 11, 17, 10, 0, 0, 0, DateTimeKind.Unspecified), 5, "Held", "Starting" },
+                { 5, new DateTime(2022, 11, 7, 10, 0, 0, 0, DateTimeKind.Unspecified), 3, "Held", "Starting" },
+                { 6, new DateTime(2024, 10, 27, 11, 0, 0, 0, DateTimeKind.Unspecified), 3, "Held", "Assessment" },
+                { 7, new DateTime(2023, 1, 16, 10, 0, 0, 0, DateTimeKind.Unspecified), 4, "Held", "Starting" },
+                { 8, new DateTime(2025, 1, 7, 9, 30, 0, 0, DateTimeKind.Unspecified), 4, "Held", "Assessment" },
+                { 9, new DateTime(2024, 11, 17, 10, 0, 0, 0, DateTimeKind.Unspecified), 5, "Held", "Starting" },
                 { 10, new DateTime(2026, 11, 5, 13, 0, 0, 0, DateTimeKind.Unspecified), 5, "Held", "Assessment" },
-                { 11, new DateTime(2026, 1, 15, 10, 0, 0, 0, DateTimeKind.Unspecified), 6, "Held", "Starting" },
+                { 11, new DateTime(2025, 1, 15, 10, 0, 0, 0, DateTimeKind.Unspecified), 6, "Held", "Starting" },
                 { 12, new DateTime(2026, 12, 18, 9, 0, 0, 0, DateTimeKind.Unspecified), 6, "Scheduled", "Assessment" },
-                { 13, new DateTime(2025, 1, 8, 10, 0, 0, 0, DateTimeKind.Unspecified), 7, "Held", "Starting" },
-                { 14, new DateTime(2025, 12, 17, 12, 0, 0, 0, DateTimeKind.Unspecified), 7, "Held", "Assessment" },
-                { 15, new DateTime(2025, 12, 17, 11, 0, 0, 0, DateTimeKind.Unspecified), 8, "Held", "Starting" },
+                { 13, new DateTime(2023, 1, 8, 10, 0, 0, 0, DateTimeKind.Unspecified), 7, "Held", "Starting" },
+                { 14, new DateTime(2024, 12, 17, 12, 0, 0, 0, DateTimeKind.Unspecified), 7, "Held", "Assessment" },
+                { 15, new DateTime(2024, 12, 17, 11, 0, 0, 0, DateTimeKind.Unspecified), 8, "Held", "Starting" },
                 { 16, new DateTime(2026, 11, 14, 10, 0, 0, 0, DateTimeKind.Unspecified), 8, "Scheduled", "Assessment" },
                 { 17, new DateTime(2026, 11, 26, 10, 0, 0, 0, DateTimeKind.Unspecified), 9, "Scheduled", "Starting" },
-                { 18, new DateTime(2025, 4, 22, 9, 0, 0, 0, DateTimeKind.Unspecified), 10, "Held", "Starting" },
-                { 19, new DateTime(2026, 3, 25, 10, 0, 0, 0, DateTimeKind.Unspecified), 10, "Held", "Assessment" },
-                { 20, new DateTime(2026, 4, 21, 9, 0, 0, 0, DateTimeKind.Unspecified), 11, "Held", "Starting" },
-                { 21, new DateTime(2025, 2, 4, 9, 0, 0, 0, DateTimeKind.Unspecified), 12, "Held", "Starting" },
-                { 22, new DateTime(2026, 1, 12, 11, 0, 0, 0, DateTimeKind.Unspecified), 12, "Held", "Assessment" },
-                { 23, new DateTime(2026, 2, 3, 9, 0, 0, 0, DateTimeKind.Unspecified), 13, "Held", "Starting" },
-                { 24, new DateTime(2024, 12, 17, 9, 0, 0, 0, DateTimeKind.Unspecified), 14, "Held", "Starting" },
-                { 25, new DateTime(2025, 11, 17, 10, 0, 0, 0, DateTimeKind.Unspecified), 14, "Held", "Assessment" },
-                { 26, new DateTime(2025, 12, 16, 9, 0, 0, 0, DateTimeKind.Unspecified), 15, "Held", "Starting" },
+                { 18, new DateTime(2023, 4, 22, 9, 0, 0, 0, DateTimeKind.Unspecified), 10, "Held", "Starting" },
+                { 19, new DateTime(2025, 3, 25, 10, 0, 0, 0, DateTimeKind.Unspecified), 10, "Held", "Assessment" },
+                { 20, new DateTime(2025, 4, 21, 9, 0, 0, 0, DateTimeKind.Unspecified), 11, "Held", "Starting" },
+                { 21, new DateTime(2023, 2, 4, 9, 0, 0, 0, DateTimeKind.Unspecified), 12, "Held", "Starting" },
+                { 22, new DateTime(2025, 1, 12, 11, 0, 0, 0, DateTimeKind.Unspecified), 12, "Held", "Assessment" },
+                { 23, new DateTime(2025, 2, 3, 9, 0, 0, 0, DateTimeKind.Unspecified), 13, "Held", "Starting" },
+                { 24, new DateTime(2022, 12, 17, 9, 0, 0, 0, DateTimeKind.Unspecified), 14, "Held", "Starting" },
+                { 25, new DateTime(2024, 11, 17, 10, 0, 0, 0, DateTimeKind.Unspecified), 14, "Held", "Assessment" },
+                { 26, new DateTime(2024, 12, 16, 9, 0, 0, 0, DateTimeKind.Unspecified), 15, "Held", "Starting" },
                 { 27, new DateTime(2026, 11, 16, 11, 0, 0, 0, DateTimeKind.Unspecified), 15, "Held", "Assessment" }
             });
 

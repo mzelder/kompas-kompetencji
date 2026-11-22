@@ -1,0 +1,101 @@
+<RadzenRow Gap="1.5rem">
+    <RadzenColumn Size="12" SizeMD="6">
+        <RadzenCard Variant="Variant.Outlined" class="rz-h-100">
+            <RadzenStack Gap="1.5rem">
+                <RadzenStack Gap="0">
+                    <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H2" class="rz-m-0">Sporządzenie oceny</RadzenText>
+                    <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">@PreparationSubtitle</RadzenText>
+                </RadzenStack>
+
+                <RadzenFormField Text="Data sporządzenia oceny" Variant="Variant.Outlined">
+                    <ChildContent>
+                        <RadzenDatePicker TValue="DateOnly?" @bind-Value="preparedOn" DateFormat="dd.MM.yyyy"
+                                          Min="@Completion.PreparedOnRange.Min.ToDateTime(TimeOnly.MinValue)"
+                                          Max="@Completion.PreparedOnRange.Max.ToDateTime(TimeOnly.MinValue)" />
+                    </ChildContent>
+                    <Helper>
+                        <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">@PreparedOnHelp</RadzenText>
+                    </Helper>
+                </RadzenFormField>
+
+                <RadzenStack Gap="0.5rem">
+                    <DetailItem Label="Okres oceny" Value="@PeriodText" />
+                    <DetailItem Label="Termin oceny" Value="@EvaluationText.Date(View.Task.DueDate)" />
+                    @if (preparedOn is DateOnly day)
+                    {
+                        <DetailItem Label="Kolejna ocena" Value="@EvaluationText.Date(EvaluationSchedule.NextDueDate(day))" />
+                    }
+                </RadzenStack>
+
+                @if (preparationError is not null)
+                {
+                    <RadzenAlert AlertStyle="AlertStyle.Danger" Variant="Variant.Flat" Shade="Shade.Lighter" AllowClose="false" class="rz-m-0">
+                        @preparationError
+                    </RadzenAlert>
+                }
+
+                <RadzenStack Gap="0.5rem" AlignItems="AlignItems.End">
+                    <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End" Gap="0.5rem" Wrap="FlexWrap.Wrap">
+                        <RadzenButton Text="Zapisz datę sporządzenia" Icon="save"
+                                      ButtonStyle="@(IsPrepared ? ButtonStyle.Secondary : ButtonStyle.Primary)"
+                                      IsBusy="@savingPreparedOn" BusyText="Zapisywanie..." Disabled="@(closing || !CanPrepare)" Click="@SavePreparedOnAsync" />
+                        @if (IsPrepared)
+                        {
+                            <RadzenButton Text="Pobierz PDF" Icon="picture_as_pdf" ButtonStyle="ButtonStyle.Primary" Click="@DownloadPdf" />
+                        }
+                    </RadzenStack>
+                    @if (!CanPrepare)
+                    {
+                        <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">@CompletionRules.AssessmentConversationNotHeld</RadzenText>
+                    }
+                </RadzenStack>
+            </RadzenStack>
+        </RadzenCard>
+    </RadzenColumn>
+
+    @if (IsPrepared)
+    {
+        <RadzenColumn Size="12" SizeMD="6">
+            <RadzenCard Variant="Variant.Outlined" class="rz-h-100">
+                <RadzenStack Gap="1.5rem">
+                    <RadzenStack Gap="0">
+                        <RadzenText TextStyle="TextStyle.H6" TagName="TagName.H2" class="rz-m-0">Zapoznanie pracownika z oceną</RadzenText>
+                        <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">
+                            Po podpisaniu arkusza przez pracownika wpisz datę i zamknij ocenę.
+                        </RadzenText>
+                    </RadzenStack>
+
+                    <RadzenFormField Text="Data zapoznania pracownika z oceną" Variant="Variant.Outlined">
+                        <ChildContent>
+                            <RadzenDatePicker TValue="DateOnly?" @bind-Value="acquaintedOn" DateFormat="dd.MM.yyyy"
+                                              Min="@Completion.AcquaintedOnRange.Min.ToDateTime(TimeOnly.MinValue)"
+                                              Max="@Completion.AcquaintedOnRange.Max.ToDateTime(TimeOnly.MinValue)" />
+                        </ChildContent>
+                        <Helper>
+                            <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">
+                                Data podpisu pracownika na części II. Nie wcześniej niż data sporządzenia oceny (@EvaluationText.Date(Completion.AcquaintedOnRange.Min)).
+                            </RadzenText>
+                        </Helper>
+                    </RadzenFormField>
+
+                    @if (closeError is not null)
+                    {
+                        <RadzenAlert AlertStyle="AlertStyle.Danger" Variant="Variant.Flat" Shade="Shade.Lighter" AllowClose="false" class="rz-m-0">
+                            @closeError
+                        </RadzenAlert>
+                    }
+
+                    <RadzenStack Gap="0.5rem" AlignItems="AlignItems.End">
+                        <RadzenButton Text="Zamknij ocenę" Icon="task_alt" ButtonStyle="ButtonStyle.Primary"
+                                      IsBusy="@closing" BusyText="Zamykanie..." Disabled="@(savingPreparedOn || Completion.CloseBlocker is not null)"
+                                      Click="@CloseEvaluationAsync" />
+                        @if (Completion.CloseBlocker is string blocker)
+                        {
+                            <RadzenText TextStyle="TextStyle.Caption" class="rz-m-0 rz-color-base-300">@blocker</RadzenText>
+                        }
+                    </RadzenStack>
+                </RadzenStack>
+            </RadzenCard>
+        </RadzenColumn>
+    }
+</RadzenRow>

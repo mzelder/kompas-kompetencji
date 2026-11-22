@@ -23,7 +23,8 @@ public sealed record EvaluationTask(
     DateOnly CycleStart,
     DateTime? StartingConversationAt,
     ConversationStatus? StartingConversationStatus,
-    bool IsPartIConfirmed)
+    bool IsPartIConfirmed,
+    DateOnly? PreparedOn)
 {
     public DateOnly StartingConversationDeadline => StartingConversationRules.Deadline(CycleStart);
 
@@ -55,8 +56,9 @@ public static class EvaluationSchedule
 {
     public const int DueSoonDays = 60;
 
-    public static DateOnly NextDueDate(DateOnly employedSince, DateOnly? lastCompletedDueDate) =>
-        lastCompletedDueDate?.AddYears(1) ?? employedSince.AddYears(1);
+    public const int CycleMonths = 24;
+
+    public static DateOnly NextDueDate(DateOnly cycleStart) => cycleStart.AddMonths(CycleMonths);
 
     public static EvaluationSheet SheetFor(Employee employee) =>
         employee.IsSupervisor ? EvaluationSheet.B : EvaluationSheet.C;
@@ -65,9 +67,7 @@ public static class EvaluationSchedule
         evaluations.Where(v => v.Status == EvaluationStatus.Completed).MaxBy(v => v.DueDate);
 
     public static DateOnly CycleStart(Employee employee, IEnumerable<Evaluation> evaluations) =>
-        LastCompleted(evaluations)?.CompletedAt is DateTime completedAt
-            ? DateOnly.FromDateTime(completedAt)
-            : employee.EmployedSince;
+        LastCompleted(evaluations)?.PreparedOn ?? employee.EmployedSince;
 
     public static Evaluation? OpenEvaluation(IEnumerable<Evaluation> evaluations) =>
         evaluations.Where(v => v.Status != EvaluationStatus.Completed).MaxBy(v => v.DueDate);
@@ -77,7 +77,8 @@ public static class EvaluationSchedule
         var list = evaluations.ToList();
         var open = OpenEvaluation(list);
         var lastCompleted = LastCompleted(list);
-        var dueDate = open?.DueDate ?? NextDueDate(employee.EmployedSince, lastCompleted?.DueDate);
+        var cycleStart = CycleStart(employee, list);
+        var dueDate = open?.DueDate ?? NextDueDate(cycleStart);
         var started = open is not null && open.Status >= EvaluationStatus.InProgress;
         var assessmentConversation = open?.FindConversation(ConversationType.Assessment);
         var startingConversation = open?.FindConversation(ConversationType.Starting);
@@ -98,9 +99,10 @@ public static class EvaluationSchedule
             ConversationAt: assessmentConversation?.At,
             ConversationStatus: assessmentConversation?.Status,
             IsSheetConfirmed: open?.SheetConfirmedAt is not null,
-            CycleStart: CycleStart(employee, list),
+            CycleStart: cycleStart,
             StartingConversationAt: startingConversation?.At,
             StartingConversationStatus: startingConversation?.Status,
-            IsPartIConfirmed: open?.PartIConfirmedAt is not null);
+            IsPartIConfirmed: open?.PartIConfirmedAt is not null,
+            PreparedOn: open?.PreparedOn);
     }
 }

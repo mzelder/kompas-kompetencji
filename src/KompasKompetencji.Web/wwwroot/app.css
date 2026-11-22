@@ -373,3 +373,10 @@ h1:focus {
     margin-inline: 1rem;
     background-color: var(--rz-base-600);
 }
+
+.topic-tasks {
+    padding-left: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+}

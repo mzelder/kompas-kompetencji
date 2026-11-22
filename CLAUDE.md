@@ -14,6 +14,7 @@ Prototyp aplikacji wspierającej przełożonego w ocenie pracownika służby cyw
 - Plan wdrożenia asystenta AI z bazą wiedzy (RAG, BM25), podjęte decyzje i tickety w kolejności realizacji: `tickety_do_implementacji/` (zacznij od `README.md` w tym folderze). Cała baza wiedzy (źródła, skrypt, `knowledge-base.json`) ma być w jednym folderze `knowledge-base/`.
 - Plan Etapu 0 oceny (opis stanowiska, wybór arkusza) i strony pracownika z etapami: `tickety_do_implementacji/ocena_etap_0/` (zacznij od `README.md` w tym folderze).
 - Plan Etapu 1 oceny (przygotowanie, rozmowa rozpoczynająca, zatwierdzenie części I arkusza): `tickety_do_implementacji/ocena_etap_1/` (zacznij od `README.md` w tym folderze).
+- Plan Etapu 3 oceny (data sporządzenia, PDF arkusza, zapoznanie pracownika, zamknięcie i nowy cykl, cykl 24 miesiące): `tickety_do_implementacji/ocena_etap_3/` (zacznij od `README.md` w tym folderze).
 
 ## Ustalenia od organizatorów
 

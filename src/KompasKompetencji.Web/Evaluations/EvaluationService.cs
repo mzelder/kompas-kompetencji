@@ -1,4 +1,5 @@
 using KompasKompetencji.Web.Data;
+using KompasKompetencji.Web.Evaluations.Pdf;
 using KompasKompetencji.Web.Organization;
 using Microsoft.EntityFrameworkCore;
 
@@ -36,6 +37,16 @@ public sealed record EmployeeEvaluationRow(Employee Employee, EvaluationStage St
     public DateOnly DueDate => Task.DueDate;
 }
 
+public sealed record PreviousEvaluation(int Id, EvaluationSheet Sheet, DateOnly PreparedOn);
+
+public sealed record CompletionView(
+    CompletionStep Step,
+    DateOnly? PreparedOn,
+    AllowedDates PreparedOnRange,
+    AllowedDates AcquaintedOnRange,
+    DateOnly? AssessmentConversationDay,
+    string? CloseBlocker);
+
 public sealed record EmployeeEvaluationView(
     Employee Employee,
     JobDescription? JobDescription,
@@ -54,7 +65,9 @@ public sealed record EmployeeEvaluationView(
     string? Expectations,
     string? Goals,
     DateOnly? EmployeeAcquaintedOn,
-    IReadOnlyList<EvaluationNote> Notes)
+    IReadOnlyList<EvaluationNote> Notes,
+    CompletionView? Completion,
+    PreviousEvaluation? PreviousEvaluation)
 {
     public bool IsPartIConfirmed => StartingConversationStep == StartingConversationStep.Confirmed;
 }
@@ -67,6 +80,7 @@ public sealed class EvaluationService(IDbContextFactory<AppDbContext> dbFactory)
     private const string EmployeeNotFound = "Nie znaleziono pracownika w Twoim zespole.";
     private const string SheetNotConfirmed = "Najpierw zatwierdź arkusz oceny na stronie pracownika.";
     private const string PartIAlreadyConfirmed = "Część I arkusza jest już zatwierdzona.";
+    private const string NotInCompletion = "Datę sporządzenia i zapoznania wpisuje się na etapie zakończenia oceny pracownika z Twojego zespołu.";
 
     public async Task<SupervisorOverview> GetSupervisorOverviewAsync(int supervisorId, DateTime now, CancellationToken ct = default)
     {
@@ -309,7 +323,100 @@ public sealed class EvaluationService(IDbContextFactory<AppDbContext> dbFactory)
             open?.Expectations,
             open?.Goals,
             open?.EmployeeAcquaintedOn,
-            notes);
+            notes,
+            open is not null && EvaluationStages.Current(open) == EvaluationStage.Completion ? DescribeCompletion(open, today) : null,
+            EvaluationSchedule.LastCompleted(evaluations) is { PreparedOn: DateOnly preparedOn } last
+                ? new PreviousEvaluation(last.Id, last.Sheet, preparedOn)
+                : null);
+    }
+
+    public async Task<OperationResult> SavePreparedOnAsync(
+        int supervisorId, int employeeId, DateOnly preparedOn, DateTime now, CancellationToken ct = default)
+    {
+        await using var db = await dbFactory.CreateDbContextAsync(ct);
+
+        var open = await FindCompletionEvaluationAsync(db, supervisorId, employeeId, ct);
+        if (open is null)
+        {
+            return OperationResult.Fail(NotInCompletion);
+        }
+
+        var error = CompletionRules.ValidatePreparedOn(open, preparedOn, DateOnly.FromDateTime(now));
+        if (error is not null)
+        {
+            return OperationResult.Fail(error);
+        }
+
+        open.PreparedOn = preparedOn;
+        await db.SaveChangesAsync(ct);
+        return OperationResult.Success;
+    }
+
+    public async Task<OperationResult> CloseEvaluationAsync(
+        int supervisorId, int employeeId, DateOnly acquaintedOn, DateTime now, CancellationToken ct = default)
+    {
+        await using var db = await dbFactory.CreateDbContextAsync(ct);
+
+        var open = await FindCompletionEvaluationAsync(db, supervisorId, employeeId, ct);
+        if (open is null)
+        {
+            return OperationResult.Fail(NotInCompletion);
+        }
+
+        var error = CompletionRules.CloseBlocker(open)
+            ?? CompletionRules.ValidateAcquaintedOn(open, acquaintedOn, DateOnly.FromDateTime(now));
+        if (error is not null)
+        {
+            return OperationResult.Fail(error);
+        }
+
+        open.PartIIAcquaintedOn = acquaintedOn;
+        open.PeriodEnd = open.PreparedOn;
+        open.CompletedAt = now;
+        open.Status = EvaluationStatus.Completed;
+        await db.SaveChangesAsync(ct);
+        return OperationResult.Success;
+    }
+
+    public async Task<EvaluationSheetData?> GetEvaluationSheetAsync(int supervisorId, int evaluationId, CancellationToken ct = default)
+    {
+        await using var db = await dbFactory.CreateDbContextAsync(ct);
+
+        var evaluation = await db.Evaluations.AsNoTracking()
+            .Include(v => v.Employee)
+            .Include(v => v.Evaluator)
+            .Include(v => v.Conversations)
+            .Include(v => v.AdditionalCriteria)
+            .SingleOrDefaultAsync(v => v.Id == evaluationId, ct);
+        if (evaluation?.PreparedOn is null || await FindSubordinateAsync(db, supervisorId, evaluation.EmployeeId, ct) is null)
+        {
+            return null;
+        }
+
+        var isPrintable = evaluation.Status == EvaluationStatus.Completed
+            || EvaluationStages.Current(evaluation) == EvaluationStage.Completion;
+        return isPrintable ? EvaluationSheetData.From(evaluation) : null;
+    }
+
+    private static CompletionView DescribeCompletion(Evaluation open, DateOnly today) => new(
+        CompletionRules.Step(open),
+        open.PreparedOn,
+        CompletionRules.PreparedOnRange(open, today),
+        CompletionRules.AcquaintedOnRange(open, today),
+        CompletionRules.AssessmentConversationDay(open),
+        CompletionRules.CloseBlocker(open));
+
+    private static async Task<Evaluation?> FindCompletionEvaluationAsync(
+        AppDbContext db, int supervisorId, int employeeId, CancellationToken ct)
+    {
+        if (await FindSubordinateAsync(db, supervisorId, employeeId, ct) is null)
+        {
+            return null;
+        }
+
+        var evaluations = await db.Evaluations.Include(v => v.Conversations).Where(v => v.EmployeeId == employeeId).ToListAsync(ct);
+        var open = EvaluationSchedule.OpenEvaluation(evaluations);
+        return EvaluationStages.Current(open) == EvaluationStage.Completion ? open : null;
     }
 
     public async Task<OperationResult> AddNoteAsync(
@@ -473,7 +580,6 @@ public sealed class EvaluationService(IDbContextFactory<AppDbContext> dbFactory)
         Sheet = task.Sheet,
         Status = EvaluationStatus.NotStarted,
         PeriodStart = cycleStart,
-        PeriodEnd = task.DueDate.AddDays(-1),
         DueDate = task.DueDate,
     };
 }
